@@ -2,12 +2,15 @@
   "name": "المصطلحات السياسية والقانونية",
   "short_name": "المصطلحات",
   "description": "تطبيق تعليمي تفاعلي للمصطلحات السياسية والقانونية",
-  "start_url": "/index.html",
-  "scope": "/",
+
+  "start_url": "/My_pwa_app/index.html",
+  "scope": "/My_pwa_app/",
+
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#1e40af",
   "background_color": "#ffffff",
+
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231e40af' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>📚</text></svg>",
@@ -22,13 +25,6 @@
       "purpose": "any"
     }
   ],
-  "categories": ["education"],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%231e40af' width='540' height='720'/><text x='50%' y='50%' font-size='80' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>📚</text></svg>",
-      "sizes": "540x720",
-      "type": "image/svg+xml",
-      "form_factor": "narrow"
-    }
-  ]
+
+  "categories": ["education"]
 }
