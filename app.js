@@ -7,20 +7,20 @@ const app = {
         const appDiv = document.getElementById('app');
         let levelsHtml = levels.map(level => `
             <div class="level-card" onclick="app.showLessons('${level.id}')">
-                <span class="level-icon">${level.icon}</span>
+                <div class="level-icon">${level.icon}</div>
                 <h2>${level.name}</h2>
             </div>
         `).join('');
 
         appDiv.innerHTML = `
-            <header class="app-header">
+            <div class="header">
                 <h1>المصطلحات السياسية والقانونية</h1>
-                <p>اختر المستوى لبدء التعلم</p>
-                <button class="nav-btn" onclick="app.showFlashcards()">🗂️ بطاقات الكلمات</button>
-            </header>
-            <main class="levels-container">
+                <p>تعلم المصطلحات من خلال النصوص السياقية</p>
+                <button class="flashcards-main-btn" onclick="app.showFlashcards()">🗂️ بطاقات الاستذكار الخاصة بي</button>
+            </div>
+            <div class="levels-grid">
                 ${levelsHtml}
-            </main>
+            </div>
         `;
     },
 
@@ -29,104 +29,102 @@ const app = {
         const lessons = lessonsList[levelId] || [];
 
         let lessonsHtml = lessons.map(lesson => `
-            <div class="lesson-item" onclick="app.showFullText('${lesson.id}', '${levelId}')">
-                <div class="lesson-info">
-                    <h3>${lesson.title}</h3>
-                    <p>${lesson.description}</p>
-                </div>
-                <span class="arrow">←</span>
+            <div class="lesson-card" onclick="app.viewLesson('${lesson.id}', '${levelId}')">
+                <h3>${lesson.title}</h3>
+                <p>${lesson.description}</p>
+                <div class="lesson-footer">اضغط للقراءة والتعلم ←</div>
             </div>
         `).join('');
 
         appDiv.innerHTML = `
-            <header class="app-header small">
-                <button class="back-btn" onclick="app.renderHome()">🔙 الرئيسية</button>
-                <h1>${levels.find(l => l.id === levelId).name}</h1>
-            </header>
-            <main class="lessons-list">
+            <div class="nav-bar">
+                <button class="back-btn" onclick="app.renderHome()">🏠 الرئيسية</button>
+                <h2>${levels.find(l => l.id === levelId).name}</h2>
+            </div>
+            <div class="lessons-container">
                 ${lessonsHtml}
-            </main>
+            </div>
         `;
     },
 
-    showFullText(lessonId, levelId) {
+    viewLesson(lessonId, levelId) {
         const appDiv = document.getElementById('app');
-        const data = lessonsData[lessonId];
+        const lesson = lessonsData[lessonId];
         
-        // جلب الكلمات الخاصة بهذا النص من قائمة المصطلحات
+        if (!lesson) return;
+
+        // استخراج الكلمات من قائمة المصطلحات لهذا الدرس
         const terms = termsList[lessonId] || [];
 
-        if (!data) return;
-
-        let termsHtml = terms.map(term => `
-            <div class="term-box">
-                <span><strong>${term.english}:</strong> ${term.arabic}</span>
-                <button class="add-btn" onclick="app.addToFlashcards('${term.english}', '${term.arabic}')">➕ أضف للبطاقات</button>
-            </div>
-        `).join('');
-
         appDiv.innerHTML = `
-            <header class="app-header small">
-                <button class="back-btn" onclick="app.showLessons('${levelId}')">🔙 القائمة</button>
-            </header>
-            <article class="content-view">
-                <h1 class="text-title">${data.title}</h1>
-                <div class="text-body">
-                    ${data.content.replace(/\n/g, '<br>')}
+            <div class="nav-bar">
+                <button class="back-btn" onclick="app.showLessons('${levelId}')">🔙 عودة للقائمة</button>
+            </div>
+            <div class="content-wrapper">
+                <h1 class="lesson-full-title">${lesson.title}</h1>
+                <div class="article-body">
+                    ${lesson.content.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}
                 </div>
                 
-                ${terms.length > 0 ? `
-                <section class="terms-section">
-                    <h3>المصطلحات الهامة:</h3>
-                    <div class="terms-grid">${termsHtml}</div>
-                </section>` : ''}
-            </article>
+                <div class="vocabulary-section">
+                    <h3>💡 مصطلحات النص (اضغط للإضافة للبطاقات)</h3>
+                    <div class="terms-list">
+                        ${terms.map(t => `
+                            <div class="term-item">
+                                <div class="term-texts">
+                                    <span class="en">${t.english}</span>
+                                    <span class="ar">${t.arabic}</span>
+                                </div>
+                                <button class="add-word-btn" onclick="app.addToFlashcards('${t.english}', '${t.arabic}')">➕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
         `;
         window.scrollTo(0, 0);
     },
 
     addToFlashcards(en, ar) {
-        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
-        if (!saved.some(item => item.en === en)) {
-            saved.push({ en, ar });
-            localStorage.setItem('myFlashcards', JSON.stringify(saved));
-            alert('تمت إضافة الكلمة إلى بطاقاتك! ✅');
+        let cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        if (!cards.some(c => c.en === en)) {
+            cards.push({ en, ar });
+            localStorage.setItem('myFlashcards', JSON.stringify(cards));
+            alert('✅ تمت الإضافة للبطاقات');
         } else {
-            alert('الكلمة موجودة مسبقاً في بطاقاتك.');
+            alert('الكلمة موجودة مسبقاً');
         }
     },
 
     showFlashcards() {
         const appDiv = document.getElementById('app');
-        const saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        const cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
 
-        let cardsHtml = saved.map((card, index) => `
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front">${card.en}</div>
-                    <div class="card-back">${card.ar}</div>
-                </div>
-                <button class="delete-btn" onclick="app.deleteCard(${index}); event.stopPropagation();">🗑️</button>
+        let cardsHtml = cards.map((c, i) => `
+            <div class="flashcard-obj" onclick="this.classList.toggle('is-flipped')">
+                <div class="card-face card-front">${c.en}</div>
+                <div class="card-face card-back">${c.ar}</div>
+                <button class="del-card" onclick="app.removeCard(${i}); event.stopPropagation();">×</button>
             </div>
         `).join('');
 
         appDiv.innerHTML = `
-            <header class="app-header small">
+            <div class="nav-bar">
                 <button class="back-btn" onclick="app.renderHome()">🔙 الرئيسية</button>
-                <h1>بطاقات الاستذكار</h1>
-            </header>
-            <main class="flashcards-container">
-                ${saved.length > 0 ? cardsHtml : '<p class="empty-msg">لا توجد كلمات مضافة بعد.</p>'}
-            </main>
+                <h2>بطاقات الاستذكار</h2>
+            </div>
+            <div class="cards-grid">
+                ${cards.length > 0 ? cardsHtml : '<p class="empty-state">لا يوجد كلمات مضافة بعد. ابدأ بإضافة الكلمات من النصوص!</p>'}
+            </div>
         `;
     },
 
-    deleteCard(index) {
-        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
-        saved.splice(index, 1);
-        localStorage.setItem('myFlashcards', JSON.stringify(saved));
+    removeCard(index) {
+        let cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        cards.splice(index, 1);
+        localStorage.setItem('myFlashcards', JSON.stringify(cards));
         this.showFlashcards();
     }
 };
 
-window.onload = () => app.init();
+app.init();
