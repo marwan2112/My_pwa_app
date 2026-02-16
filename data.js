@@ -16,8 +16,37 @@ window.lessonsList = {
     { id: '201', title: 'السيادة الدولية', description: 'تحليل نص سياسي معمق' }
   ],
   'advanced': [
-    { id: '301', title: 'نص متقدم 1', description: 'اضغط لتعديل العنوان' },
-    { id: '302', title: 'نص متقدم 2', description: 'اضغط لتعديل العنوان' }
+    { id: '301', title: ' Cooperative Sovereignty in a Globalized Era ', description: 'اضغط لتعديل العنوان' },
+    { id: '302', title: ' Decoupling and the Future of Globalization ', description: 'اضغط لتعديل العنوان' },
+    { id: '303', title: ' Modern Conflict in the Information Age ', description: 'اضغط لتعديل العنوان' },
+    { id: '304', title: ' The Paradox of Sovereignty in Global Governance ', description: 'اضغط لتعديل العنوان' },
+    { id: '305', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '306', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '307', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '308', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '309', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '310', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '311', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '312', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '313', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '314', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '315', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '316', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '317', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '318', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '319', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '320', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '321', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '322', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '323', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '324', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '325', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '326', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '327', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '328', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '329', title: '  ', description: 'اضغط لتعديل العنوان' },
+    { id: '330', title: '  ', description: 'اضغط لتعديل العنوان' },
+    
   ]
 };
 
@@ -91,8 +120,10 @@ Skeptics, however, challenge the utility of this new generational label. They co
     terms: [{ id: '303-1', english: 'Word', arabic: 'كلمة' }]
   },
    '304': {
-    title: "عنوان النص الثاني",
-    content: `محتوى النص الثاني هنا...`,
+    title: " The Paradox of Sovereignty in Global Governance ",
+    content: ` Global governance in the 21st century presents a complex paradox. The need for multilateral cooperation is escalating to address pressing transnational challenges—such as climate change, pandemics, and cybersecurity—at a time when nationalistic tendencies and assertions of state sovereignty are intensifying. These challenges have effectively led to an erosion of the concept of absolute sovereignty as defined by the Westphalian system, where domestic decisions are now significantly influenced by variables outside a state’s direct control. However, the existing international institutions, whose foundational rules were established in the mid-20th century, suffer from structural inertia that impedes their capacity to respond effectively to the speed and complexity of the evolving global landscape.
+Many analysts suggest that the lack of consensus regarding the reform of the UN Security Council, and the increasing use of the veto power, is not merely a procedural disagreement; it is a reflection of major powers’ reluctance to relinquish their privileges in favor of a more representative and equitable structure. This inertia has created "Grey Zones" filled by non-governmental initiatives or temporary regional coalitions attempting to fill the vacuum, which often results in scattered efforts instead of cohesive integration. The fundamental question facing the international system now is: Can the concept of Flexible Sovereignty, which involves a partial delegation to supranational organizations in specific domains, offer a compromise? Or are we inevitably heading towards a world dominated by narrow self-interests, where global solidarity becomes increasingly ineffective? The answer lies in the ability of leaders to move beyond zero-sum thinking.
+ `,
     terms: [{ id: '304-1', english: 'Word', arabic: 'كلمة' }]
   },
    '305': {
