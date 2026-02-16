@@ -1,4 +1,3 @@
-// المحرك الأساسي للتطبيق - app.js
 const app = {
     init() {
         this.renderHome();
@@ -17,6 +16,7 @@ const app = {
             <header class="app-header">
                 <h1>المصطلحات السياسية والقانونية</h1>
                 <p>اختر المستوى لبدء التعلم</p>
+                <button class="nav-btn" onclick="app.showFlashcards()">🗂️ بطاقات الكلمات</button>
             </header>
             <main class="levels-container">
                 ${levelsHtml}
@@ -29,7 +29,7 @@ const app = {
         const lessons = lessonsList[levelId] || [];
 
         let lessonsHtml = lessons.map(lesson => `
-            <div class="lesson-item" onclick="app.showFullText('${lesson.id}')">
+            <div class="lesson-item" onclick="app.showFullText('${lesson.id}', '${levelId}')">
                 <div class="lesson-info">
                     <h3>${lesson.title}</h3>
                     <p>${lesson.description}</p>
@@ -40,53 +40,93 @@ const app = {
 
         appDiv.innerHTML = `
             <header class="app-header small">
-                <button class="back-btn" onclick="app.renderHome()">🔙 عودة للرئيسية</button>
+                <button class="back-btn" onclick="app.renderHome()">🔙 الرئيسية</button>
                 <h1>${levels.find(l => l.id === levelId).name}</h1>
             </header>
             <main class="lessons-list">
-                ${lessonsHtml || '<p class="empty-msg">سيتم إضافة المحتوى قريباً</p>'}
+                ${lessonsHtml}
             </main>
         `;
     },
 
-    showFullText(lessonId) {
+    showFullText(lessonId, levelId) {
         const appDiv = document.getElementById('app');
         const data = lessonsData[lessonId];
+        
+        // جلب الكلمات الخاصة بهذا النص من قائمة المصطلحات
+        const terms = termsList[lessonId] || [];
 
         if (!data) return;
 
-        // تحويل الفواصل السطرية \n في النص الأصلي إلى <br> ليعرضها المتصفح كفقرات
-        const formattedContent = data.content.replace(/\n/g, '<br>');
+        let termsHtml = terms.map(term => `
+            <div class="term-box">
+                <span><strong>${term.english}:</strong> ${term.arabic}</span>
+                <button class="add-btn" onclick="app.addToFlashcards('${term.english}', '${term.arabic}')">➕ أضف للبطاقات</button>
+            </div>
+        `).join('');
 
         appDiv.innerHTML = `
             <header class="app-header small">
-                <button class="back-btn" onclick="history.back()">🔙 عودة للقائمة</button>
+                <button class="back-btn" onclick="app.showLessons('${levelId}')">🔙 القائمة</button>
             </header>
             <article class="content-view">
                 <h1 class="text-title">${data.title}</h1>
-                <hr>
                 <div class="text-body">
-                    ${formattedContent}
+                    ${data.content.replace(/\n/g, '<br>')}
                 </div>
+                
+                ${terms.length > 0 ? `
+                <section class="terms-section">
+                    <h3>المصطلحات الهامة:</h3>
+                    <div class="terms-grid">${termsHtml}</div>
+                </section>` : ''}
             </article>
-            <div class="bottom-nav">
-                <button class="btn-primary" onclick="app.renderHome()">الرئيسية</button>
-            </div>
         `;
         window.scrollTo(0, 0);
+    },
+
+    addToFlashcards(en, ar) {
+        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        if (!saved.some(item => item.en === en)) {
+            saved.push({ en, ar });
+            localStorage.setItem('myFlashcards', JSON.stringify(saved));
+            alert('تمت إضافة الكلمة إلى بطاقاتك! ✅');
+        } else {
+            alert('الكلمة موجودة مسبقاً في بطاقاتك.');
+        }
+    },
+
+    showFlashcards() {
+        const appDiv = document.getElementById('app');
+        const saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+
+        let cardsHtml = saved.map((card, index) => `
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">${card.en}</div>
+                    <div class="card-back">${card.ar}</div>
+                </div>
+                <button class="delete-btn" onclick="app.deleteCard(${index}); event.stopPropagation();">🗑️</button>
+            </div>
+        `).join('');
+
+        appDiv.innerHTML = `
+            <header class="app-header small">
+                <button class="back-btn" onclick="app.renderHome()">🔙 الرئيسية</button>
+                <h1>بطاقات الاستذكار</h1>
+            </header>
+            <main class="flashcards-container">
+                ${saved.length > 0 ? cardsHtml : '<p class="empty-msg">لا توجد كلمات مضافة بعد.</p>'}
+            </main>
+        `;
+    },
+
+    deleteCard(index) {
+        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        saved.splice(index, 1);
+        localStorage.setItem('myFlashcards', JSON.stringify(saved));
+        this.showFlashcards();
     }
 };
 
-// تشغيل التطبيق عند التحميل
 window.onload = () => app.init();
-
-// تفعيل زر العودة في المتصفح
-window.onpopstate = () => {
-    const appDiv = document.getElementById('app');
-    if (appDiv.querySelector('.content-view')) {
-        // إذا كان داخل نص، يعود للقائمة (مستوى متقدم مثلاً)
-        app.showLessons('advanced');
-    } else {
-        app.renderHome();
-    }
-};
