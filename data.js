@@ -1,67 +1,80 @@
-// تحديث قائمة الدروس المتوسطة
-lessonsList['intermediate'] = [
-  { id: '201', title: '1. السيادة والتعاون', description: 'تحليل العلاقة بين الدول في العصر الحديث' },
-  { id: '202', title: '2. الذكاء الاصطناعي', description: 'تأثير التكنولوجيا على سوق العمل' },
-  { id: '203', title: '3. التغير المناخي', description: 'المسؤولية الأخلاقية والحلول المستدامة' },
-  { id: '204', title: '4. الاقتصاد الرقمي', description: 'العملات المشفرة ومستقبل التجارة' },
-  { id: '205', title: '5. الصحة النفسية', description: 'توازن العمل والحياة في القرن الـ 21' }
+const levels = [
+  { id: 'beginner', name: 'المستوى المبتدئ', icon: '🌱' },
+  { id: 'intermediate', name: 'المستوى المتوسط', icon: '🌿' },
+  { id: 'advanced', name: 'المستوى المتقدم', icon: '🌳' }
 ];
 
-// إضافة محتوى الدروس المتوسطة
-Object.assign(lessonsData, {
-  '201': {
-    title: "National Sovereignty vs Global Cooperation",
-    content: "In the contemporary era, the traditional concept of sovereignty is facing unprecedented challenges. Global issues like pandemics and climate change compel nations to collaborate, often at the expense of absolute autonomy. This shift towards 'Cooperative Sovereignty' revealed that isolated policies are no longer viable. International law serves as a framework to balance national interests with global welfare.",
+const lessonsList = {
+  'beginner': [
+    { id: '101', title: '1. كسر الجليد', description: 'التعريف الاحترافي بالنفس' },
+    { id: '102', title: '2. الروتين الفعال', description: 'الأفعال اليومية الحركية' },
+    { id: '103', title: '3. الروابط العائلية', description: 'وصف الشخصيات والقرابة' },
+    { id: '104', title: '4. لغة الطعام', description: 'التعبير عن الأذواق والطلبات' },
+    { id: '105', title: '5. المكان والبيئة', description: 'وصف المحيط بدقة' }
+  ],
+  'intermediate': [
+    { id: '201', title: 'السيادة الدولية', description: 'تحليل نص سياسي معمق' }
+  ]
+};
+
+const lessonsData = {
+  '101': {
+    title: "Breaking the Ice",
+    content: "Allow me to introduce myself. My name is Adam, and I am currently focusing on improving my English skills. I live in a vibrant city where I meet diverse people every day. It is a pleasure to meet you, and I look forward to our conversation. Establishing a good first impression is essential in any language.",
     terms: [
-      { id: '201-1', english: 'Sovereignty', arabic: 'السيادة', example: 'Respecting national sovereignty is a core principle.' },
-      { id: '201-2', english: 'Unprecedented', arabic: 'غير مسبوق', example: 'We are facing unprecedented economic growth.' },
-      { id: '201-3', english: 'Compel', arabic: 'يجبر / يضطر', example: 'Circumstances compel us to change our plans.' },
-      { id: '201-4', english: 'Autonomy', arabic: 'الحكم الذاتي / الاستقلالية', example: 'The region gained more autonomy.' },
-      { id: '201-5', english: 'Viable', arabic: 'قابل للتطبيق / حيوي', example: 'The project is no longer economically viable.' }
+      { id: '101-1', english: 'Introduce', arabic: 'يقدّم', example: 'Let me introduce myself.' },
+      { id: '101-2', english: 'Improve', arabic: 'يُحسّن', example: 'I want to improve my skills.' },
+      { id: '101-3', english: 'Vibrant', arabic: 'حيوي', example: 'The city is vibrant.' },
+      { id: '101-4', english: 'Pleasure', arabic: 'سرور / متعة', example: 'It is a pleasure to meet you.' },
+      { id: '101-5', english: 'Essential', arabic: 'ضروري / أساسي', example: 'Water is essential for life.' }
     ]
   },
-  '202': {
-    title: "Artificial Intelligence and the Workforce",
-    content: "The rapid evolution of Artificial Intelligence (AI) has sparked a global debate regarding job displacement. While automation enhances efficiency and reduces human error, it also necessitates a massive reskilling of the workforce. Experts argue that AI should be viewed as a tool for augmentation rather than a replacement. Adapting to this technological paradigm shift is crucial for future economic stability.",
+  '102': {
+    title: "The Power of Routine",
+    content: "A consistent routine shapes our lives. Every morning, I prioritize my tasks to stay productive. I typically start my day with a brief exercise, followed by a nutritious breakfast. Discipline in daily habits leads to long-term success. Success doesn't happen by chance; it happens by choice.",
     terms: [
-      { id: '202-1', english: 'Displacement', arabic: 'إحلال / إزاحة', example: 'Job displacement is a concern in the tech age.' },
-      { id: '202-2', english: 'Automation', arabic: 'الأتمتة', example: 'Automation speeds up manufacturing.' },
-      { id: '202-3', english: 'Augmentation', arabic: 'تعزيز / زيادة', example: 'The system focuses on human augmentation.' },
-      { id: '202-4', english: 'Paradigm shift', arabic: 'تحول جذري في المفاهيم', example: 'The internet caused a paradigm shift in communication.' },
-      { id: '202-5', english: 'Efficiency', arabic: 'كفاءة', example: 'We need to improve energy efficiency.' }
+      { id: '102-1', english: 'Consistent', arabic: 'ثابت / مستمر', example: 'Practice must be consistent.' },
+      { id: '102-2', english: 'Prioritize', arabic: 'يرتب الأولويات', example: 'Prioritize your goals.' },
+      { id: '102-3', english: 'Productive', arabic: 'مُنتج', example: 'I had a productive day.' },
+      { id: '102-4', english: 'Discipline', arabic: 'انضباط', example: 'Discipline is key to success.' },
+      { id: '102-5', english: 'Nutritious', arabic: 'مغذي', example: 'Eat a nutritious breakfast.' }
     ]
   },
-  '203': {
-    title: "The Ethics of Sustainability",
-    content: "Sustainability is no longer a choice but a moral obligation. Corporations are under immense pressure to adopt eco-friendly practices and reduce their carbon footprint. Greenwashing, the practice of making misleading environmental claims, has become a significant hurdle for conscious consumers. Real change requires transparent supply chains and a transition to renewable energy sources.",
+  '103': {
+    title: "Family Dynamics",
+    content: "Family is the core of society. My family members have distinct personalities. My father is very ambitious, while my mother is incredibly supportive. We share a strong bond, and we always help each other during difficult times. Understanding your family history is very important.",
     terms: [
-      { id: '203-1', english: 'Sustainability', arabic: 'الاستدامة', example: 'Sustainability is key to our future.' },
-      { id: '203-2', english: 'Obligation', arabic: 'التزام / واجب', example: 'We have a moral obligation to help.' },
-      { id: '203-3', english: 'Carbon footprint', arabic: 'البصمة الكربونية', example: 'Try to reduce your carbon footprint.' },
-      { id: '203-4', english: 'Hurdle', arabic: 'عقبة / عائق', example: 'Lack of funding is the main hurdle.' },
-      { id: '203-5', english: 'Renewable', arabic: 'متجدد', example: 'Solar power is a renewable energy.' }
+      { id: '103-1', english: 'Core', arabic: 'جوهر', example: 'Core values are important.' },
+      { id: '103-2', english: 'Ambitious', arabic: 'طموح', example: 'He is an ambitious man.' },
+      { id: '103-3', english: 'Supportive', arabic: 'داعم', example: 'My family is supportive.' },
+      { id: '103-4', english: 'Bond', arabic: 'رابطة / علاقة', example: 'A strong bond between brothers.' },
+      { id: '103-5', english: 'Distinct', arabic: 'مميز / مختلف', example: 'They have distinct characters.' }
     ]
   },
-  '204': {
-    title: "The Digital Economy & Blockchain",
-    content: "The emergence of decentralized finance has disrupted traditional banking systems. Blockchain technology ensures transparency and security in digital transactions. However, the volatility of cryptocurrencies remains a major deterrent for conservative investors. As we move towards a cashless society, regulatory frameworks must evolve to prevent cyber-fraud and ensure financial inclusivity.",
+  '104': {
+    title: "Culinary Preferences",
+    content: "Food is a universal language. I enjoy exploring various cuisines, from spicy to sweet. I prefer balanced meals that include fresh ingredients. When dining out, I always look for authentic flavors that represent the culture. Cooking is not just a chore; it's an art.",
     terms: [
-      { id: '204-1', english: 'Decentralized', arabic: 'لامركزي', example: 'Blockchain is a decentralized system.' },
-      { id: '204-2', english: 'Volatility', arabic: 'تقلب / عدم استقرار', example: 'Market volatility can be dangerous.' },
-      { id: '204-3', english: 'Deterrent', arabic: 'رادع / مانع', example: 'High taxes are a deterrent to investment.' },
-      { id: '204-4', english: 'Cashless', arabic: 'غير نقدي', example: 'Sweden is becoming a cashless society.' },
-      { id: '204-5', english: 'Inclusivity', arabic: 'الشمولية', example: 'We strive for financial inclusivity.' }
+      { id: '104-1', english: 'Cuisine', arabic: 'مطبخ / أسلوب طهي', example: 'I love Italian cuisine.' },
+      { id: '104-2', english: 'Ingredients', arabic: 'مكونات', example: 'Use fresh ingredients.' },
+      { id: '104-3', english: 'Authentic', arabic: 'أصيل', example: 'This is authentic food.' },
+      { id: '104-4', english: 'Universal', arabic: 'عالمي', example: 'Music is a universal language.' },
+      { id: '104-5', english: 'Balanced', arabic: 'متوازن', example: 'A balanced diet is healthy.' }
     ]
   },
-  '205': {
-    title: "Psychological Well-being in the Modern Era",
-    content: "In a hyper-connected world, maintaining mental health has become increasingly complex. The phenomenon of 'Burnout' is prevalent among professionals who struggle to disconnect from digital notifications. Establishing healthy boundaries and practicing mindfulness are effective strategies to mitigate stress. Society must destigmatize seeking professional help for emotional challenges.",
+  '105': {
+    title: "Environment and Space",
+    content: "My neighborhood is peaceful and well-maintained. There is a spacious park nearby where people gather to relax. The atmosphere is very welcoming and friendly. I appreciate a clean environment and I always try to reduce waste. Protecting our nature is our collective responsibility.",
     terms: [
-      { id: '205-1', english: 'Well-being', arabic: 'رفاهية / عافية', example: 'Physical exercise improves well-being.' },
-      { id: '205-2', english: 'Prevalent', arabic: 'سائد / منتشر', example: 'This belief is prevalent in many cultures.' },
-      { id: '205-3', english: 'Mitigate', arabic: 'يخفف / يلطف', example: 'New laws will mitigate the pollution.' },
-      { id: '205-4', english: 'Destigmatize', arabic: 'إزالة الوصمة', example: 'We must destigmatize mental illness.' },
-      { id: '205-5', english: 'Mindfulness', arabic: 'اليقظة الذهنية', example: 'Mindfulness reduces anxiety.' }
+      { id: '105-1', english: 'Neighborhood', arabic: 'حي', example: 'I love my neighborhood.' },
+      { id: '105-2', english: 'Spacious', arabic: 'واسع', example: 'The house is spacious.' },
+      { id: '105-3', english: 'Appreciate', arabic: 'يقدّر', example: 'I appreciate your time.' },
+      { id: '105-4', english: 'Peaceful', arabic: 'هادئ / مسالم', example: 'It is a peaceful village.' },
+      { id: '105-5', english: 'Atmosphere', arabic: 'أجواء', example: 'The café has a great atmosphere.' }
     ]
   }
-});
+};
+
+function getLessonsByLevel(id) { return lessonsList[id] || []; }
+function getLessonData(id) { return lessonsData[id] || null; }
+function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
