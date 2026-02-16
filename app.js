@@ -8,10 +8,10 @@ const app = {
         appDiv.innerHTML = `
             <div class="main-header">
                 <h1>📚 قاموس المصطلحات التفاعلي</h1>
-                <p>تعلم واحفظ بذكاء</p>
+                <p>تعلم المصطلحات من خلال النصوص السياقية</p>
                 <div class="main-nav-buttons">
-                    <button class="action-btn" style="background:#fff; color:#1e40af" onclick="app.showFlashcards()">🗂️ بطاقاتي</button>
-                    <button class="action-btn" style="background:#f59e0b; color:white" onclick="app.startQuiz()">🧠 اختبار</button>
+                    <button class="action-btn flash-btn" onclick="app.showFlashcards()">🗂️ بطاقات الاستذكار</button>
+                    <button class="action-btn quiz-btn" onclick="app.startQuiz()">🧠 اختبار البطاقات</button>
                 </div>
             </div>
             <div class="levels-container">
@@ -20,7 +20,7 @@ const app = {
                         <div class="level-icon">${level.icon}</div>
                         <div class="level-info">
                             <h2>${level.name}</h2>
-                            <span>استكشف الدروس ←</span>
+                            <span>اضغط لاستعراض الدروس</span>
                         </div>
                     </div>
                 `).join('')}
@@ -39,11 +39,11 @@ const app = {
                 <h2>${levelName}</h2>
             </div>
             <div class="lessons-grid">
-                ${lessons.map(l => `
-                    <div class="lesson-card-fixed" onclick="app.viewLesson('${l.id}', '${levelId}')">
-                        <h3>${l.title}</h3>
-                        <p>${l.description}</p>
-                        <div class="card-hint">ابدأ القراءة ←</div>
+                ${lessons.map(lesson => `
+                    <div class="lesson-card-fixed" onclick="app.viewLesson('${lesson.id}', '${levelId}')">
+                        <h3>${lesson.title}</h3>
+                        <p>${lesson.description}</p>
+                        <div class="card-hint">اقرأ النص وتعلم ←</div>
                     </div>
                 `).join('')}
             </div>
@@ -53,7 +53,7 @@ const app = {
     viewLesson(lessonId, levelId) {
         const appDiv = document.getElementById('app');
         const lesson = lessonsData[lessonId];
-        if(!lesson) return;
+        if (!lesson) return;
 
         appDiv.innerHTML = `
             <div class="top-bar">
@@ -66,7 +66,7 @@ const app = {
                 </div>
                 
                 <div class="vocab-section">
-                    <h3>📌 مصطلحات هامة (اضغط للإضافة)</h3>
+                    <h3>📌 مصطلحات النص (اضغط للإضافة للبطاقات)</h3>
                     <div class="vocab-list">
                         ${(lesson.terms || []).map(term => `
                             <div class="vocab-item">
@@ -85,11 +85,11 @@ const app = {
     },
 
     addToFlashcards(en, ar) {
-        let cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
-        if (!cards.some(c => c.en === en)) {
-            cards.push({ en, ar });
-            localStorage.setItem('myFlashcards', JSON.stringify(cards));
-            alert('✅ تمت إضافة الكلمة لبطاقاتك');
+        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        if (!saved.some(item => item.en === en)) {
+            saved.push({ en, ar });
+            localStorage.setItem('myFlashcards', JSON.stringify(saved));
+            alert('✅ تمت الإضافة لبطاقاتك!');
         } else {
             alert('الكلمة موجودة مسبقاً');
         }
@@ -97,69 +97,70 @@ const app = {
 
     showFlashcards() {
         const appDiv = document.getElementById('app');
-        const cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        const saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
 
         appDiv.innerHTML = `
             <div class="top-bar">
                 <button class="back-link" onclick="app.renderHome()">🏠 الرئيسية</button>
-                <h2>🗂️ بطاقاتي الاستذكارية</h2>
+                <h2>🗂️ بطاقات الاستذكار</h2>
             </div>
             <div class="flashcards-grid">
-                ${cards.length > 0 ? cards.map((c, i) => `
+                ${saved.length > 0 ? saved.map((card, index) => `
                     <div class="flip-card" onclick="this.classList.toggle('flipped')">
                         <div class="flip-card-inner">
-                            <div class="flip-card-front">${c.en}</div>
-                            <div class="flip-card-back">${c.ar}</div>
+                            <div class="flip-card-front">${card.en}</div>
+                            <div class="flip-card-back">${card.ar}</div>
                         </div>
-                        <button class="remove-btn" onclick="app.removeCard(${i}); event.stopPropagation();">×</button>
+                        <button class="remove-btn" onclick="app.removeCard(${index}); event.stopPropagation();">×</button>
                     </div>
-                `).join('') : '<p style="text-align:center; padding:20px; grid-column:1/3">لا توجد كلمات مضافة بعد.</p>'}
+                `).join('') : '<p style="grid-column: 1 / -1; text-align: center; padding: 20px;">لم تضف أي كلمات بعد.</p>'}
             </div>
         `;
     },
 
     removeCard(index) {
-        let cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
-        cards.splice(index, 1);
-        localStorage.setItem('myFlashcards', JSON.stringify(cards));
+        let saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        saved.splice(index, 1);
+        localStorage.setItem('myFlashcards', JSON.stringify(saved));
         this.showFlashcards();
     },
 
     startQuiz() {
-        const cards = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
-        if (cards.length < 1) {
-            alert('أضف كلمات أولاً لبدء الاختبار!');
+        const saved = JSON.parse(localStorage.getItem('myFlashcards') || '[]');
+        if (saved.length === 0) {
+            alert('أضف بعض الكلمات أولاً لبدء الاختبار!');
             return;
         }
-        this.runQuiz(0, cards);
+        this.runQuiz(0, saved);
     },
 
     runQuiz(index, cards) {
         if (index >= cards.length) {
-            alert('انتهى الاختبار! 🎉');
+            alert('أحسنت! انتهى الاختبار.');
             this.renderHome();
             return;
         }
         const appDiv = document.getElementById('app');
         const current = cards[index];
-        
+
         appDiv.innerHTML = `
-            <div class="quiz-container" style="padding:40px; text-align:center">
-                <div style="font-size:1.2rem; color:#64748b">ما ترجمة:</div>
-                <h1 style="font-size:2.5rem; color:#1e40af; margin:20px 0">${current.en}</h1>
-                <input type="text" id="quiz-answer" style="width:100%; padding:15px; border:2px solid #e2e8f0; border-radius:12px; text-align:center; font-size:1.2rem" placeholder="اكتب بالعربي هنا..." autofocus>
-                <button class="action-btn" style="background:#1e40af; color:white; width:100%; margin-top:20px; font-size:1.1rem" onclick="app.checkAnswer(${index}, '${current.ar}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">تحقق من الإجابة</button>
+            <div class="quiz-container">
+                <div class="quiz-progress">سؤال ${index + 1} من ${cards.length}</div>
+                <div class="quiz-question">ما معنى المصطلح التالي؟</div>
+                <h2 class="quiz-word">${current.en}</h2>
+                <input type="text" id="quiz-input" placeholder="اكتب الترجمة بالعربية..." autofocus>
+                <button class="check-btn" onclick="app.checkAnswer(${index}, '${current.ar}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">تحقق من الإجابة</button>
             </div>
         `;
     },
 
     checkAnswer(index, correct, cards) {
-        const input = document.getElementById('quiz-answer').value.trim();
+        const input = document.getElementById('quiz-input').value.trim();
         if (input === correct) {
             alert('إجابة صحيحة! 🎉');
             this.runQuiz(index + 1, cards);
         } else {
-            alert('خطأ، الإجابة الصحيحة هي: ' + correct);
+            alert('إجابة خاطئة. الإجابة الصحيحة هي: ' + correct);
             this.runQuiz(index + 1, cards);
         }
     }
