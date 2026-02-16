@@ -7,7 +7,7 @@ class App {
     this.quizIndex = 0;
     this.quizScore = 0;
     this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
-    this.typingTimer = null; // مؤقت للكتابة
+    this.typingTimer = null;
     this.init();
   }
 
@@ -38,16 +38,15 @@ class App {
       else if (action === 'ansQ') { this.handleAnswer(btn, param, btn.dataset.correct); }
       else if (action === 'resetQ') { this.resetState(); }
       else if (action === 'addNewWord') { this.manualAddWord(); }
-      else if (action === 'translateNow') { this.fetchTranslation(); } // زر ترجمة يدوي للطوارئ
+      else if (action === 'translateNow') { this.fetchTranslation(); }
 
       this.render();
     });
 
-    // مراقبة الكتابة لجلب الترجمة تلقائياً
     document.addEventListener('input', (e) => {
       if (e.target.id === 'newEng') {
         clearTimeout(this.typingTimer);
-        this.typingTimer = setTimeout(() => this.fetchTranslation(), 1000); // ترجم بعد ثانية من التوقف عن الكتابة
+        this.typingTimer = setTimeout(() => this.fetchTranslation(), 1000);
       }
     });
   }
@@ -67,7 +66,6 @@ class App {
         arbInput.value = data.responseData.translatedText;
       }
     } catch (error) {
-      console.error("Translation Error:", error);
       arbInput.placeholder = "المعنى بالعربي";
     }
   }
@@ -94,15 +92,17 @@ class App {
   resetState() { this.quizIndex = 0; this.quizScore = 0; this.currentCardIndex = 0; }
 
   getCurrentTerms() {
-    const lesson = typeof getLessonData === 'function' ? getLessonData(this.selectedLessonId) : null;
-    const originalTerms = lesson ? lesson.terms : [];
+    // تعديل هنا لضمان القراءة المباشرة من النافذة
+    const lesson = window.lessonsData ? window.lessonsData[this.selectedLessonId] : null;
+    const originalTerms = lesson ? (lesson.terms || []) : [];
     const addedTerms = this.userVocabulary.filter(v => String(v.lessonId) === String(this.selectedLessonId));
     return [...originalTerms, ...addedTerms];
   }
 
   render() {
     const app = document.getElementById('app');
-    const lesson = typeof getLessonData === 'function' ? getLessonData(this.selectedLessonId) : null;
+    // تعديل هنا لضمان القراءة المباشرة من النافذة
+    const lesson = window.lessonsData ? window.lessonsData[this.selectedLessonId] : null;
     const terms = this.getCurrentTerms();
     app.innerHTML = this.renderHeader() + `<div id="view">${this.renderView(lesson, terms)}</div>`;
   }
@@ -113,19 +113,21 @@ class App {
   }
 
   renderView(lesson, terms) {
-    if (this.currentPage === 'home') return `<main class="main-content"><div class="hero"><h1>خطة الاحتراف</h1></div><div class="features-grid">${levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
+    if (this.currentPage === 'home') return `<main class="main-content"><div class="hero"><h1>خطة الاحتراف</h1></div><div class="features-grid">${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
     
     if (this.currentPage === 'lessons') {
-      const list = getLessonsByLevel(this.selectedLevel);
+      // تعديل هنا لضمان القراءة المباشرة من النافذة
+      const list = window.lessonsList ? window.lessonsList[this.selectedLevel] : [];
       return `<main class="main-content"><button class="hero-btn" data-action="goHome">← رجوع</button><div class="features-grid" style="margin-top:20px;">${list.map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>${l.title}</h3></div>`).join('')}</div></main>`;
     }
 
     if (this.currentPage === 'reading') {
+      if (!lesson) return `<main class="main-content">النص غير متوفر</main>`;
       return `<main class="main-content">
         <button class="hero-btn" data-action="setPage" data-param="lessons">← العودة للدروس</button>
         <div class="reading-card" style="margin-top:15px;">
           <h2>${lesson.title}</h2>
-          <div class="reading-body" style="margin-bottom:25px;">${lesson.content}</div>
+          <div class="reading-body" style="margin-bottom:25px; white-space: pre-wrap;">${lesson.content}</div>
           
           <div style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 2px solid #bbf7d0;">
             <h4 style="margin-bottom:10px; color:#166534;">➕ إضافة سريعة:</h4>
