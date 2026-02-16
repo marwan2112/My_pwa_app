@@ -6,8 +6,8 @@ window.levels = [
 
 window.lessonsList = {
   'beginner': [
-    { id: '101', title: '1. كسر الجليد', description: 'التعريف الاحترافي بالنفس' },
-    { id: '102', title: '2. الروتين الفعال', description: 'الأفعال اليومية الحركية' },
+    { id: '101', title: '1: People and Places', description: 'التعريف الاحترافي بالنفس' },
+    { id: '102', title: '2: Ali and His City', description: 'الأفعال اليومية الحركية' },
     { id: '103', title: '3. الروابط العائلية', description: 'وصف الشخصيات والقرابة' },
     { id: '104', title: '4. لغة الطعام', description: 'التعبير عن الأذواق والطلبات' },
     { id: '105', title: '5. المكان والبيئة', description: 'وصف المحيط بدقة' }
@@ -52,22 +52,26 @@ window.lessonsList = {
 
 window.lessonsData = {
   '101': {
-    title: "Breaking the Ice",
-    content: "Allow me to introduce myself. My name is Adam, and I am currently focusing on improving my English skills. I live in a vibrant city where I meet diverse people every day. It is a pleasure to meet you, and I look forward to our conversation. Establishing a good first impression is essential in any language.",
+    title: " People and Places ",
+    content: "Ali is a young man. Ali lives in a small city. The city is in a country called Jordan. Many people live in this city. Ali works in a shop. He meets many people every day. People in the city follow simple rules. These rules help the city stay safe..",
     terms: [
-      { id: '101-1', english: 'Introduce', arabic: 'يقدّم' },
-      { id: '101-2', english: 'Improve', arabic: 'يُحسّن' },
-      { id: '101-3', english: 'Vibrant', arabic: 'حيوي' },
-      { id: '101-4', english: 'Pleasure', arabic: 'سرور / متعة' },
-      { id: '101-5', english: 'Essential', arabic: 'ضروري / أساسي' }
+      { id: '101-1', english: 'person', arabic: 'شخص' },
+      { id: '101-2', english: 'city', arabic: 'مدينة' },
+      { id: '101-3', english: 'country', arabic: 'دولة' },
+      { id: '101-4', english: 'people', arabic: 'ناس' },
+      { id: '101-5', english: 'live', arabic: ' يعيش ' },
+      { id: '101-6', english: 'work', arabic: 'يعمل' },
+      { id: '101-7', english: 'rule', arabic: 'قواعد' },
+      { id: '101-8', english: 'safe', arabic: 'آمن' },
     ]
   },
   '102': {
-    title: "The Power of Routine",
-    content: "A consistent routine shapes our lives. Every morning, I prioritize my tasks to stay productive. I typically start my day with a brief exercise, followed by a nutritious breakfast. Discipline in daily habits leads to long-term success.",
+    title: "Ali and His City",
+    content: " Ali lives in a small city in Jordan. The city is not very big, but it is busy. Many people work in shops and offices. Ali works in a small shop near his home. Every morning, he walks to work. He sees many people in the street. People in the city know each other. They help each other when they can.
+  ",
     terms: [
-      { id: '102-1', english: 'Consistent', arabic: 'ثابت / مستمر' },
-      { id: '102-2', english: 'Prioritize', arabic: 'يرتب الأولويات' }
+      { id: '102-1', english: 'small', arabic: 'صغير ' },
+      { id: '102-2', english: 'big', arabic: 'كبير' }
     ]
   },
   '103': {
