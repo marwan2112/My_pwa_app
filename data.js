@@ -21,11 +21,11 @@ const exercisesData = [
 ];
 
 function getTermsByBatch(batchId) {
-  return terms.filter(t => t.batch === batchId);
+  return terms.filter(t => t.batch === parseInt(batchId));
 }
 
 function getExercisesByBatch(batchId) {
-  return exercisesData.filter(e => e.batch === batchId);
+  return exercisesData.filter(e => e.batch === parseInt(batchId));
 }
 
 function shuffleArray(arr) {
