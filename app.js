@@ -6,142 +6,140 @@ class App {
     this.currentCardIndex = 0;
     this.quizIndex = 0;
     this.quizScore = 0;
-    this.masteredWords = new Set();
-    this.userVocabulary = []; // للكلمات التي يضيفها المستخدم من النص
+    this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
     this.init();
   }
 
-  init() { this.render(); this.setupEventListeners(); this.setupTextSelection(); }
+  init() { this.render(); this.setupSelection(); }
 
-  setupEventListeners() {
-    document.addEventListener('click', (e) => {
-      const target = e.target.closest('[data-action]');
-      if (!target) return;
-      const { action, param } = target.dataset;
-      this[action]?.(param);
-    });
-  }
+  saveVocab() { localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary)); }
 
-  // ميزة تحديد الكلمة والترجمة (تلقائياً للبطاقات)
-  setupTextSelection() {
+  setupSelection() {
     document.addEventListener('mouseup', () => {
-      const selection = window.getSelection().toString().trim();
-      if (selection && selection.length > 0 && this.currentPage === 'reading') {
-        this.handleNewWord(selection);
+      const text = window.getSelection().toString().trim();
+      if (text && this.currentPage === 'reading') {
+        const ar = prompt(`ترجمة كلمة "${text}" للعربية:`);
+        if (ar) {
+          const ex = prompt(`مثال بالإنجليزية لهذه الكلمة:`);
+          const newTerm = { id: Date.now(), lessonId: this.selectedLessonId, english: text, arabic: ar, example: ex || 'Added from reading.' };
+          this.userVocabulary.push(newTerm);
+          this.saveVocab();
+          alert("تم حفظ الكلمة في البطاقات والاختبارات بنجاح!");
+        }
       }
     });
   }
 
-  handleNewWord(word) {
-    const confirmAdd = confirm(`هل تريد إضافة الكلمة "${word}" إلى بطاقاتك؟`);
-    if (confirmAdd) {
-        const arabic = prompt(`ما هو معنى "${word}" بالعربي؟`);
-        if (arabic) {
-            const newTerm = { id: Date.now(), english: word, arabic: arabic, example: "Added from text context.", custom: true };
-            this.userVocabulary.push(newTerm);
-            alert("تمت الإضافة بنجاح لكل الخيارات!");
-        }
-    }
-  }
-
   render() {
     const app = document.getElementById('app');
-    app.innerHTML = this.renderHeader() + `<div id="content-area">${this.renderContent()}</div>`;
+    app.innerHTML = this.renderHeader() + `<div id="view">${this.renderView()}</div>`;
   }
 
   renderHeader() {
     const nav = this.selectedLessonId ? [
-      { label: 'النص', page: 'reading' },
-      { label: 'البطاقات', page: 'flashcards' },
-      { label: 'المطابقة', page: 'matching' },
-      { label: 'الاختبار', page: 'quiz' }
+      { id: 'reading', n: 'النص' }, { id: 'flashcards', n: 'البطاقات' },
+      { id: 'matching', n: 'المطابقة' }, { id: 'quiz', n: 'الاختبار' }
     ] : [];
-    return `<header class="header"><div class="header-content"><div class="header-title" data-action="goHome">English Booster</div>
-    <nav class="nav-menu">${nav.map(b => `<button class="nav-btn ${this.currentPage===b.page?'active':''}" data-action="setPage" data-param="${b.page}">${b.label}</button>`).join('')}</nav></div></header>`;
+    return `<header class="header"><div class="header-content">
+      <h2 data-action="goHome" style="cursor:pointer">English Booster</h2>
+      <nav class="nav-menu">
+        ${nav.map(b => `<button class="nav-btn ${this.currentPage===b.id?'active':''}" data-action="setPage" data-param="${b.id}">${b.n}</button>`).join('')}
+      </nav></div></header>`;
   }
 
-  renderContent() {
-    const data = getLessonData(this.selectedLessonId);
-    const combinedTerms = data ? [...data.terms, ...this.userVocabulary] : [];
+  renderView() {
+    const lesson = getLessonData(this.selectedLessonId);
+    const combinedTerms = lesson ? [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)] : [];
 
     switch (this.currentPage) {
-      case 'home': return this.renderLevels();
-      case 'lessons': return this.renderLessonsList();
-      case 'reading': return `<main class="main-content"><div class="exercise-card card-enter"><h2>${data.title}</h2><p style="color:#64748b; font-size:0.8rem;">* حدد أي كلمة لترجمتها وإضافتها لبطاقاتك</p><div class="reading-body">${data.content}</div></div></main>`;
-      case 'flashcards': return this.renderFlashcards(combinedTerms);
-      case 'quiz': return this.renderQuiz(combinedTerms);
-      case 'matching': return this.renderMatching(combinedTerms);
-      default: return this.renderLevels();
+      case 'home': return this.drawHome();
+      case 'lessons': return this.drawLessons();
+      case 'reading': return `<main class="main-content">
+        <button class="hero-btn" data-action="setPage" data-param="lessons">← العودة للدروس</button>
+        <div class="reading-card" style="margin-top:20px;">
+          <small style="color:blue">* حدد أي كلمة لترجمتها وحفظها فوراً</small>
+          <h2 style="margin:10px 0">${lesson.title}</h2>
+          <div class="reading-body">${lesson.content}</div>
+        </div></main>`;
+      case 'flashcards': return this.drawFlash(combinedTerms);
+      case 'quiz': return this.drawQuiz(combinedTerms);
+      case 'matching': return this.drawMatch(combinedTerms);
+      default: return this.drawHome();
     }
   }
 
-  renderLevels() {
-    return `<main class="main-content"><div class="hero"><h1>خطة الـ 9 أشهر للاحتراف</h1><p>ابدأ رحلتك من الصفر</p></div><div class="features-grid">${levels.map(l => `<div class="feature-card" data-action="selectLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
+  drawHome() {
+    return `<main class="main-content"><div class="features-grid">${levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
   }
 
-  renderLessonsList() {
+  drawLessons() {
     const list = getLessonsByLevel(this.selectedLevel);
-    return `<main class="main-content"><button class="hero-btn" data-action="goHome">← العودة</button><div class="features-grid" style="margin-top:20px;">${list.map(les => `<div class="feature-card" data-action="selectLesson" data-param="${les.id}"><h3>${les.title}</h3><p>${les.description}</p></div>`).join('')}</div></main>`;
+    return `<main class="main-content"><button class="hero-btn" data-action="goHome">← العودة للمستويات</button><div class="features-grid" style="margin-top:20px;">${list.map(s => `<div class="feature-card" data-action="selLesson" data-param="${s.id}"><h3>${s.title}</h3><p>${s.description}</p></div>`).join('')}</div></main>`;
   }
 
-  renderFlashcards(terms) {
-    const term = terms[this.currentCardIndex];
-    if(!term) return `<div class="main-content">لا توجد كلمات بعد.</div>`;
+  drawFlash(terms) {
+    if(terms.length === 0) return `<div class="main-content">لا توجد كلمات. حدد كلمات من النص أولاً.</div>`;
+    const t = terms[this.currentCardIndex];
     return `<main class="main-content">
-      <div class="flashcard-container" onclick="this.classList.toggle('flipped')">
-        <div class="flashcard">
-          <div class="flashcard-front"><span class="highlight-word">${term.english}</span><button class="nav-btn" style="margin-top:20px" data-action="speak" data-param="${term.english}">🔊 نطق</button></div>
-          <div class="flashcard-back"><h2>${term.arabic}</h2><p style="margin-top:20px; color:#1e40af; font-style:italic;">Example: ${term.example || ''}</p></div>
-        </div>
-      </div>
-      <div class="controls"><button class="nav-btn" data-action="prevCard">السابق</button><span>${this.currentCardIndex+1}/${terms.length}</span><button class="nav-btn" data-action="nextCard">التالي</button></div></main>`;
+      <div class="flashcard-container" onclick="this.classList.toggle('flipped')"><div class="flashcard">
+        <div class="flashcard-front"><div class="highlight-word">${t.english}</div><button class="hero-btn" data-action="speak" data-param="${t.english}">🔊 نطق</button></div>
+        <div class="flashcard-back"><div class="back-meaning">${t.arabic}</div><div class="back-example">"${t.example}"</div></div>
+      </div></div>
+      <div class="controls"><button class="hero-btn" data-action="prevC">السابق</button><span>${this.currentCardIndex+1} / ${terms.length}</span><button class="hero-btn" data-action="nextC" data-total="${terms.length}">التالي</button></div></main>`;
   }
 
-  renderQuiz(terms) {
-    if (this.quizIndex >= terms.length) return `<div class="main-content"><h1>انتهى! النتيجة: ${this.quizScore}</h1><button class="hero-btn" data-action="resetQuiz">إعادة</button></div>`;
-    const current = terms[this.quizIndex];
-    const options = shuffleArray([...terms]).slice(0, 4);
-    if(!options.find(o => o.id === current.id)) options[0] = current;
-
-    return `<main class="main-content"><div class="quiz-header">سؤال ${this.quizIndex+1} | نتيجة: ${this.quizScore}</div>
-      <div class="exercise-card"><h3>ما معنى: <span style="color:#1e40af">${current.english}</span>؟</h3>
-      <div class="options-grid" style="margin-top:20px;">
-        ${shuffleArray(options).map(o => `<button class="quiz-opt-btn" data-action="checkAnswer" data-param="${o.arabic}" data-correct="${current.arabic}">${o.arabic}</button>`).join('')}
-      </div></div></main>`;
+  drawQuiz(terms) {
+    if(this.quizIndex >= terms.length) return `<div class="main-content"><h2>النتيجة: ${this.quizScore} / ${terms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></div>`;
+    const curr = terms[this.quizIndex];
+    const opts = shuffleArray([...terms]).slice(0,4); if(!opts.find(x=>x.id===curr.id)) opts[0]=curr;
+    return `<main class="main-content"><div class="reading-card"><h3>ما معنى: <span style="color:#1e40af">${curr.english}</span>؟</h3>
+      <div class="options-grid">${shuffleArray(opts).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${curr.arabic}">${o.arabic}</button>`).join('')}</div>
+    </div></main>`;
   }
 
-  checkAnswer(selected) {
+  ansQ(selected, e) {
+    const correct = e.target.dataset.correct;
     const btns = document.querySelectorAll('.quiz-opt-btn');
-    const correct = btns[0].dataset.correct;
     btns.forEach(b => {
-        if(b.innerText === correct) b.style.background = "#22c55e";
-        if(b.innerText === selected && selected !== correct) b.style.background = "#ef4444";
+      if(b.innerText === correct) b.style.background = "#22c55e";
+      else if(b.innerText === selected) b.style.background = "#ef4444";
     });
-    if(selected === correct) { this.quizScore++; this.playSound('correct'); } else { this.playSound('wrong'); }
-    setTimeout(() => { this.quizIndex++; this.render(); }, 1500);
+    if(selected === correct) this.quizScore++;
+    setTimeout(() => { this.quizIndex++; this.render(); }, 1000);
   }
 
-  renderMatching(terms) {
-    // منطق المطابقة المتطور: إخفاء الكلمات المطابقة
+  drawMatch(terms) {
     if(!this.mSet) {
-        const set = shuffleArray([...terms]).slice(0, 5);
-        this.mSet = { eng: shuffleArray([...set]), arb: shuffleArray([...set]), solved: new Set() };
+      const set = shuffleArray([...terms]).slice(0,5);
+      this.mSet = { eng: shuffleArray([...set]), arb: shuffleArray([...set]), solved: [] };
     }
-    return `<main class="main-content"><div class="matching-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-      <div>${this.mSet.eng.map(t => this.mSet.solved.has(t.id) ? '' : `<button class="match-btn" id="eng-${t.id}" data-action="mSelect" data-param="eng-${t.id}">${t.english}</button>`).join('')}</div>
-      <div>${this.mSet.arb.map(t => this.mSet.solved.has(t.id) ? '' : `<button class="match-btn" id="arb-${t.id}" data-action="mSelect" data-param="arb-${t.id}">${t.arabic}</button>`).join('')}</div>
-    </div><button class="hero-btn" style="width:100%; margin-top:20px;" data-action="resMatch">تحديث</button></main>`;
+    return `<main class="main-content"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+      <div>${this.mSet.eng.map(t => this.mSet.solved.includes(t.id) ? `<div class="match-btn" style="visibility:hidden"></div>` : `<button class="match-btn ${this.mSelect?.id===t.id && this.mSelect?.side==='e' ? 'selected' : ''}" data-action="mClick" data-id="${t.id}" data-side="e">${t.english}</button>`).join('')}</div>
+      <div>${this.mSet.arb.map(t => this.mSet.solved.includes(t.id) ? `<div class="match-btn" style="visibility:hidden"></div>` : `<button class="match-btn ${this.mSelect?.id===t.id && this.mSelect?.side==='a' ? 'selected' : ''}" data-action="mClick" data-id="${t.id}" data-side="a">${t.arabic}</button>`).join('')}</div>
+    </div><button class="hero-btn" style="width:100%; margin-top:20px;" data-action="resMatch">تحديث اللعبة</button></main>`;
   }
 
-  // منطق المساعدة
+  mClick(p, e) {
+    const id = e.target.dataset.id;
+    const side = e.target.dataset.side;
+    if(!this.mSelect) { this.mSelect = {id, side}; } 
+    else {
+      if(this.mSelect.id === id && this.mSelect.side !== side) { this.mSet.solved.push(id); }
+      this.mSelect = null;
+    }
+    this.render();
+  }
+
+  // المساعدة
   setPage(p) { this.currentPage = p; this.render(); }
-  selectLevel(id) { this.selectedLevel = id; this.currentPage = 'lessons'; this.render(); }
-  selectLesson(id) { this.selectedLessonId = id; this.currentPage = 'reading'; this.render(); }
-  goHome() { this.selectedLessonId = null; this.setPage('home'); }
-  speak(t) { const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
-  nextCard() { this.currentCardIndex++; this.render(); }
-  prevCard() { if(this.currentCardIndex > 0) this.currentCardIndex--; this.render(); }
-  playSound(type) { /* يمكنك إضافة ملفات صوتية هنا */ }
+  selLevel(l) { this.selectedLevel = l; this.currentPage = 'lessons'; this.render(); }
+  selLesson(id) { this.selectedLessonId = id; this.currentPage = 'reading'; this.quizIndex=0; this.quizScore=0; this.currentCardIndex=0; this.render(); }
+  goHome() { this.selectedLevel = null; this.selectedLessonId = null; this.setPage('home'); }
+  nextC(p, e) { if(this.currentCardIndex < e.target.dataset.total - 1) this.currentCardIndex++; this.render(); }
+  prevC() { if(this.currentCardIndex > 0) this.currentCardIndex--; this.render(); }
+  resMatch() { this.mSet = null; this.render(); }
+  resetQ() { this.quizIndex = 0; this.quizScore = 0; this.render(); }
+  speak(t) { const s = new SpeechSynthesisUtterance(t); s.lang='en-US'; window.speechSynthesis.speak(s); }
 }
 
 window.onload = () => new App();
