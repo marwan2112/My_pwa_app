@@ -53,7 +53,7 @@ window.lessonsList = {
 window.lessonsData = {
   '101': {
     title: " People and Places ",
-    content: "Ali is a young man. Ali lives in a small city. The city is in a country called Jordan. Many people live in this city. Ali works in a shop. He meets many people every day. People in the city follow simple rules. These rules help the city stay safe..",
+    content: "Ali is a young man. Ali lives in a small city. The city is in a country called Jordan. Many people live in this city. Ali works in a shop. He meets many people every day. People in the city follow simple rules. These rules help the city stay safe.",
     terms: [
       { id: '101-1', english: 'person', arabic: 'شخص' },
       { id: '101-2', english: 'city', arabic: 'مدينة' },
