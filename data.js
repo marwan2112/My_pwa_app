@@ -6,24 +6,24 @@ const levels = [
 
 const lessonsList = {
     'beginner': [
-        { id: '101', title: 'أساسيات السياسة', description: 'تعريف الدولة والسيادة' }
+        { id: '101', title: 'أساسيات السياسة', description: 'مفاهيم الدولة والحكم' }
     ],
     'intermediate': [
-        { id: '201', title: 'القانون الدولي', description: 'المعاهدات والمنظمات' }
+        { id: '201', title: 'العلاقات الدولية', description: 'الدبلوماسية والمنظمات' }
     ],
     'advanced': [
-        { id: '301', title: 'الجيوسياسية', description: 'صراعات القوى الكبرى' }
+        { id: '301', title: 'السياسة النقدية', description: 'الاقتصاد السياسي العالمي' }
     ]
 };
 
 const lessonsData = {
     '101': {
         title: "أساسيات السياسة",
-        content: "تعتبر السياسة فن إدارة شؤون الدولة والمجتمع. تهدف النظم السياسية إلى تنظيم العلاقات بين الأفراد والسلطة لضمان الاستقرار والعدالة.",
+        content: "السياسة هي العلم الذي يدرس إدارة شؤون الدولة والمجتمع، وتعتبر الدولة هي الوحدة الأساسية في النظام السياسي العالمي.",
         terms: [
-            { english: "Politics", arabic: "السياسة" },
-            { english: "State", arabic: "الدولة" },
-            { english: "Sovereignty", arabic: "السيادة" }
+            { english: "Sovereignty", arabic: "السيادة" },
+            { english: "Constitution", arabic: "الدستور" },
+            { english: "Government", arabic: "الحكومة" }
         ]
     }
 };
