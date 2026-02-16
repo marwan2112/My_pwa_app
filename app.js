@@ -40,9 +40,31 @@ class App {
 
       this.render();
     });
+
+    // ميزة الاقتراح التلقائي عند الكتابة
+    document.addEventListener('focusout', async (e) => {
+      if (e.target.id === 'newEng') {
+        const word = e.target.value.trim();
+        const arbInput = document.getElementById('newArb');
+        
+        if (word && arbInput && !arbInput.value) {
+          arbInput.placeholder = "جاري البحث عن ترجمة...";
+          try {
+            // استخدام API مجاني للترجمة (MyMemory)
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${word}&langpair=en|ar`);
+            const data = await res.json();
+            if (data.responseData.translatedText) {
+              arbInput.value = data.responseData.translatedText;
+            }
+          } catch (error) {
+            arbInput.placeholder = "المعنى بالعربي";
+            console.log("Translation error:", error);
+          }
+        }
+      }
+    });
   }
 
-  // خيار الإضافة اليدوية الصريح
   manualAddWord() {
     const eng = document.getElementById('newEng').value.trim();
     const arb = document.getElementById('newArb').value.trim();
@@ -119,12 +141,13 @@ class App {
           <h2>${lesson.title}</h2>
           <div class="reading-body" style="margin-bottom:25px;">${lesson.content}</div>
           
-          <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 2px dashed #cbd5e1;">
-            <h4 style="margin-bottom:10px;">➕ أضف كلمة جديدة لبطاقات هذا الدرس:</h4>
+          <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border: 2px solid #bae6fd;">
+            <h4 style="margin-bottom:10px; color:#0369a1;">➕ إضافة كلمة ذكية:</h4>
+            <p style="font-size:0.75rem; color:#0c4a6e; margin-bottom:10px;">اكتب الكلمة بالإنجليزي واضغط خارج المربع ليقترح لك الترجمة تلقائياً.</p>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <input type="text" id="newEng" placeholder="الكلمة بالإنجليزي" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd;">
-              <input type="text" id="newArb" placeholder="المعنى بالعربي" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd;">
-              <button class="hero-btn" data-action="addNewWord" style="background:#059669">إضافة للبطاقات</button>
+              <input type="text" id="newEng" placeholder="الكلمة بالإنجليزي" style="flex:1; padding:12px; border-radius:8px; border:1px solid #bae6fd;">
+              <input type="text" id="newArb" placeholder="المعنى بالعربي" style="flex:1; padding:12px; border-radius:8px; border:1px solid #bae6fd;">
+              <button class="hero-btn" data-action="addNewWord" style="background:#0284c7">حفظ في بطاقاتي</button>
             </div>
           </div>
         </div>
