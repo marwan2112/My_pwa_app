@@ -1,3 +1,4 @@
+// كود app.js الموحد والمصلح
 class App {
   constructor() {
     this.currentPage = 'home';
@@ -10,136 +11,141 @@ class App {
     this.init();
   }
 
-  init() { this.render(); this.setupSelection(); }
+  init() {
+    this.render();
+    this.setupEventListeners();
+  }
 
-  saveVocab() { localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary)); }
+  saveVocab() {
+    localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary));
+  }
 
-  setupSelection() {
+  setupEventListeners() {
+    // حل مشكلة عدم استجابة الأزرار: نستخدم مراقب واحد لكل الصفحة
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+
+      const action = target.dataset.action;
+      const param = target.dataset.param;
+
+      console.log("Action Triggered:", action, param); // للتصحيح
+
+      if (this[action]) {
+        this[action](param);
+      } else {
+        // إذا كانت الدالة غير موجودة بالاسم المباشر (مثل التنقل)
+        this.handleNavigation(action, param);
+      }
+      this.render();
+    });
+
+    // الترجمة عند التظليل
     document.addEventListener('mouseup', () => {
       const text = window.getSelection().toString().trim();
       if (text && this.currentPage === 'reading') {
-        const ar = prompt(`ترجمة كلمة "${text}" للعربية:`);
-        if (ar) {
-          const ex = prompt(`مثال بالإنجليزية لهذه الكلمة:`);
-          const newTerm = { id: Date.now(), lessonId: this.selectedLessonId, english: text, arabic: ar, example: ex || 'Added from reading.' };
-          this.userVocabulary.push(newTerm);
-          this.saveVocab();
-          alert("تم حفظ الكلمة في البطاقات والاختبارات بنجاح!");
-        }
+        setTimeout(() => {
+          const ar = prompt(`ما ترجمة الكلمة "${text}"؟`);
+          if (ar) {
+            this.userVocabulary.push({
+              id: Date.now(),
+              lessonId: this.selectedLessonId,
+              english: text,
+              arabic: ar,
+              example: 'Added by user'
+            });
+            this.saveVocab();
+            this.render();
+          }
+        }, 100);
       }
     });
   }
 
+  handleNavigation(action, param) {
+    if (action === 'selLevel') { this.selectedLevel = param; this.currentPage = 'lessons'; }
+    else if (action === 'selLesson') { this.selectedLessonId = param; this.currentPage = 'reading'; this.resetState(); }
+    else if (action === 'setPage') { this.currentPage = param; }
+    else if (action === 'goHome') { this.selectedLevel = null; this.selectedLessonId = null; this.currentPage = 'home'; }
+  }
+
+  resetState() {
+    this.quizIndex = 0; this.quizScore = 0; this.currentCardIndex = 0;
+  }
+
   render() {
     const app = document.getElementById('app');
-    app.innerHTML = this.renderHeader() + `<div id="view">${this.renderView()}</div>`;
+    const lesson = typeof getLessonData === 'function' ? getLessonData(this.selectedLessonId) : null;
+    const terms = lesson ? [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)] : [];
+
+    app.innerHTML = this.renderHeader() + `<div id="view">${this.renderView(lesson, terms)}</div>`;
   }
 
   renderHeader() {
-    const nav = this.selectedLessonId ? [
-      { id: 'reading', n: 'النص' }, { id: 'flashcards', n: 'البطاقات' },
-      { id: 'matching', n: 'المطابقة' }, { id: 'quiz', n: 'الاختبار' }
-    ] : [];
-    return `<header class="header"><div class="header-content">
-      <h2 data-action="goHome" style="cursor:pointer">English Booster</h2>
-      <nav class="nav-menu">
-        ${nav.map(b => `<button class="nav-btn ${this.currentPage===b.id?'active':''}" data-action="setPage" data-param="${b.id}">${b.n}</button>`).join('')}
-      </nav></div></header>`;
+    const isLessonActive = this.selectedLessonId;
+    return `
+      <header class="header">
+        <div class="header-content">
+          <h2 data-action="goHome" style="cursor:pointer">English Booster</h2>
+          ${isLessonActive ? `
+          <nav class="nav-menu">
+            <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">النص</button>
+            <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات</button>
+            <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">الاختبار</button>
+          </nav>` : ''}
+        </div>
+      </header>`;
   }
 
-  renderView() {
-    const lesson = getLessonData(this.selectedLessonId);
-    const combinedTerms = lesson ? [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)] : [];
+  renderView(lesson, terms) {
+    if (this.currentPage === 'home') {
+      return `
+        <main class="main-content">
+          <div class="hero"><h1>خطة الـ 9 أشهر</h1><p>تأسيس من الصفر للاحتراف</p></div>
+          <div class="features-grid">
+            <div class="feature-card" data-action="selLevel" data-param="beginner"><h3>🌱 المستوى المبتدئ</h3><p>5 دروس أساسية</p></div>
+            <div class="feature-card" data-action="selLevel" data-param="intermediate"><h3>🌿 المستوى المتوسط</h3><p>مقالات سياسية وتقنية</p></div>
+          </div>
+        </main>`;
+    }
 
-    switch (this.currentPage) {
-      case 'home': return this.drawHome();
-      case 'lessons': return this.drawLessons();
-      case 'reading': return `<main class="main-content">
-        <button class="hero-btn" data-action="setPage" data-param="lessons">← العودة للدروس</button>
-        <div class="reading-card" style="margin-top:20px;">
-          <small style="color:blue">* حدد أي كلمة لترجمتها وحفظها فوراً</small>
-          <h2 style="margin:10px 0">${lesson.title}</h2>
-          <div class="reading-body">${lesson.content}</div>
+    if (this.currentPage === 'lessons') {
+      const list = getLessonsByLevel(this.selectedLevel);
+      return `<main class="main-content">
+        <button class="hero-btn" data-action="goHome">← رجوع</button>
+        <div class="features-grid" style="margin-top:20px;">
+          ${list.map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>${l.title}</h3></div>`).join('')}
         </div></main>`;
-      case 'flashcards': return this.drawFlash(combinedTerms);
-      case 'quiz': return this.drawQuiz(combinedTerms);
-      case 'matching': return this.drawMatch(combinedTerms);
-      default: return this.drawHome();
     }
-  }
 
-  drawHome() {
-    return `<main class="main-content"><div class="features-grid">${levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
-  }
-
-  drawLessons() {
-    const list = getLessonsByLevel(this.selectedLevel);
-    return `<main class="main-content"><button class="hero-btn" data-action="goHome">← العودة للمستويات</button><div class="features-grid" style="margin-top:20px;">${list.map(s => `<div class="feature-card" data-action="selLesson" data-param="${s.id}"><h3>${s.title}</h3><p>${s.description}</p></div>`).join('')}</div></main>`;
-  }
-
-  drawFlash(terms) {
-    if(terms.length === 0) return `<div class="main-content">لا توجد كلمات. حدد كلمات من النص أولاً.</div>`;
-    const t = terms[this.currentCardIndex];
-    return `<main class="main-content">
-      <div class="flashcard-container" onclick="this.classList.toggle('flipped')"><div class="flashcard">
-        <div class="flashcard-front"><div class="highlight-word">${t.english}</div><button class="hero-btn" data-action="speak" data-param="${t.english}">🔊 نطق</button></div>
-        <div class="flashcard-back"><div class="back-meaning">${t.arabic}</div><div class="back-example">"${t.example}"</div></div>
-      </div></div>
-      <div class="controls"><button class="hero-btn" data-action="prevC">السابق</button><span>${this.currentCardIndex+1} / ${terms.length}</span><button class="hero-btn" data-action="nextC" data-total="${terms.length}">التالي</button></div></main>`;
-  }
-
-  drawQuiz(terms) {
-    if(this.quizIndex >= terms.length) return `<div class="main-content"><h2>النتيجة: ${this.quizScore} / ${terms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></div>`;
-    const curr = terms[this.quizIndex];
-    const opts = shuffleArray([...terms]).slice(0,4); if(!opts.find(x=>x.id===curr.id)) opts[0]=curr;
-    return `<main class="main-content"><div class="reading-card"><h3>ما معنى: <span style="color:#1e40af">${curr.english}</span>؟</h3>
-      <div class="options-grid">${shuffleArray(opts).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${curr.arabic}">${o.arabic}</button>`).join('')}</div>
-    </div></main>`;
-  }
-
-  ansQ(selected, e) {
-    const correct = e.target.dataset.correct;
-    const btns = document.querySelectorAll('.quiz-opt-btn');
-    btns.forEach(b => {
-      if(b.innerText === correct) b.style.background = "#22c55e";
-      else if(b.innerText === selected) b.style.background = "#ef4444";
-    });
-    if(selected === correct) this.quizScore++;
-    setTimeout(() => { this.quizIndex++; this.render(); }, 1000);
-  }
-
-  drawMatch(terms) {
-    if(!this.mSet) {
-      const set = shuffleArray([...terms]).slice(0,5);
-      this.mSet = { eng: shuffleArray([...set]), arb: shuffleArray([...set]), solved: [] };
+    if (this.currentPage === 'reading' && lesson) {
+      return `<main class="main-content">
+        <div class="reading-card"><h2>${lesson.title}</h2><div class="reading-body">${lesson.content}</div></div>
+      </main>`;
     }
-    return `<main class="main-content"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-      <div>${this.mSet.eng.map(t => this.mSet.solved.includes(t.id) ? `<div class="match-btn" style="visibility:hidden"></div>` : `<button class="match-btn ${this.mSelect?.id===t.id && this.mSelect?.side==='e' ? 'selected' : ''}" data-action="mClick" data-id="${t.id}" data-side="e">${t.english}</button>`).join('')}</div>
-      <div>${this.mSet.arb.map(t => this.mSet.solved.includes(t.id) ? `<div class="match-btn" style="visibility:hidden"></div>` : `<button class="match-btn ${this.mSelect?.id===t.id && this.mSelect?.side==='a' ? 'selected' : ''}" data-action="mClick" data-id="${t.id}" data-side="a">${t.arabic}</button>`).join('')}</div>
-    </div><button class="hero-btn" style="width:100%; margin-top:20px;" data-action="resMatch">تحديث اللعبة</button></main>`;
-  }
 
-  mClick(p, e) {
-    const id = e.target.dataset.id;
-    const side = e.target.dataset.side;
-    if(!this.mSelect) { this.mSelect = {id, side}; } 
-    else {
-      if(this.mSelect.id === id && this.mSelect.side !== side) { this.mSet.solved.push(id); }
-      this.mSelect = null;
+    if (this.currentPage === 'flashcards') {
+        const t = terms[this.currentCardIndex];
+        if(!t) return `<main class="main-content">لا توجد كلمات.</main>`;
+        return `<main class="main-content">
+          <div class="flashcard-container" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard">
+              <div class="flashcard-front"><h1>${t.english}</h1><button data-action="speak" data-param="${t.english}">🔊</button></div>
+              <div class="flashcard-back"><h1>${t.arabic}</h1></div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="hero-btn" data-action="prevC">السابق</button>
+            <button class="hero-btn" data-action="nextC" data-total="${terms.length}">التالي</button>
+          </div>
+        </main>`;
     }
-    this.render();
+    return `<main class="main-content">قيد التطوير...</main>`;
   }
 
-  // المساعدة
-  setPage(p) { this.currentPage = p; this.render(); }
-  selLevel(l) { this.selectedLevel = l; this.currentPage = 'lessons'; this.render(); }
-  selLesson(id) { this.selectedLessonId = id; this.currentPage = 'reading'; this.quizIndex=0; this.quizScore=0; this.currentCardIndex=0; this.render(); }
-  goHome() { this.selectedLevel = null; this.selectedLessonId = null; this.setPage('home'); }
-  nextC(p, e) { if(this.currentCardIndex < e.target.dataset.total - 1) this.currentCardIndex++; this.render(); }
-  prevC() { if(this.currentCardIndex > 0) this.currentCardIndex--; this.render(); }
-  resMatch() { this.mSet = null; this.render(); }
-  resetQ() { this.quizIndex = 0; this.quizScore = 0; this.render(); }
-  speak(t) { const s = new SpeechSynthesisUtterance(t); s.lang='en-US'; window.speechSynthesis.speak(s); }
+  nextC(total) { if(this.currentCardIndex < total - 1) this.currentCardIndex++; }
+  prevC() { if(this.currentCardIndex > 0) this.currentCardIndex--; }
+  speak(t) { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
 }
 
 window.onload = () => new App();
