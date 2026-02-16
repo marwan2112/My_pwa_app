@@ -1,11 +1,11 @@
+// تطبيق المصطلحات السياسية والقانونية - PWA
 class App {
   constructor() {
     this.currentPage = 'home';
     this.selectedBatch = 1;
     this.currentCardIndex = 0;
-    this.masteredWords = new Set();
     this.quizScore = 0;
-    this.quizTotal = 0;
+    this.quizIndex = 0;
     this.matchedPairs = new Set();
     this.exerciseIndex = 0;
     this.exerciseScore = 0;
@@ -25,7 +25,9 @@ class App {
       if (target) {
         const action = target.dataset.action;
         const param = target.dataset.param;
-        this[action]?.(param);
+        if (typeof this[action] === 'function') {
+          this[action](param);
+        }
       }
     });
   }
@@ -42,7 +44,7 @@ class App {
       { label: 'البطاقات', action: 'goFlashcards', page: 'flashcards' },
       { label: 'الاختبار', action: 'goQuiz', page: 'quiz' },
       { label: 'المطابقة', action: 'goMatching', page: 'matching' },
-      { label: 'تمارين', action: 'goExercises', page: 'exercises' }
+      { label: 'التمارين', action: 'goExercises', page: 'exercises' }
     ];
 
     return `
@@ -76,24 +78,19 @@ class App {
     }
   }
 
-  // --- Functions for Reading Page ---
+  // التنقل
+  goHome() { this.currentPage = 'home'; this.render(); }
   goReading() { this.currentPage = 'reading'; this.render(); }
-  renderReading() {
-    const textData = getReadingTextByBatch(this.selectedBatch);
-    if (!textData) return '<div class="main-content"><p>لا يوجد نص متاح.</p></div>';
-    return `
-      <div class="main-content page-enter">
-        <div class="quiz-header"><h1>Reading Analysis</h1><p>تحليل النص</p></div>
-        <div class="exercise-card card-enter" style="text-align: left; max-width: 800px; margin: 0 auto; padding: 2rem;">
-          <h2 style="color: #1e40af; margin-bottom: 1.5rem; font-family: 'Poppins';">${textData.title}</h2>
-          <div style="font-family: 'Poppins'; line-height: 1.8; font-size: 1.1rem; color: #334155; white-space: pre-line;">${textData.content}</div>
-        </div>
-        <div style="margin-top:20px; text-align:center;"><button class="hero-btn" data-action="goFlashcards">ابدأ البطاقات</button></div>
-      </div>`;
+  goFlashcards() { this.currentPage = 'flashcards'; this.currentCardIndex = 0; this.render(); }
+  goQuiz() { this.currentPage = 'quiz'; this.quizIndex = 0; this.quizScore = 0; this.render(); }
+  goMatching() { this.currentPage = 'matching'; this.matchedPairs.clear(); this.render(); }
+  goExercises() { this.currentPage = 'exercises'; this.exerciseIndex = 0; this.exerciseScore = 0; this.render(); }
+
+  selectBatch(id) {
+    this.selectedBatch = parseInt(id);
+    this.goReading(); // ينتقل للنص مباشرة عند اختيار المجموعة
   }
 
-  // --- Rest of Pages (Home, Flashcards, etc.) ---
-  goHome() { this.currentPage = 'home'; this.render(); }
   renderHome() {
     return `
       <main class="main-content">
@@ -114,16 +111,28 @@ class App {
       </main>`;
   }
 
-  selectBatch(id) {
-    this.selectedBatch = parseInt(id);
-    this.goReading();
+  renderReading() {
+    const textData = getReadingTextByBatch(this.selectedBatch);
+    if (!textData) return '<div class="main-content"><div class="hero"><h1>قريباً</h1><p>النص غير متوفر لهذه المجموعة.</p><button class="hero-btn" data-action="goHome">العودة</button></div></div>';
+    return `
+      <div class="main-content page-enter">
+        <div class="quiz-header">
+            <h1>Reading Analysis</h1>
+            <p>حلل المصطلحات داخل السياق</p>
+        </div>
+        <div class="exercise-card card-enter" style="text-align: left; max-width: 850px; margin: 0 auto; padding: 2rem;">
+          <h2 style="color: #1e40af; margin-bottom: 1.5rem; font-family: 'Poppins'; border-bottom: 2px solid #eee; padding-bottom: 10px;">${textData.title}</h2>
+          <div style="font-family: 'Poppins'; line-height: 1.8; font-size: 1.15rem; color: #334155; white-space: pre-line;">${textData.content}</div>
+        </div>
+        <div style="margin-top:2rem; text-align:center;">
+            <button class="hero-btn" data-action="goFlashcards">الذهاب للبطاقات ←</button>
+        </div>
+      </div>`;
   }
 
-  // Flashcards
-  goFlashcards() { this.currentPage = 'flashcards'; this.currentCardIndex = 0; this.render(); }
   renderFlashcards() {
     const batchTerms = getTermsByBatch(this.selectedBatch);
-    if (batchTerms.length === 0) return '<div class="main-content">لا توجد بطاقات متاحة حالياً.</div>';
+    if (batchTerms.length === 0) return '<div class="main-content">لا توجد بيانات.</div>';
     const term = batchTerms[this.currentCardIndex];
     return `
       <div class="main-content">
@@ -133,7 +142,11 @@ class App {
             <div class="flashcard-back"><div class="flashcard-arabic">${term.arabic}</div></div>
           </div>
         </div>
-        <div class="controls"><button class="nav-btn" data-action="prevCard">السابق</button><span>${this.currentCardIndex + 1} / ${batchTerms.length}</span><button class="nav-btn" data-action="nextCard">التالي</button></div>
+        <div class="controls">
+          <button class="nav-btn" data-action="prevCard">السابق</button>
+          <span>${this.currentCardIndex + 1} / ${batchTerms.length}</span>
+          <button class="nav-btn" data-action="nextCard">التالي</button>
+        </div>
       </div>`;
   }
 
@@ -143,13 +156,11 @@ class App {
   }
   prevCard() { if (this.currentCardIndex > 0) { this.currentCardIndex--; this.render(); } }
 
-  // Other Sections (Quiz, Matching, Exercises - Minimal Implementation for length)
-  goQuiz() { this.currentPage = 'quiz'; this.render(); }
-  renderQuiz() { return '<div class="main-content"><h2>قسم الاختبار قيد التطوير</h2></div>'; }
-  goMatching() { this.currentPage = 'matching'; this.render(); }
-  renderMatching() { return '<div class="main-content"><h2>قسم المطابقة قيد التطوير</h2></div>'; }
-  goExercises() { this.currentPage = 'exercises'; this.render(); }
-  renderExercises() { return '<div class="main-content"><h2>قسم التمارين قيد التطوير</h2></div>'; }
+  // الأقسام الأخرى (تبسيط للعمل)
+  renderQuiz() { return '<div class="main-content"><div class="hero"><h1>قسم الاختبار</h1><p>سيتم ربط أسئلة المجموعة المختار هنا.</p><button class="hero-btn" data-action="goHome">العودة</button></div></div>'; }
+  renderMatching() { return '<div class="main-content"><div class="hero"><h1>لعبة المطابقة</h1><p>طابق الكلمات بمعانيها.</p><button class="hero-btn" data-action="goHome">العودة</button></div></div>'; }
+  renderExercises() { return '<div class="main-content"><div class="hero"><h1>تمارين ملء الفراغ</h1><p>اختبر مهاراتك في الجمل.</p><button class="hero-btn" data-action="goHome">العودة</button></div></div>'; }
 }
 
-new App();
+// تشغيل التطبيق
+window.onload = () => { new App(); };
