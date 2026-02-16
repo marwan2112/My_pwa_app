@@ -1,10 +1,12 @@
-const CACHE_NAME = "terms-app-cache-v1";
+const CACHE_NAME = "terms-app-cache-v2";
+
 const urlsToCache = [
-  "./",
-  "./index.html",
-  "./styles.css",
-  "./app.js",
-  "./manifest.json"
+  "/My_pwa_app/",
+  "/My_pwa_app/index.html",
+  "/My_pwa_app/styles.css",
+  "/My_pwa_app/app.js",
+  "/My_pwa_app/data.js",
+  "/My_pwa_app/manifest.json"
 ];
 
 self.addEventListener("install", event => {
@@ -13,6 +15,22 @@ self.addEventListener("install", event => {
       return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
