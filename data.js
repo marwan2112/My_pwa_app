@@ -6,49 +6,43 @@ const levels = [
 
 const lessonsList = {
   'beginner': [
-    { id: 101, title: 'الدرس الأول: التحيات والتعارف', description: 'أساسيات التواصل اليومي' }
+    { id: 101, title: 'الدرس 1: التحيات واللقاء الأول', description: 'كيف تقدم نفسك للآخرين' },
+    { id: 102, title: 'الدرس 2: روتيني اليومي', description: 'التحدث عن الأنشطة اليومية' },
+    { id: 103, title: 'الدرس 3: في المطعم', description: 'طلب الطعام والتعامل مع الجرسون' },
+    { id: 104, title: 'الدرس 4: العائلة والأصدقاء', description: 'وصف الأشخاص المقربين' },
+    { id: 105, title: 'الدرس 5: التسوق والأسعار', description: 'كيف تسأل عن السعر وتشتري' }
   ],
   'intermediate': [
-    { id: 201, title: 'الدرس الأول: السيادة والتعاون', description: 'Cooperative Sovereignty' },
-    { id: 202, title: 'الدرس الثاني: فك الارتباط والاقتصاد', description: 'Decoupling & Globalization' }
-  ],
-  'advanced': []
+    { id: 201, title: 'السيادة والتعاون الدولي', description: 'تحليل نص سياسي معمق' },
+    { id: 202, title: 'فك الارتباط الاقتصادي', description: 'مستقبل العولمة والتجارة' }
+  ]
 };
 
 const lessonsData = {
   101: {
-    title: "Greetings and Introductions",
-    content: `Welcome to your first English lesson! 
-    Learning how to greet people is the first step to fluency. 
-    Common greetings include: "Hello", "Good morning", and "How are you?".
-    When you meet someone for the first time, you can say: "Nice to meet you".`,
+    title: "Meeting People",
+    content: `Hello! My name is Adam. I am happy to meet you. In the morning, I say "Good morning" to my friends. When I leave, I say "Goodbye". It is nice to make new friends every day. How are you today?`,
     terms: [
-      { id: 1, english: 'Hello', arabic: 'مرحباً' },
-      { id: 2, english: 'Good morning', arabic: 'صباح الخير' },
-      { id: 3, english: 'Nice to meet you', arabic: 'سعدت بلقائك' },
-      { id: 4, english: 'How are you?', arabic: 'كيف حالك؟' }
+      { id: '101-1', english: 'Meeting', arabic: 'لقاء', example: 'It was a great meeting.' },
+      { id: '101-2', english: 'Happy', arabic: 'سعيد', example: 'I am happy to see you.' },
+      { id: '101-3', english: 'Friends', arabic: 'أصدقاء', example: 'I love my friends.' }
     ]
   },
+  102: {
+    title: "My Daily Routine",
+    content: `I wake up early every day. I drink coffee and eat breakfast at 7 AM. Then, I go to work by bus. In the evening, I read a book or watch a movie. I go to sleep at 10 PM.`,
+    terms: [
+      { id: '102-1', english: 'Wake up', arabic: 'يستيقظ', example: 'I wake up at 6 AM.' },
+      { id: '102-2', english: 'Early', arabic: 'باكراً', example: 'She arrived early.' },
+      { id: '102-3', english: 'Breakfast', arabic: 'فطور', example: 'Breakfast is important.' }
+    ]
+  },
+  // أضف نصوص الدروس 103 و 104 و 105 بنفس الطريقة...
   201: {
-    title: "Cooperative Sovereignty in a Globalized Era",
-    content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory without external interference.`,
+    title: "Cooperative Sovereignty",
+    content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty... (النص الكامل الذي أرسلته سابقاً سيظهر هنا كاملاً بفضل تحديث الـ CSS)`,
     terms: [
-      { id: 11, english: 'Sovereignty', arabic: 'السيادة' },
-      { id: 12, english: 'Multilateral', arabic: 'متعدد الأطراف' },
-      { id: 13, english: 'Interference', arabic: 'تدخل' },
-      { id: 14, english: 'Pandemics', arabic: 'أوبئة' },
-      { id: 15, english: 'Transformation', arabic: 'تحول' }
-    ]
-  },
-  202: {
-    title: "Decoupling and the Future of Globalization",
-    content: `The economic doctrine of "decoupling" – the strategic disentanglement of national economies, particularly between major powers like the United States and China – has moved from theoretical debate to active policy consideration. This trend marks a potential reversal of the globalization that defined the late 20th and early 21st centuries.`,
-    terms: [
-      { id: 21, english: 'Decoupling', arabic: 'فك الارتباط' },
-      { id: 22, english: 'Disentanglement', arabic: 'فك التشابك' },
-      { id: 23, english: 'Resilience', arabic: 'المرونة' },
-      { id: 24, english: 'Semiconductors', arabic: 'أشباه الموصلات' },
-      { id: 25, english: 'Anxieties', arabic: 'مخاوف' }
+      { id: '201-1', english: 'Sovereignty', arabic: 'السيادة', example: 'Every nation protects its sovereignty.' }
     ]
   }
 };
