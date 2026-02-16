@@ -63,13 +63,66 @@ window.lessonsData = {
   },
   // --- النصوص المتقدمة ---
   '301': {
-    title: "العنوان بالانجليزي هنا",
-    content: `ضع النص السياسي الأول هنا...`,
+    title: "اCooperative Sovereignty in a Globalized Eraا",
+    content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory, resources, and population without external interference. However, the emergence of transnational challenges such as climate change, cyber-organized crime, and global pandemics has starkly revealed the limits of this concept. States are no longer capable of confronting these challenges individually, which has compelled them to negotiate and cede portions of their authority to global governance bodies.
+This shift propels a model known as "cooperative sovereignty" or "sovereignty as responsibility." Proponents argue that in an interconnected world, the ultimate exercise of sovereignty is the ability to participate effectively in international systems, shape global norms, and protect one's citizens from threats that originate beyond borders. This requires a pragmatic surrender of absolute autonomy in exchange for influence and collective security. For example, a country adhering to World Trade Organization rules accepts constraints on its domestic trade policies but gains access to a dispute resolution mechanism and a vast global market.
+Critics, however, view this evolution with suspicion, interpreting it as a dilution of statehood and a potential infringement on national self-determination. They warn that powerful states or unaccountable bureaucracies in international organizations can dominate the rule-setting process, effectively imposing their will on smaller nations under the guise of global cooperation. The tension between the imperative for international collaboration and the desire to preserve national autonomy and identity forms the core of contemporary geopolitical discourse, influencing debates on issues ranging from migration and environmental treaties to data privacy regulations and military alliances.
+ 
+
+`,
     terms: [{ id: '301-1', english: 'Word', arabic: 'كلمة' }]
   },
   '302': {
+    title: "Decoupling and the Future of Globalization",
+    content: ` The economic doctrine of "decoupling" – the strategic disentanglement of national economies, particularly between major powers like the United States and China – has moved from theoretical debate to active policy consideration. Triggered by geopolitical rivalries, concerns over supply chain resilience, and national security anxieties regarding critical technologies, this trend marks a potential reversal of the globalization that defined the late 20th and early 21st centuries. Proponents argue that decoupling is necessary to reduce strategic dependencies, protect intellectual property, and bolster domestic industries in key sectors such as semiconductors, pharmaceuticals, and rare earth minerals.
+However, a nuanced analysis reveals that full-scale decoupling is an economic fiction. The depth of existing integration, characterized by complex, multi-tiered supply chains, makes a clean separation prohibitively expensive and logistically chaotic. A more probable and already unfolding scenario is "derisking," a targeted approach focused on limiting dependencies in a handful of strategically sensitive areas while maintaining robust trade and investment flows in others. For instance, a country might restrict foreign investment in its artificial intelligence or quantum computing sectors while continuing to import consumer electronics or agricultural products freely.
+The long-term implications of this selective disentanglement are multifaceted. Economically, it could lead to inefficiencies, higher costs for consumers and businesses (a phenomenon often termed "greenflation" or "security inflation"), and a fragmentation of global technological standards. Politically, it may solidify economic blocs aligned with competing geopolitical spheres of influence. Ultimately, the decoupling debate underscores a fundamental recalibration: nations are increasingly prioritizing economic security and strategic autonomy over the pure efficiency gains that fueled the previous era of hyper-globalization. The challenge for policymakers is to navigate this shift without triggering a full-blown, mutually detrimental economic conflict.
+
+ `,
+    terms: [{ id: '302-1', english: 'Word', arabic: 'كلمة' }]
+  }, 
+   '303': {
+    title: "Modern Conflict in the Information Age",
+    content: ` Military historians often categorize warfare into distinct "generations," delineating evolutionary leaps in tactics, technology, and the character of conflict. The widely cited framework describes a progression from massed manpower (1st Generation) through firepower and attrition (2nd), maneuver warfare (3rd), to the asymmetric and networked conflict of non-state actors (4th). In contemporary discourse, a vigorous debate centers on whether we are now witnessing the emergence of a "Fifth Generation Warfare" (5GW).
+Proponents of the 5GW concept argue that the very nature of the battlefield has dissolved. They posit that modern conflict is dominated by non-kinetic, informational, and cognitive dimensions, where the primary objectives are to manipulate the adversary's perception, decision-making, and social cohesion. Key tools include sophisticated cyber operations, pervasive disinformation campaigns, economic coercion, and the weaponization of social media to create societal division and erode trust in institutions. In this view, a successful 5GW campaign could achieve strategic objectives without firing a single shot, by crippling an enemy from within.
+Skeptics, however, challenge the utility of this new generational label. They contend that many described 5GW tactics are merely modern iterations of age-old strategies of deception, subversion, and political warfare, now amplified by new technology. They warn that an overemphasis on this nebulous concept risks diverting attention and resources from the enduring realities of combined arms warfare, territorial defense, and the potential for high-intensity kinetic conflict, which remains a definitive element of state power. The debate, therefore, is not merely academic; it directly influences defense budgeting, force structure design, and the training of military personnel, forcing institutions to balance preparation for invisible, pervasive threats with readiness for traditional combat.
+
+ `,
+    terms: [{ id: '303-1', english: 'Word', arabic: 'كلمة' }]
+  },
+   '304': {
     title: "عنوان النص الثاني",
     content: `محتوى النص الثاني هنا...`,
-    terms: [{ id: '302-1', english: 'Word', arabic: 'كلمة' }]
+    terms: [{ id: '304-1', english: 'Word', arabic: 'كلمة' }]
+  },
+   '305': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '305-1', english: 'Word', arabic: 'كلمة' }]
+  }, 
+   '306': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '306-1', english: 'Word', arabic: 'كلمة' }]
+  },
+   '307': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '307-1', english: 'Word', arabic: 'كلمة' }]
+  },
+   '308': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '308-1', english: 'Word', arabic: 'كلمة' }]
+  },
+   '309': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '309-1', english: 'Word', arabic: 'كلمة' }]
+  }, 
+   '310': {
+    title: "عنوان النص الثاني",
+    content: `محتوى النص الثاني هنا...`,
+    terms: [{ id: '310-1', english: 'Word', arabic: 'كلمة' }]
   }
 };
