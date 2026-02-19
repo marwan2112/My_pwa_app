@@ -1,5 +1,5 @@
 class App {
-constructor() {
+  constructor() {
     this.currentPage = 'home';
     this.selectedLevel = null;
     this.selectedLessonId = null;
@@ -7,11 +7,11 @@ constructor() {
     this.quizIndex = 0;
     this.quizScore = 0;
     this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
-    // السطر الجديد تحت:
     this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
     this.typingTimer = null;
     this.init();
   }
+
   init() {
     this.render();
     this.setupGlobalEvents();
@@ -19,6 +19,28 @@ constructor() {
 
   saveVocab() {
     localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary));
+  }
+
+  // دالة لحفظ الكلمة (Mastered)
+  toggleMastered(wordId) {
+    if (this.masteredWords.includes(wordId)) {
+      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
+    } else {
+      this.masteredWords.push(wordId);
+    }
+    localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
+    this.render();
+  }
+
+  // دالة لحذف الكلمة نهائياً
+  deleteWord(wordId) {
+    if (confirm('هل أنت متأكد من حذف هذه الكلمة نهائياً؟')) {
+      this.userVocabulary = this.userVocabulary.filter(v => String(v.id) !== String(wordId));
+      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
+      this.saveVocab();
+      localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
+      this.render();
+    }
   }
 
   setupGlobalEvents() {
@@ -38,10 +60,8 @@ constructor() {
       else if (action === 'ansQ') { this.handleAnswer(btn, param, btn.dataset.correct); }
       else if (action === 'resetQ') { this.resetState(); }
       else if (action === 'addNewWord') { this.manualAddWord(); }
-      // --- الأسطر الجديدة هنا ---
       else if (action === 'masterWord') { this.toggleMastered(param); }
       else if (action === 'deleteWord') { this.deleteWord(param); }
-      // -------------------------
       
       this.render();
     });
@@ -84,7 +104,6 @@ constructor() {
         arabic: arb 
       });
       this.saveVocab();
-      alert(`✅ تمت إضافة "${eng}"`);
       document.getElementById('newEng').value = '';
       document.getElementById('newArb').value = '';
       this.render();
@@ -104,6 +123,7 @@ constructor() {
 
   renderHeader(terms) {
     const isLesson = this.selectedLessonId;
+    const activeTerms = terms.filter(t => !this.masteredWords.includes(t.id));
     return `
       <header class="header">
         <div class="header-content">
@@ -111,7 +131,7 @@ constructor() {
           ${isLesson ? `
             <nav class="nav-menu">
               <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">النص</button>
-              <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${terms.length})</button>
+              <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${activeTerms.length})</button>
               <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">الاختبار</button>
             </nav>` : ''}
         </div>
@@ -126,7 +146,7 @@ constructor() {
       return `<main class="main-content"><button class="hero-btn" data-action="goHome">← رجوع</button><div class="features-grid" style="margin-top:20px;">${list.map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>${l.title}</h3></div>`).join('')}</div></main>`;
     }
 
-if (this.currentPage === 'reading') {
+    if (this.currentPage === 'reading') {
       if (!lesson) return `<main class="main-content">النص غير موجود</main>`;
       return `
         <main class="main-content" style="padding: 10px; height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
@@ -134,11 +154,9 @@ if (this.currentPage === 'reading') {
              <button class="hero-btn" data-action="setPage" data-param="lessons" style="margin:0; padding: 4px 12px; font-size: 0.8rem;">← رجوع</button>
              <h3 style="margin:0; font-size: 0.9rem; color: #1e3a8a;">${lesson.title}</h3>
           </div>
-          
           <div style="flex-grow: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 10px; text-align: left; direction: ltr; -webkit-overflow-scrolling: touch;">
             <div style="white-space: pre-wrap; line-height: 1.6; font-size: 1.1rem; color: #333;">${lesson.content}</div>
           </div>
-
           <div style="background: #f0fdf4; padding: 12px; border-radius: 12px; border: 2px solid #bbf7d0; flex-shrink: 0;">
             <h4 style="margin: 0 0 8px 0; font-size: 0.85rem; color: #166534;">➕ إضافة سريعة:</h4>
             <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -149,10 +167,9 @@ if (this.currentPage === 'reading') {
           </div>
         </main>`;
     }
-if (this.currentPage === 'flashcards') {
-      // فلترة الكلمات عشان المحفوظة ما تطلع
+
+    if (this.currentPage === 'flashcards') {
       const activeTerms = terms.filter(t => !this.masteredWords.includes(t.id));
-      
       if (!activeTerms.length) return `<main class="main-content" style="text-align:center;"><h2>🎉 بطل! خلصت الكلمات</h2><button class="hero-btn" data-action="setPage" data-param="reading">ارجع للنص</button></main>`;
       
       const t = activeTerms[this.currentCardIndex] || activeTerms[0];
@@ -166,12 +183,10 @@ if (this.currentPage === 'flashcards') {
                     <div class="flashcard-back"><h1>${t.arabic}</h1></div>
                 </div>
             </div>
-            
             <div style="display:flex; justify-content:center; gap:10px; margin: 15px 0;">
                 <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#059669; font-size:0.8rem; margin:0;">✅ حفظتها</button>
                 <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#dc2626; font-size:0.8rem; margin:0;">🗑️ حذف</button>
             </div>
-
             <div class="controls">
                 <button class="hero-btn" data-action="prevC">السابق</button>
                 <span>${this.currentCardIndex + 1} / ${activeTerms.length}</span>
@@ -179,14 +194,15 @@ if (this.currentPage === 'flashcards') {
             </div>
         </main>`;
     }
+
     if (this.currentPage === 'quiz') {
-        // استبدل أول سطر في الـ Quiz بهذا:
-const activeQuizTerms = terms.filter(t => !this.masteredWords.includes(t.id));
-if (this.quizIndex >= activeQuizTerms.length) // ... وباقي الكود يستخدم activeQuizTerms
-      if (this.quizIndex >= terms.length) return `<main class="main-content" style="text-align:center"><h2>النتيجة النهائية: ${this.quizScore} من ${terms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
-      const q = terms[this.quizIndex];
-      let opts = [...terms].sort(()=>Math.random()-0.5).slice(0,4);
+      const activeQuizTerms = terms.filter(t => !this.masteredWords.includes(t.id));
+      if (this.quizIndex >= activeQuizTerms.length) return `<main class="main-content" style="text-align:center"><h2>النتيجة النهائية: ${this.quizScore} من ${activeQuizTerms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
+      
+      const q = activeQuizTerms[this.quizIndex];
+      let opts = [...activeQuizTerms].sort(()=>Math.random()-0.5).slice(0,4);
       if(!opts.find(o => o.english === q.english)) opts[0] = q;
+
       return `<main class="main-content"><div class="reading-card"><h1 style="text-align:center;margin-bottom:30px;">${q.english}</h1><div class="options-grid">${opts.sort(()=>Math.random()-0.5).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${q.arabic}">${o.arabic}</button>`).join('')}</div></div></main>`;
     }
   }
@@ -205,26 +221,5 @@ if (this.quizIndex >= activeQuizTerms.length) // ... وباقي الكود يس�
   nextCard(total) { if (this.currentCardIndex < total - 1) { this.currentCardIndex++; } }
   prevCard() { if (this.currentCardIndex > 0) { this.currentCardIndex--; } }
 }
-// دالة لحفظ الكلمة عشان ما تظهر مرة ثانية
-  toggleMastered(wordId) {
-    if (this.masteredWords.includes(wordId)) {
-      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
-    } else {
-      this.masteredWords.push(wordId);
-    }
-    localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
-    this.render();
-  }
 
- 
 document.addEventListener('DOMContentLoaded', () => { window.appInstance = new App(); });
- // دالة لحذف الكلمة نهائياً
-  deleteWord(wordId) {
-    if (confirm('هل أنت متأكد من حذف هذه الكلمة نهائياً؟')) {
-      this.userVocabulary = this.userVocabulary.filter(v => String(v.id) !== String(wordId));
-      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
-      this.saveVocab();
-      localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
-      this.render();
-    }
-  }
