@@ -121,30 +121,35 @@ class App {
       return `<main class="main-content"><button class="hero-btn" data-action="goHome">← رجوع</button><div class="features-grid" style="margin-top:20px;">${list.map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>${l.title}</h3></div>`).join('')}</div></main>`;
     }
 
-    if (this.currentPage === 'reading') {
+if (this.currentPage === 'reading') {
       if (!lesson) return `<main class="main-content">النص غير موجود</main>`;
       return `
-        <main class="main-content" style="padding: 10px; height: calc(100vh - 80px); display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-             <button class="hero-btn" data-action="setPage" data-param="lessons" style="margin:0; padding: 5px 15px;">← رجوع</button>
-             <h3 style="margin:0; font-size: 1rem; color: #1e3a8a;">${lesson.title}</h3>
+        <main class="main-content" style="padding: 10px; height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0;">
+             <button class="hero-btn" data-action="setPage" data-param="lessons" style="margin:0; padding: 4px 12px; font-size: 0.8rem;">← رجوع</button>
+             <h3 style="margin:0; font-size: 0.9rem; color: #1e3a8a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">${lesson.title}</h3>
           </div>
           
-          <div style="flex: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; line-height: 1.8; font-size: 1.1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="white-space: pre-wrap;">${lesson.content}</div>
+          <div style="flex-grow: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 10px; -webkit-overflow-scrolling: touch;">
+            <div style="white-space: pre-wrap; line-height: 1.6; font-size: 1rem; color: #333;">${lesson.content}</div>
           </div>
 
-          <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin-top: 10px; border: 2px solid #bbf7d0;">
-            <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #166534;">➕ إضافة سريعة:</h4>
-            <div style="display: flex; gap: 8px;">
-              <input type="text" id="newEng" placeholder="Word" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
-              <input type="text" id="newArb" placeholder="المعنى" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
-              <button class="hero-btn" data-action="addNewWord" style="background: #16a34a; border: none; color: white; margin: 0; padding: 0 15px;">حفظ</button>
+          <div style="background: #f0fdf4; padding: 12px; border-radius: 12px; border: 2px solid #bbf7d0; flex-shrink: 0;">
+            <h4 style="margin: 0 0 8px 0; font-size: 0.85rem; color: #166534;">➕ إضافة سريعة:</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <input type="text" id="newEng" placeholder="الكلمة (English)" 
+                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;">
+              
+              <input type="text" id="newArb" placeholder="المعنى (عربي)" 
+                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;">
+              
+              <button class="hero-btn" data-action="addNewWord" 
+                style="background: #16a34a; border: none; color: white; margin: 0; padding: 12px; width: 100%; font-weight: bold;">حفظ في البطاقات</button>
             </div>
           </div>
         </main>`;
     }
-
     if (this.currentPage === 'flashcards') {
       if (!terms.length) return `<main class="main-content">لا توجد كلمات في هذا الدرس.</main>`;
       const t = terms[this.currentCardIndex];
