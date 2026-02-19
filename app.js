@@ -1,5 +1,5 @@
 class App {
-  constructor() {
+constructor() {
     this.currentPage = 'home';
     this.selectedLevel = null;
     this.selectedLessonId = null;
@@ -7,10 +7,11 @@ class App {
     this.quizIndex = 0;
     this.quizScore = 0;
     this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
+    // السطر الجديد تحت:
+    this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
     this.typingTimer = null;
     this.init();
   }
-
   init() {
     this.render();
     this.setupGlobalEvents();
