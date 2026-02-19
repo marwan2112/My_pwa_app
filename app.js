@@ -21,7 +21,7 @@ class App {
     localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary));
   }
 
-  // دالة لحفظ الكلمة (Mastered)
+  // دالة لحفظ الكلمة (Mastered) لعدم تكرارها
   toggleMastered(wordId) {
     if (this.masteredWords.includes(wordId)) {
       this.masteredWords = this.masteredWords.filter(id => id !== wordId);
@@ -56,7 +56,11 @@ class App {
       else if (action === 'goHome') { this.selectedLevel = null; this.selectedLessonId = null; this.currentPage = 'home'; }
       else if (action === 'nextC') { this.nextCard(btn.dataset.total); }
       else if (action === 'prevC') { this.prevCard(); }
-      else if (action === 'speak') { window.speechSynthesis.speak(new SpeechSynthesisUtterance(param)); }
+      else if (action === 'speak') { 
+          const utterance = new SpeechSynthesisUtterance(param);
+          utterance.lang = 'en-US';
+          window.speechSynthesis.speak(utterance); 
+      }
       else if (action === 'ansQ') { this.handleAnswer(btn, param, btn.dataset.correct); }
       else if (action === 'resetQ') { this.resetState(); }
       else if (action === 'addNewWord') { this.manualAddWord(); }
@@ -123,7 +127,7 @@ class App {
 
   renderHeader(terms) {
     const isLesson = this.selectedLessonId;
-    const activeTerms = terms.filter(t => !this.masteredWords.includes(t.id));
+    const activeTermsCount = terms.filter(t => !this.masteredWords.includes(t.id)).length;
     return `
       <header class="header">
         <div class="header-content">
@@ -131,7 +135,7 @@ class App {
           ${isLesson ? `
             <nav class="nav-menu">
               <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">النص</button>
-              <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${activeTerms.length})</button>
+              <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${activeTermsCount})</button>
               <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">الاختبار</button>
             </nav>` : ''}
         </div>
@@ -179,7 +183,10 @@ class App {
         <main class="main-content">
             <div class="flashcard-container" onclick="this.classList.toggle('flipped')">
                 <div class="flashcard">
-                    <div class="flashcard-front"><h1>${t.english}</h1></div>
+                    <div class="flashcard-front">
+                        <h1>${t.english}</h1>
+                        <button class="hero-btn" data-action="speak" data-param="${t.english}" style="margin-top:20px; font-size:0.9rem;">🔊 نطق الكلمة</button>
+                    </div>
                     <div class="flashcard-back"><h1>${t.arabic}</h1></div>
                 </div>
             </div>
@@ -203,7 +210,17 @@ class App {
       let opts = [...activeQuizTerms].sort(()=>Math.random()-0.5).slice(0,4);
       if(!opts.find(o => o.english === q.english)) opts[0] = q;
 
-      return `<main class="main-content"><div class="reading-card"><h1 style="text-align:center;margin-bottom:30px;">${q.english}</h1><div class="options-grid">${opts.sort(()=>Math.random()-0.5).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${q.arabic}">${o.arabic}</button>`).join('')}</div></div></main>`;
+      return `<main class="main-content">
+        <div class="reading-card">
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
+                <h1 style="margin:0;">${q.english}</h1>
+                <button class="hero-btn" data-action="speak" data-param="${q.english}" style="margin:0; padding:5px 10px; font-size:0.8rem;">🔊</button>
+            </div>
+            <div class="options-grid">
+                ${opts.sort(()=>Math.random()-0.5).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${q.arabic}">${o.arabic}</button>`).join('')}
+            </div>
+        </div>
+      </main>`;
     }
   }
 
