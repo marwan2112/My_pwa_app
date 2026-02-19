@@ -7,7 +7,7 @@ class App {
     this.quizIndex = 0;
     this.quizScore = 0;
     this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
-    this.typingTimer = null; // مؤقت لعملية الترجمة
+    this.typingTimer = null;
     this.init();
   }
 
@@ -21,7 +21,6 @@ class App {
   }
 
   setupGlobalEvents() {
-    // مراقبة الضغط على الأزرار
     document.addEventListener('click', async (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -42,11 +41,9 @@ class App {
       this.render();
     });
 
-    // --- ميزة الترجمة التلقائية عند الكتابة ---
     document.addEventListener('input', (e) => {
       if (e.target.id === 'newEng') {
         clearTimeout(this.typingTimer);
-        // الانتظار لمدة 1000 مللي ثانية (ثانية واحدة) بعد آخر حرف تمت كتابته
         this.typingTimer = setTimeout(() => this.fetchTranslation(), 1000);
       }
     });
@@ -55,7 +52,6 @@ class App {
   async fetchTranslation() {
     const engInput = document.getElementById('newEng');
     const arbInput = document.getElementById('newArb');
-    
     if (!engInput || !engInput.value.trim()) return;
 
     const word = engInput.value.trim();
@@ -65,11 +61,9 @@ class App {
       const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
       const data = await res.json();
       if (data.responseData.translatedText) {
-        // تعبئة خانة العربي بالترجمة المقترحة
         arbInput.value = data.responseData.translatedText;
       }
     } catch (e) {
-      console.error("خطأ في الاتصال بمحرك الترجمة");
       arbInput.placeholder = "اكتب الترجمة يدوياً";
     }
   }
@@ -85,7 +79,9 @@ class App {
         arabic: arb 
       });
       this.saveVocab();
-      alert(`✅ تمت إضافة "${eng}" لبطاقاتك`);
+      alert(`✅ تمت إضافة "${eng}"`);
+      document.getElementById('newEng').value = '';
+      document.getElementById('newArb').value = '';
       this.render();
     }
   }
@@ -95,16 +91,26 @@ class App {
   render() {
     const app = document.getElementById('app');
     const lesson = window.lessonsData ? window.lessonsData[this.selectedLessonId] : null;
-    const originalTerms = lesson ? (lesson.terms || []) : [];
     const addedTerms = this.userVocabulary.filter(v => String(v.lessonId) === String(this.selectedLessonId));
-    const terms = [...originalTerms, ...addedTerms];
+    const terms = [...(lesson?.terms || []), ...addedTerms];
 
     app.innerHTML = this.renderHeader(terms) + `<div id="view">${this.renderView(lesson, terms)}</div>`;
   }
 
   renderHeader(terms) {
     const isLesson = this.selectedLessonId;
-    return `<header class="header"><div class="header-content"><h2 data-action="goHome" style="cursor:pointer">English Booster</h2>${isLesson ? `<nav class="nav-menu"><button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">النص</button><button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${terms.length})</button><button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">الاختبار</button></nav>` : ''}</div></header>`;
+    return `
+      <header class="header">
+        <div class="header-content">
+          <h2 data-action="goHome" style="cursor:pointer">English Booster</h2>
+          ${isLesson ? `
+            <nav class="nav-menu">
+              <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">النص</button>
+              <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">البطاقات (${terms.length})</button>
+              <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">الاختبار</button>
+            </nav>` : ''}
+        </div>
+      </header>`;
   }
 
   renderView(lesson, terms) {
@@ -117,7 +123,26 @@ class App {
 
     if (this.currentPage === 'reading') {
       if (!lesson) return `<main class="main-content">النص غير موجود</main>`;
-      return `<main class="main-content"><button class="hero-btn" data-action="setPage" data-param="lessons">← رجوع</button><div class="reading-card" style="margin-top:15px;"><h2>${lesson.title}</h2><div class="reading-body" style="white-space:pre-wrap;">${lesson.content}</div><div style="background:#f0fdf4;padding:20px;border-radius:12px;margin-top:20px;border:2px solid #bbf7d0;"><h4>➕ إضافة سريعة للبطاقات:</h4><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><input type="text" id="newEng" placeholder="الكلمة بالانجليزية" style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;"><input type="text" id="newArb" placeholder="الترجمة ستظهر هنا..." style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;"><button class="hero-btn" data-action="addNewWord" style="background:#16a34a;border:none;color:white;">حفظ</button></div><p style="font-size:0.8rem;color:#666;margin-top:8px;">* اكتب الكلمة وانتظر ثانية للترجمة التلقائية</p></div></div></main>`;
+      return `
+        <main class="main-content" style="padding: 10px; height: calc(100vh - 80px); display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+             <button class="hero-btn" data-action="setPage" data-param="lessons" style="margin:0; padding: 5px 15px;">← رجوع</button>
+             <h3 style="margin:0; font-size: 1rem; color: #1e3a8a;">${lesson.title}</h3>
+          </div>
+          
+          <div style="flex: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; line-height: 1.8; font-size: 1.1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="white-space: pre-wrap;">${lesson.content}</div>
+          </div>
+
+          <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin-top: 10px; border: 2px solid #bbf7d0;">
+            <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #166534;">➕ إضافة سريعة:</h4>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="newEng" placeholder="Word" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+              <input type="text" id="newArb" placeholder="المعنى" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+              <button class="hero-btn" data-action="addNewWord" style="background: #16a34a; border: none; color: white; margin: 0; padding: 0 15px;">حفظ</button>
+            </div>
+          </div>
+        </main>`;
     }
 
     if (this.currentPage === 'flashcards') {
@@ -150,5 +175,4 @@ class App {
   prevCard() { if (this.currentCardIndex > 0) { this.currentCardIndex--; } }
 }
 
-// تشغيل التطبيق بعد تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => { window.appInstance = new App(); });
