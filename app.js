@@ -6,15 +6,14 @@ class App {
     this.currentCardIndex = 0;
     this.quizIndex = 0;
     this.quizScore = 0;
+    this.quizQuestions = []; // مصفوفة لتخزين الأسئلة المجهزة للاختبار
     
-    // الذاكرة
     this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
     this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
     this.unlockedLessons = JSON.parse(localStorage.getItem('unlockedLessons')) || [];
     
     this.isUnlockTest = false; 
     this.tempLessonToUnlock = null;
-    this.unlockQuizLength = 0; // سيتم تحديدها ديناميكياً (نصف كلمات الدرس السابق)
     
     this.typingTimer = null;
     this.init();
@@ -37,12 +36,18 @@ class App {
     return this.unlockedLessons.includes(String(lessonId));
   }
 
+  // ميزة الفتح: تجهيز مصفوفة أسئلة فريدة وغير مكررة
+  prepareQuiz(terms) {
+    const shuffled = [...terms].sort(() => 0.5 - Math.random());
+    const limit = this.isUnlockTest ? Math.max(1, Math.floor(terms.length / 2)) : terms.length;
+    this.quizQuestions = shuffled.slice(0, limit);
+    this.quizIndex = 0;
+    this.quizScore = 0;
+  }
+
   startUnlockTest(targetLessonId) {
     const levelLessons = window.lessonsList[this.selectedLevel];
     const currentIndex = levelLessons.findIndex(l => String(l.id) === String(targetLessonId));
-    
-    if (currentIndex <= 0) return; 
-
     const prevLessonId = levelLessons[currentIndex - 1].id;
     const prevLessonData = window.lessonsData[prevLessonId];
     const prevAdded = this.userVocabulary.filter(v => String(v.lessonId) === String(prevLessonId));
@@ -53,13 +58,9 @@ class App {
         return;
     }
 
-    // تحديد عدد الأسئلة بنصف عدد كلمات الدرس السابق
-    this.unlockQuizLength = Math.max(1, Math.floor(allPrevTerms.length / 2));
-    
     this.isUnlockTest = true;
     this.tempLessonToUnlock = targetLessonId;
-    this.quizIndex = 0;
-    this.quizScore = 0;
+    this.prepareQuiz(allPrevTerms);
     this.currentPage = 'quiz';
     this.render();
   }
@@ -103,9 +104,7 @@ class App {
       const result = await Tesseract.recognize(file, 'eng');
       document.getElementById('custom-text-input').value = result.data.text;
       statusDiv.innerText = "✅ تمت القراءة بنجاح!";
-    } catch (e) {
-      statusDiv.innerText = "❌ فشل في قراءة الصورة.";
-    }
+    } catch (e) { statusDiv.innerText = "❌ فشل في قراءة الصورة."; }
   }
 
   saveCustomLesson() {
@@ -132,14 +131,24 @@ class App {
       if (action === 'selLevel') { this.selectedLevel = param; this.currentPage = 'lessons'; }
       else if (action === 'selLesson') { 
           if (this.isLessonUnlocked(param, this.selectedLevel)) {
-              this.selectedLessonId = param; this.currentPage = 'reading'; this.resetState(); 
+              this.selectedLessonId = param; 
+              this.currentPage = 'reading'; 
+              this.resetState(); 
           } else {
               if (confirm('هذا الدرس مقفل. هل تريد خوض اختبار الفتح؟')) {
                   this.startUnlockTest(param);
               }
           }
       }
-      else if (action === 'setPage') { this.currentPage = param; }
+      else if (action === 'setPage') { 
+          if (param === 'quiz') {
+              const lesson = window.lessonsData[this.selectedLessonId];
+              const added = this.userVocabulary.filter(v => String(v.lessonId) === String(this.selectedLessonId));
+              const all = [...(lesson?.terms || []), ...added].filter(t => !this.masteredWords.includes(t.id));
+              this.prepareQuiz(all);
+          }
+          this.currentPage = param; 
+      }
       else if (action === 'goHome') { this.selectedLevel = null; this.selectedLessonId = null; this.currentPage = 'home'; this.isUnlockTest = false; }
       else if (action === 'nextC') { this.nextCard(btn.dataset.total); }
       else if (action === 'prevC') { this.prevCard(); }
@@ -149,7 +158,12 @@ class App {
           window.speechSynthesis.speak(utterance); 
       }
       else if (action === 'ansQ') { this.handleAnswer(btn, param, btn.dataset.correct); }
-      else if (action === 'resetQ') { this.resetState(); }
+      else if (action === 'resetQ') { 
+          const lesson = window.lessonsData[this.selectedLessonId];
+          const added = this.userVocabulary.filter(v => String(v.lessonId) === String(this.selectedLessonId));
+          this.prepareQuiz([...(lesson?.terms || []), ...added]);
+          this.render();
+      }
       else if (action === 'addNewWord') { this.manualAddWord(); }
       else if (action === 'masterWord') { this.toggleMastered(param); }
       else if (action === 'deleteWord') { this.deleteWord(param); }
@@ -190,7 +204,13 @@ class App {
     }
   }
 
-  resetState() { this.quizIndex = 0; this.quizScore = 0; this.currentCardIndex = 0; this.isUnlockTest = false; }
+  resetState() { 
+      this.quizIndex = 0; 
+      this.quizScore = 0; 
+      this.currentCardIndex = 0; 
+      this.isUnlockTest = false; 
+      this.quizQuestions = [];
+  }
 
   render() {
     const app = document.getElementById('app');
@@ -275,24 +295,10 @@ class App {
     }
 
     if (this.currentPage === 'quiz') {
-      let quizTerms = [];
-      let totalQuestions = 0;
+      if (!this.quizQuestions.length) return `<main class="main-content" style="text-align:center"><h2>لا توجد كلمات كافية للاختبار</h2><button class="hero-btn" data-action="setPage" data-param="reading">رجوع</button></main>`;
 
-      if (this.isUnlockTest) {
-          const levelLessons = window.lessonsList[this.selectedLevel];
-          const currentIndex = levelLessons.findIndex(l => String(l.id) === String(this.tempLessonToUnlock));
-          const prevLessonId = levelLessons[currentIndex - 1].id;
-          const prevLesson = window.lessonsData[prevLessonId];
-          const prevAdded = this.userVocabulary.filter(v => String(v.lessonId) === String(prevLessonId));
-          quizTerms = [...prevLesson.terms, ...prevAdded].sort(() => 0.5 - Math.random());
-          totalQuestions = this.unlockQuizLength;
-      } else {
-          quizTerms = terms.filter(t => !this.masteredWords.includes(t.id));
-          totalQuestions = quizTerms.length;
-      }
-
-      if (this.quizIndex >= totalQuestions) {
-          const scorePercent = (this.quizScore / totalQuestions) * 100;
+      if (this.quizIndex >= this.quizQuestions.length) {
+          const scorePercent = (this.quizScore / this.quizQuestions.length) * 100;
           if (this.isUnlockTest) {
               if (scorePercent >= 70) {
                   return `<main class="main-content" style="text-align:center"><h2>🎉 مبروك! نجحت بنسبة ${scorePercent.toFixed(0)}%</h2><p>تم فتح الدرس بنجاح.</p><button class="hero-btn" onclick="window.appInstance.unlockLesson('${this.tempLessonToUnlock}')">ادخل للدرس</button></main>`;
@@ -300,33 +306,49 @@ class App {
                   return `<main class="main-content" style="text-align:center"><h2>😟 للاسف، نتيجتك ${scorePercent.toFixed(0)}%</h2><p>يجب أن تحصل على 70% لفتح هذا الدرس.</p><button class="hero-btn" data-action="goHome">العودة للرئيسية</button></main>`;
               }
           }
-          return `<main class="main-content" style="text-align:center"><h2>النتيجة: ${this.quizScore} من ${totalQuestions}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
+          return `<main class="main-content" style="text-align:center"><h2>النتيجة: ${this.quizScore} من ${this.quizQuestions.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
       }
 
-      const q = quizTerms[this.quizIndex];
-      let opts = [...quizTerms].sort(()=>Math.random()-0.5).slice(0,4);
-      if(!opts.find(o => o.english === q.english)) opts[0] = q;
+      const q = this.quizQuestions[this.quizIndex];
+      // توليد خيارات من مصفوفة الأسئلة لضمان عدم التكرار الخارجي
+      let opts = [q];
+      let otherPool = terms.filter(t => t.id !== q.id);
+      let randomOthers = otherPool.sort(() => 0.5 - Math.random()).slice(0, 3);
+      opts = [...opts, ...randomOthers].sort(() => 0.5 - Math.random());
 
       return `<main class="main-content">
         <div class="reading-card">
-            <h3 style="text-align:center; color:#6b7280; margin-bottom:10px;">السؤال ${this.quizIndex + 1} من ${totalQuestions}</h3>
+            <h3 style="text-align:center; color:#6b7280; margin-bottom:10px;">السؤال ${this.quizIndex + 1} من ${this.quizQuestions.length}</h3>
             <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
                 <h1>${q.english}</h1><button class="hero-btn" data-action="speak" data-param="${q.english}">🔊</button>
             </div>
-            <div class="options-grid">${opts.sort(()=>Math.random()-0.5).map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${q.arabic}">${o.arabic}</button>`).join('')}</div>
+            <div class="options-grid">${opts.map(o => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${o.arabic}" data-correct="${q.arabic}">${o.arabic}</button>`).join('')}</div>
         </div></main>`;
     }
   }
 
   handleAnswer(btn, selected, correct) {
     const btns = document.querySelectorAll('.quiz-opt-btn');
-    btns.forEach(b => { b.style.pointerEvents = 'none'; if (b.innerText === correct) b.style.background = "#22c55e"; else if (b.innerText === selected) b.style.background = "#ef4444"; });
+    btns.forEach(b => { 
+        b.style.pointerEvents = 'none'; 
+        if (b.innerText === correct) {
+            b.style.background = "#22c55e"; 
+            b.style.color = "white";
+        } else if (b.innerText === selected) {
+            b.style.background = "#ef4444"; 
+            b.style.color = "white";
+        }
+    });
+    
     if(selected === correct) this.quizScore++;
-    setTimeout(() => { this.quizIndex++; this.render(); }, 1200);
+    
+    // الانتقال بعد 1 ثانية بالضبط لإتاحة الفرصة لرؤية الجواب
+    setTimeout(() => { 
+        this.quizIndex++; 
+        this.render(); 
+    }, 1000);
   }
 
   nextCard(total) { if (this.currentCardIndex < total - 1) this.currentCardIndex++; }
   prevCard() { if (this.currentCardIndex > 0) this.currentCardIndex--; }
 }
-
-document.addEventListener('DOMContentLoaded', () => { window.appInstance = new App(); });
