@@ -21,7 +21,7 @@ class App {
     localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary));
   }
 
-  // دالة لحفظ الكلمة (Mastered) لعدم تكرارها
+  // --- ميزات الكلمات (حفظ وحذف) ---
   toggleMastered(wordId) {
     if (this.masteredWords.includes(wordId)) {
       this.masteredWords = this.masteredWords.filter(id => id !== wordId);
@@ -32,7 +32,6 @@ class App {
     this.render();
   }
 
-  // دالة لحذف الكلمة نهائياً
   deleteWord(wordId) {
     if (confirm('هل أنت متأكد من حذف هذه الكلمة نهائياً؟')) {
       this.userVocabulary = this.userVocabulary.filter(v => String(v.id) !== String(wordId));
@@ -41,6 +40,38 @@ class App {
       localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
       this.render();
     }
+  }
+
+  // --- ميزات الكاميرا والمعالجة (OCR) ---
+  async scanImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const statusDiv = document.getElementById('ocr-status');
+    statusDiv.innerText = "⏳ جاري قراءة النص من الصورة... انتظر قليلاً";
+    try {
+      const result = await Tesseract.recognize(file, 'eng');
+      document.getElementById('custom-text-input').value = result.data.text;
+      statusDiv.innerText = "✅ تمت القراءة بنجاح!";
+    } catch (e) {
+      statusDiv.innerText = "❌ فشل في قراءة الصورة.";
+    }
+  }
+
+  saveCustomLesson() {
+    const text = document.getElementById('custom-text-input').value.trim();
+    if (!text) return alert("الرجاء إضافة نص أولاً");
+    const newId = "custom-" + Date.now();
+    const newLesson = {
+      id: newId,
+      title: "نص مستورد " + new Date().toLocaleDateString('ar-EG'),
+      content: text,
+      terms: []
+    };
+    if(!window.lessonsData) window.lessonsData = {};
+    window.lessonsData[newId] = newLesson;
+    this.selectedLessonId = newId;
+    this.currentPage = 'reading';
+    this.render();
   }
 
   setupGlobalEvents() {
@@ -82,31 +113,20 @@ class App {
     const engInput = document.getElementById('newEng');
     const arbInput = document.getElementById('newArb');
     if (!engInput || !engInput.value.trim()) return;
-
     const word = engInput.value.trim();
     arbInput.placeholder = "جاري الترجمة...";
-    
     try {
       const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
       const data = await res.json();
-      if (data.responseData.translatedText) {
-        arbInput.value = data.responseData.translatedText;
-      }
-    } catch (e) {
-      arbInput.placeholder = "اكتب الترجمة يدوياً";
-    }
+      if (data.responseData.translatedText) arbInput.value = data.responseData.translatedText;
+    } catch (e) { arbInput.placeholder = "اكتب الترجمة يدوياً"; }
   }
 
   manualAddWord() {
     const eng = document.getElementById('newEng').value.trim();
     const arb = document.getElementById('newArb').value.trim();
     if (eng && arb) {
-      this.userVocabulary.push({ 
-        id: "u-" + Date.now(), 
-        lessonId: String(this.selectedLessonId), 
-        english: eng, 
-        arabic: arb 
-      });
+      this.userVocabulary.push({ id: "u-" + Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
       this.saveVocab();
       document.getElementById('newEng').value = '';
       document.getElementById('newArb').value = '';
@@ -121,7 +141,6 @@ class App {
     const lesson = window.lessonsData ? window.lessonsData[this.selectedLessonId] : null;
     const addedTerms = this.userVocabulary.filter(v => String(v.lessonId) === String(this.selectedLessonId));
     const terms = [...(lesson?.terms || []), ...addedTerms];
-
     app.innerHTML = this.renderHeader(terms) + `<div id="view">${this.renderView(lesson, terms)}</div>`;
   }
 
@@ -143,8 +162,32 @@ class App {
   }
 
   renderView(lesson, terms) {
-    if (this.currentPage === 'home') return `<main class="main-content"><div class="hero"><h1>خطة الاحتراف</h1></div><div class="features-grid">${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div></main>`;
+    if (this.currentPage === 'home') {
+      return `<main class="main-content">
+        <div class="hero"><h1>خطة الاحتراف</h1></div>
+        <div style="text-align:center; margin-bottom:20px;">
+            <button class="hero-btn" data-action="setPage" data-param="addLesson" style="background:#8b5cf6; width:90%; margin:0 auto;">📸 إضافة نص عبر الكاميرا</button>
+        </div>
+        <div class="features-grid">${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><div style="font-size:3rem">${l.icon}</div><h3>${l.name}</h3></div>`).join('')}</div>
+      </main>`;
+    }
     
+    if (this.currentPage === 'addLesson') {
+      return `<main class="main-content">
+          <button class="hero-btn" data-action="goHome">← رجوع</button>
+          <div class="reading-card" style="margin-top:20px;">
+              <h3 style="text-align:center;">إضافة نص خاص</h3>
+              <p id="ocr-status" style="font-size:0.8rem; color:#1e3a8a; text-align:center; min-height:20px;"></p>
+              <input type="file" id="imageInput" accept="image/*" capture="environment" style="display:none;" onchange="window.appInstance.scanImage(event)">
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                  <button class="hero-btn" onclick="document.getElementById('imageInput').click()" style="background:#8b5cf6; margin:0;">📸 تصوير نص بالكاميرا</button>
+                  <textarea id="custom-text-input" placeholder="النص سيظهر هنا..." style="width:100%; height:200px; border-radius:12px; padding:12px; border:1px solid #ddd; font-size:1rem; direction:ltr; text-align:left;"></textarea>
+                  <button class="hero-btn" onclick="window.appInstance.saveCustomLesson()" style="background:#16a34a; margin:0;">💾 حفظ كدرس للبدء بدراسته</button>
+              </div>
+          </div>
+      </main>`;
+    }
+
     if (this.currentPage === 'lessons') {
       const list = window.lessonsList ? window.lessonsList[this.selectedLevel] : [];
       return `<main class="main-content"><button class="hero-btn" data-action="goHome">← رجوع</button><div class="features-grid" style="margin-top:20px;">${list.map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>${l.title}</h3></div>`).join('')}</div></main>`;
@@ -175,10 +218,8 @@ class App {
     if (this.currentPage === 'flashcards') {
       const activeTerms = terms.filter(t => !this.masteredWords.includes(t.id));
       if (!activeTerms.length) return `<main class="main-content" style="text-align:center;"><h2>🎉 بطل! خلصت الكلمات</h2><button class="hero-btn" data-action="setPage" data-param="reading">ارجع للنص</button></main>`;
-      
       const t = activeTerms[this.currentCardIndex] || activeTerms[0];
       if (this.currentCardIndex >= activeTerms.length) this.currentCardIndex = 0;
-
       return `
         <main class="main-content">
             <div class="flashcard-container" onclick="this.classList.toggle('flipped')">
@@ -205,11 +246,9 @@ class App {
     if (this.currentPage === 'quiz') {
       const activeQuizTerms = terms.filter(t => !this.masteredWords.includes(t.id));
       if (this.quizIndex >= activeQuizTerms.length) return `<main class="main-content" style="text-align:center"><h2>النتيجة النهائية: ${this.quizScore} من ${activeQuizTerms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
-      
       const q = activeQuizTerms[this.quizIndex];
       let opts = [...activeQuizTerms].sort(()=>Math.random()-0.5).slice(0,4);
       if(!opts.find(o => o.english === q.english)) opts[0] = q;
-
       return `<main class="main-content">
         <div class="reading-card">
             <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
