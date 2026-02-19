@@ -38,6 +38,10 @@ constructor() {
       else if (action === 'ansQ') { this.handleAnswer(btn, param, btn.dataset.correct); }
       else if (action === 'resetQ') { this.resetState(); }
       else if (action === 'addNewWord') { this.manualAddWord(); }
+      // --- الأسطر الجديدة هنا ---
+      else if (action === 'masterWord') { this.toggleMastered(param); }
+      else if (action === 'deleteWord') { this.deleteWord(param); }
+      // -------------------------
       
       this.render();
     });
@@ -126,38 +130,59 @@ if (this.currentPage === 'reading') {
       if (!lesson) return `<main class="main-content">النص غير موجود</main>`;
       return `
         <main class="main-content" style="padding: 10px; height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
-          
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0;">
              <button class="hero-btn" data-action="setPage" data-param="lessons" style="margin:0; padding: 4px 12px; font-size: 0.8rem;">← رجوع</button>
-             <h3 style="margin:0; font-size: 0.9rem; color: #1e3a8a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">${lesson.title}</h3>
+             <h3 style="margin:0; font-size: 0.9rem; color: #1e3a8a;">${lesson.title}</h3>
           </div>
           
-          <div style="flex-grow: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 10px; -webkit-overflow-scrolling: touch;">
-            <div style="white-space: pre-wrap; line-height: 1.6; font-size: 1rem; color: #333;">${lesson.content}</div>
+          <div style="flex-grow: 1; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 10px; text-align: left; direction: ltr; -webkit-overflow-scrolling: touch;">
+            <div style="white-space: pre-wrap; line-height: 1.6; font-size: 1.1rem; color: #333;">${lesson.content}</div>
           </div>
 
           <div style="background: #f0fdf4; padding: 12px; border-radius: 12px; border: 2px solid #bbf7d0; flex-shrink: 0;">
             <h4 style="margin: 0 0 8px 0; font-size: 0.85rem; color: #166534;">➕ إضافة سريعة:</h4>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <input type="text" id="newEng" placeholder="الكلمة (English)" 
-                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;">
-              
-              <input type="text" id="newArb" placeholder="المعنى (عربي)" 
-                style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;">
-              
-              <button class="hero-btn" data-action="addNewWord" 
-                style="background: #16a34a; border: none; color: white; margin: 0; padding: 12px; width: 100%; font-weight: bold;">حفظ في البطاقات</button>
+              <input type="text" id="newEng" placeholder="Word" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px;">
+              <input type="text" id="newArb" placeholder="المعنى" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px;">
+              <button class="hero-btn" data-action="addNewWord" style="background: #16a34a; border: none; color: white; margin: 0; padding: 12px; width: 100%;">حفظ</button>
             </div>
           </div>
         </main>`;
     }
-    if (this.currentPage === 'flashcards') {
-      if (!terms.length) return `<main class="main-content">لا توجد كلمات في هذا الدرس.</main>`;
-      const t = terms[this.currentCardIndex];
-      return `<main class="main-content"><div class="flashcard-container" onclick="this.classList.toggle('flipped')"><div class="flashcard"><div class="flashcard-front"><h1>${t.english}</h1><button class="hero-btn" data-action="speak" data-param="${t.english}" style="margin-top:20px">🔊 استمع</button></div><div class="flashcard-back"><h1>${t.arabic}</h1></div></div></div><div class="controls"><button class="hero-btn" data-action="prevC">السابق</button><span>${this.currentCardIndex+1} / ${terms.length}</span><button class="hero-btn" data-action="nextC" data-total="${terms.length}">التالي</button></div></main>`;
-    }
+if (this.currentPage === 'flashcards') {
+      // فلترة الكلمات عشان المحفوظة ما تطلع
+      const activeTerms = terms.filter(t => !this.masteredWords.includes(t.id));
+      
+      if (!activeTerms.length) return `<main class="main-content" style="text-align:center;"><h2>🎉 بطل! خلصت الكلمات</h2><button class="hero-btn" data-action="setPage" data-param="reading">ارجع للنص</button></main>`;
+      
+      const t = activeTerms[this.currentCardIndex] || activeTerms[0];
+      if (this.currentCardIndex >= activeTerms.length) this.currentCardIndex = 0;
 
+      return `
+        <main class="main-content">
+            <div class="flashcard-container" onclick="this.classList.toggle('flipped')">
+                <div class="flashcard">
+                    <div class="flashcard-front"><h1>${t.english}</h1></div>
+                    <div class="flashcard-back"><h1>${t.arabic}</h1></div>
+                </div>
+            </div>
+            
+            <div style="display:flex; justify-content:center; gap:10px; margin: 15px 0;">
+                <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#059669; font-size:0.8rem; margin:0;">✅ حفظتها</button>
+                <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#dc2626; font-size:0.8rem; margin:0;">🗑️ حذف</button>
+            </div>
+
+            <div class="controls">
+                <button class="hero-btn" data-action="prevC">السابق</button>
+                <span>${this.currentCardIndex + 1} / ${activeTerms.length}</span>
+                <button class="hero-btn" data-action="nextC" data-total="${activeTerms.length}">التالي</button>
+            </div>
+        </main>`;
+    }
     if (this.currentPage === 'quiz') {
+        // استبدل أول سطر في الـ Quiz بهذا:
+const activeQuizTerms = terms.filter(t => !this.masteredWords.includes(t.id));
+if (this.quizIndex >= activeQuizTerms.length) // ... وباقي الكود يستخدم activeQuizTerms
       if (this.quizIndex >= terms.length) return `<main class="main-content" style="text-align:center"><h2>النتيجة النهائية: ${this.quizScore} من ${terms.length}</h2><button class="hero-btn" data-action="resetQ">إعادة الاختبار</button></main>`;
       const q = terms[this.quizIndex];
       let opts = [...terms].sort(()=>Math.random()-0.5).slice(0,4);
@@ -180,5 +205,26 @@ if (this.currentPage === 'reading') {
   nextCard(total) { if (this.currentCardIndex < total - 1) { this.currentCardIndex++; } }
   prevCard() { if (this.currentCardIndex > 0) { this.currentCardIndex--; } }
 }
+// دالة لحفظ الكلمة عشان ما تظهر مرة ثانية
+  toggleMastered(wordId) {
+    if (this.masteredWords.includes(wordId)) {
+      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
+    } else {
+      this.masteredWords.push(wordId);
+    }
+    localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
+    this.render();
+  }
 
+ 
 document.addEventListener('DOMContentLoaded', () => { window.appInstance = new App(); });
+ // دالة لحذف الكلمة نهائياً
+  deleteWord(wordId) {
+    if (confirm('هل أنت متأكد من حذف هذه الكلمة نهائياً؟')) {
+      this.userVocabulary = this.userVocabulary.filter(v => String(v.id) !== String(wordId));
+      this.masteredWords = this.masteredWords.filter(id => id !== wordId);
+      this.saveVocab();
+      localStorage.setItem('masteredWords', JSON.stringify(this.masteredWords));
+      this.render();
+    }
+  }
