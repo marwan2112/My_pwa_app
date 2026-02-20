@@ -194,10 +194,10 @@ class App {
                     this.saveData(); 
                     if (this.currentCardIndex > 0) this.currentCardIndex--;
                     this.render(); break;
-                case 'restartCards': // الوظيفة الجديدة: إعادة تشغيل القائمة الحالية من أول بطاقة متبقية
+                case 'restartCards': 
                     this.currentCardIndex = 0; 
                     this.render(); break;
-                case 'resetAll': // خيار إضافي إذا أردت تصفير كل شيء فعلاً (للطوارئ)
+                case 'resetAll': 
                     if(confirm('سيتم إعادة إظهار جميع الكلمات المحفوظة والمحذوفة لهذا الدرس، هل أنت متأكد؟')) {
                         const idsToReset = JSON.parse(param);
                         this.masteredWords = this.masteredWords.filter(id => !idsToReset.includes(String(id)));
@@ -347,7 +347,10 @@ class App {
                 </div>
                 <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
                     <div class="flashcard">
-                        <div class="flashcard-front"><h1>${t.english}</h1></div>
+                        <div class="flashcard-front">
+                            <h1>${t.english}</h1>
+                            <button class="hero-btn" data-action="speak" data-param="${t.english}" style="margin-top:15px; background:rgba(255,255,255,0.2); border:1px solid white; padding:5px 15px;">🔊 نطق الكلمة</button>
+                        </div>
                         <div class="flashcard-back"><h1>${t.arabic}</h1></div>
                     </div>
                 </div>
