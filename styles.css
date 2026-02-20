@@ -210,6 +210,9 @@ body {
     box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
     border: 1px solid #e2e8f0;
     margin-bottom: 20px;
+    direction: ltr;         /* لتغيير اتجاه القراءة من اليسار لليمين */
+    text-align: left;       /* لمحاذاة النص لجهة اليسار */
+    line-height: 1.8;       /* اختياري: لجعل النص مريحاً للعين */
 }
 
 /* 9. شاشات الجوال */
