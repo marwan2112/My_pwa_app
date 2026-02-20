@@ -22,7 +22,7 @@ class App {
         this.quizQuestions = [];
         this.quizOptions = [];
         this.isWaiting = false;
-        this.typingTimer = null; // للمؤقت السريع
+        this.typingTimer = null; 
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -47,7 +47,6 @@ class App {
         localStorage.setItem('customLessons', JSON.stringify(this.customLessons));
     }
 
-    // --- محرك الترجمة الفوري والسريع ---
     async translateWord(word) {
         if (!word || word.trim().length < 2) return "";
         try {
@@ -62,14 +61,12 @@ class App {
     handleTypingTranslate(word) {
         clearTimeout(this.typingTimer);
         const arbInput = document.getElementById('newArb');
-        
-        // إذا كان الحقل فارغاً، نبدأ بالبحث فوراً بعد 300 مللي ثانية من التوقف عن الكتابة
         this.typingTimer = setTimeout(async () => {
             if (word.trim().length > 1) {
                 const suggested = await this.translateWord(word);
                 if (suggested && (arbInput.value.trim() === "" || arbInput.dataset.auto === "true")) {
                     arbInput.value = suggested;
-                    arbInput.dataset.auto = "true"; // علامة توضح أن النص تلقائي
+                    arbInput.dataset.auto = "true";
                 }
             } else {
                 arbInput.value = "";
@@ -187,15 +184,26 @@ class App {
                     this.currentPage = param; break;
                 case 'deleteWord': 
                     if(confirm('هل أنت متأكد من حذف هذه البطاقة نهائياً من العرض؟')) {
-                        this.hiddenFromCards.push(String(param)); this.saveData(); this.render();
+                        this.hiddenFromCards.push(String(param)); 
+                        this.saveData(); 
+                        if (this.currentCardIndex > 0) this.currentCardIndex--;
+                        this.render();
                     } break;
                 case 'masterWord': 
-                    this.masteredWords.push(param); this.saveData(); this.render(); break;
-                case 'resetReview':
-                    const idsToReset = JSON.parse(param);
-                    this.masteredWords = this.masteredWords.filter(id => !idsToReset.includes(String(id)));
-                    this.hiddenFromCards = this.hiddenFromCards.filter(id => !idsToReset.includes(String(id)));
-                    this.saveData(); this.currentCardIndex = 0; this.render(); break;
+                    this.masteredWords.push(param); 
+                    this.saveData(); 
+                    if (this.currentCardIndex > 0) this.currentCardIndex--;
+                    this.render(); break;
+                case 'restartCards': // الوظيفة الجديدة: إعادة تشغيل القائمة الحالية من أول بطاقة متبقية
+                    this.currentCardIndex = 0; 
+                    this.render(); break;
+                case 'resetAll': // خيار إضافي إذا أردت تصفير كل شيء فعلاً (للطوارئ)
+                    if(confirm('سيتم إعادة إظهار جميع الكلمات المحفوظة والمحذوفة لهذا الدرس، هل أنت متأكد؟')) {
+                        const idsToReset = JSON.parse(param);
+                        this.masteredWords = this.masteredWords.filter(id => !idsToReset.includes(String(id)));
+                        this.hiddenFromCards = this.hiddenFromCards.filter(id => !idsToReset.includes(String(id)));
+                        this.saveData(); this.currentCardIndex = 0; this.render();
+                    } break;
                 case 'speak': window.speechSynthesis.speak(new SpeechSynthesisUtterance(param)); break;
                 case 'nextC': if (this.currentCardIndex < (total - 1)) this.currentCardIndex++; break;
                 case 'prevC': if (this.currentCardIndex > 0) this.currentCardIndex--; break;
@@ -327,7 +335,8 @@ class App {
             if (active.length === 0) {
                 return `<main class="main-content" style="text-align:center;">
                     <div class="reading-card"><h2>🎉 انتهت الكلمات!</h2>
-                    <button class="hero-btn" data-action="resetReview" data-param='${allIds}'>🔄 إعادة تكرار كل الكلمات</button></div>
+                    <p>لقد قمت بمراجعة أو حذف جميع الكلمات في هذا الدرس.</p>
+                    <button class="hero-btn" data-action="resetAll" data-param='${allIds}' style="background:#dc2626;">🔄 إعادة إظهار كل الكلمات (تصفير)</button></div>
                 </main>`;
             }
             const t = active[this.currentCardIndex] || active[0];
@@ -351,7 +360,7 @@ class App {
                     <button class="hero-btn" data-action="nextC" data-total="${active.length}">التالي</button>
                 </div>
                 <center style="margin-top:30px;">
-                    <button class="hero-btn" data-action="resetReview" data-param='${allIds}' style="background:#64748b; font-size:0.8rem;">🔄 تصفير التقدم لهذا الدرس</button>
+                    <button class="hero-btn" data-action="restartCards" style="background:#64748b; font-size:0.8rem;">🔄 إعادة الجولة من البداية</button>
                 </center>
             </main>`;
         }
