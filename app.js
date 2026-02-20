@@ -8,10 +8,9 @@ class App {
     }
 
     init() {
-        // فحص وجود البيانات الأساسية
+        // التأكد من تحميل البيانات من ملف data.js
         if (typeof window.levels === 'undefined' || typeof window.lessonsData === 'undefined') {
-            console.warn("Waiting for data.js to load...");
-            setTimeout(() => this.init(), 500);
+            setTimeout(() => this.init(), 100);
             return;
         }
 
@@ -25,7 +24,7 @@ class App {
         this.quizOptions = [];
         this.isWaiting = false;
         this.typingTimer = null; 
-        this.lastScrollPos = 0; 
+        this.lastScrollPos = 0; // لحل مشكلة قفز النص للأعلى
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -40,7 +39,6 @@ class App {
 
         this.setupGlobalEvents();
         this.render();
-        console.log("App Initialized Successfully");
     }
 
     saveData() {
@@ -191,7 +189,7 @@ class App {
                     const eng = document.getElementById('newEng').value;
                     const arb = document.getElementById('newArb').value;
                     const scrollElem = document.querySelector('.reading-card');
-                    if (scrollElem) this.lastScrollPos = scrollElem.scrollTop;
+                    if (scrollElem) this.lastScrollPos = scrollElem.scrollTop; // حفظ مكان النص
                     if(eng && arb) {
                         this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
                         this.saveData(); this.render();
@@ -215,6 +213,8 @@ class App {
         const added = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
         app.innerHTML = this.getHeader(allTerms) + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
+        
+        // إعادة التمرير لمكانه بعد الرندر
         if (this.currentPage === 'reading') {
             const scrollElem = document.querySelector('.reading-card');
             if (scrollElem) scrollElem.scrollTop = this.lastScrollPos;
@@ -310,11 +310,11 @@ class App {
                 <input type="file" id="camIn" accept="image/*" style="display:none;" onchange="const f=this.files[0]; if(f){ Tesseract.recognize(f,'eng').then(r=>{document.getElementById('ocrText').value=r.data.text;}) }">
                 <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="width:100%; background:#8b5cf6;">فتح الكاميرا</button>
                 <textarea id="ocrText" placeholder="النص..." style="width:100%; height:150px; margin-top:10px;"></textarea>
-                <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ const id='c'+Date.now(); const newL={id, title:'نص جديد', content:t, terms:[]}; appInstance.customLessons[id]=newL; window.lessonsData[id]=newL; appInstance.saveData(); appInstance.selectedLessonId=id; appInstance.currentPage='reading'; appInstance.render(); }" style="width:100%; background:#16a34a;">حفظ وبدء</button>
+                <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ const id='c'+Date.now(); const newL={id, title:'نص جديد', content:t, terms:[]}; window.appInstance.customLessons[id]=newL; window.lessonsData[id]=newL; window.appInstance.saveData(); window.appInstance.selectedLessonId=id; window.appInstance.currentPage='reading'; window.appInstance.render(); }" style="width:100%; background:#16a34a;">حفظ وبدء</button>
             </div></main>`;
         }
     }
 }
 
-// السطر الأهم لربط HTML بالـ JavaScript
+// جعل النسخة متاحة بشكل عام للـ HTML
 window.appInstance = new App();
