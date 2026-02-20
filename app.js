@@ -8,6 +8,7 @@ class App {
     }
 
     init() {
+        // إذا لم يجد البيانات، سينتظر ويحاول مرة أخرى (هنا قد تظهر شاشة بيضاء مؤقتة)
         if (!window.levels || !window.lessonsData) {
             setTimeout(() => this.init(), 500);
             return;
@@ -23,7 +24,7 @@ class App {
         this.quizOptions = [];
         this.isWaiting = false;
         this.typingTimer = null; 
-        this.lastScrollPos = 0; // متغير جديد لحفظ موقع النص
+        this.lastScrollPos = 0; 
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -152,7 +153,6 @@ class App {
             switch(action) {
                 case 'goHome': 
                     this.currentPage = 'home'; 
-                    this.selectedLevel = null; 
                     this.selectedLessonId = null; 
                     this.isUnlockTest = false; 
                     break;
@@ -212,7 +212,6 @@ class App {
                 case 'addNewWord':
                     const eng = document.getElementById('newEng').value;
                     const arb = document.getElementById('newArb').value;
-                    // حفظ مكان التمرير الحالي قبل التحديث
                     const scrollElem = document.querySelector('.reading-card');
                     if (scrollElem) this.lastScrollPos = scrollElem.scrollTop;
 
@@ -220,9 +219,6 @@ class App {
                         this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
                         this.saveData(); 
                         this.render();
-                        // إعادة التمرير بعد الرندر
-                        const newScrollElem = document.querySelector('.reading-card');
-                        if (newScrollElem) newScrollElem.scrollTop = this.lastScrollPos;
                     } break;
                 case 'editTitle':
                     const newTitle = prompt('أدخل العنوان الجديد للدرس:', param);
@@ -244,7 +240,6 @@ class App {
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
         app.innerHTML = this.getHeader(allTerms) + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
         
-        // إعادة التمرير التلقائي إذا كان المستخدم في صفحة القراءة
         if (this.currentPage === 'reading') {
             const scrollElem = document.querySelector('.reading-card');
             if (scrollElem) scrollElem.scrollTop = this.lastScrollPos;
