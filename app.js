@@ -251,7 +251,7 @@ class App {
                     <h2 style="flex:1;">${lesson.title}</h2>
                     ${isCustom ? `<button class="hero-btn" data-action="editTitle" data-param="${lesson.title}" style="background:#64748b; padding:5px 10px;">📝 تعديل الاسم</button>` : ''}
                 </div>
-                <div class="reading-card" style="margin-top:10px; max-height:350px; overflow-y:auto; border-right:4px solid #1e40af;">${lesson ? lesson.content : 'لا يوجد نص'}</div>
+               <div class="reading-card" style="margin-top:15px; max-height:350px; overflow-y:auto; border-left:4px solid #1e40af; direction: ltr; text-align: left;">${lesson ? lesson.content : 'لا يوجد نص'}</div>
                 <div style="background:white; padding:15px; border-radius:12px; margin-top:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                     <h4>أضف كلمة من النص:</h4>
                     <input id="newEng" placeholder="English" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:5px;">
