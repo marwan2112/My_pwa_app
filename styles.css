@@ -88,3 +88,21 @@ body { font-family: 'Cairo', 'Poppins', sans-serif; background: #f0f4f8; color: 
 .correct-flash { background-color: #22c55e !important; color: white !important; border-color: #16a34a !important; }
 .wrong-flash { background-color: #ef4444 !important; color: white !important; border-color: #dc2626 !important; }
 }
+/* أضف هذا في نهاية الملف الحالي أو استبدله */
+.correct-flash { 
+    background-color: #22c55e !important; 
+    color: white !important; 
+    border-color: #16a34a !important;
+    transform: scale(1.02);
+}
+.wrong-flash { 
+    background-color: #ef4444 !important; 
+    color: white !important; 
+    border-color: #dc2626 !important;
+}
+.quiz-opt-btn {
+    transition: all 0.2s ease-in-out;
+}
+.quiz-opt-btn:disabled {
+    opacity: 1 !important; /* لضمان بقاء اللون واضحاً عند التجميد */
+}
