@@ -1,6 +1,6 @@
 /**
  * BOOSTER APP - PRO VERSION (Marwan Edition)
- * التحديث: تطوير اختبار اجتياز الدروس، إضافة أصوات، وتحسين واجهة الاختبار.
+ * التحديث: رفع نسبة النجاح لـ 75%، إخفاء أزرار التنقل أثناء اختبار الفتح، والحفاظ على كافة الميزات.
  */
 
 class App {
@@ -46,7 +46,6 @@ class App {
         this.render();
     }
 
-    // وظيفة إصدار أصوات تنبيهية (صح/خطأ)
     playTone(type) {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
@@ -110,14 +109,10 @@ class App {
         this.isUnlockTest = isUnlockMode;
         
         if (this.isUnlockTest) {
-            // اختيار نصف كلمات الدرس الأصلي
             const originalTerms = [...terms];
             const halfCount = Math.max(1, Math.floor(originalTerms.length / 2));
             let selectedPool = originalTerms.sort(() => 0.5 - Math.random()).slice(0, halfCount);
-            
-            // إضافة كلمات المستخدم المضافة لهذا الدرس (التي لم تحذف)
             const addedByUser = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId && !this.hiddenFromCards.includes(String(v.id)));
-            
             this.quizQuestions = [...selectedPool, ...addedByUser];
         } else {
             this.quizQuestions = terms.filter(t => !this.hiddenFromCards.includes(String(t.id)));
@@ -175,7 +170,7 @@ class App {
             if (action === 'ansQ') { this.handleAnswer(param, correct, btn); return; }
 
             switch(action) {
-                case 'goHome': this.currentPage = 'home'; this.selectedLessonId = null; break;
+                case 'goHome': this.currentPage = 'home'; this.selectedLevel = null; break;
                 case 'selLevel': 
                     this.selectedLevel = param; 
                     this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
@@ -186,6 +181,7 @@ class App {
                     if (isUnlocked) {
                         this.selectedLessonId = param;
                         this.currentPage = 'reading';
+                        this.isUnlockTest = false; // نضمن أنه ليس اختبار فتح
                     } else {
                         const currentIdx = list.findIndex(l => l.id == param);
                         const prevLessonId = list[currentIdx - 1].id;
@@ -228,6 +224,7 @@ class App {
                 case 'backToLessons':
                     this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons';
                     this.selectedLessonId = null;
+                    this.isUnlockTest = false;
                     break;
             }
             this.render();
@@ -245,13 +242,15 @@ class App {
 
     getHeader() {
         let nav = '';
+        const list = window.lessonsList[this.selectedLevel] || [];
+        // التحقق مما إذا كان الدرس مفتوحاً فعلياً
         const isUnlocked = this.selectedLessonId && 
             (this.unlockedLessons.includes(String(this.selectedLessonId)) || 
-            (window.lessonsList[this.selectedLevel] && window.lessonsList[this.selectedLevel][0].id == this.selectedLessonId) || 
+            (list[0] && list[0].id == this.selectedLessonId) || 
             this.selectedLevel === 'custom_list');
 
-        // إذا كان اختبار فتح درس مقفل (isUnlockTest)، لا نعرض أزرار التنقل
-        if (isUnlocked && !['home', 'lessons', 'custom_lessons_view', 'addLesson'].includes(this.currentPage) && !this.isUnlockTest) {
+        // لا تظهر القائمة إلا إذا كان الدرس فاتحاً ولسنا في حالة "اختبار فتح درس جديد"
+        if (isUnlocked && !this.isUnlockTest && !['home', 'lessons', 'custom_lessons_view', 'addLesson'].includes(this.currentPage)) {
             nav = `<nav class="nav-menu">
                 <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
                 <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
@@ -337,8 +336,8 @@ class App {
         if (this.currentPage === 'quiz') {
             if (this.quizIndex >= this.quizQuestions.length) {
                 const s = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
-                const pass = s >= 50;
-                let title = pass ? "🎉 مبروك! نجحت في الاختبار" : "💪 حاول مرة أخرى";
+                const pass = s >= 75; // النسبة الجديدة 75%
+                let title = pass ? "🎉 مبروك! نجحت في الاختبار" : "💪 حاول مرة أخرى (مطلوب 75%)";
                 if (this.isUnlockTest && pass) { this.unlockedLessons.push(String(this.tempLessonToUnlock)); this.saveData(); }
                 
                 return `<main class="main-content" style="text-align:center;"><div class="reading-card">
