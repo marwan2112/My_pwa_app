@@ -270,7 +270,7 @@ Skeptics, however, challenge the utility of this new generational label. They co
 { id: '303-48', english: 'Budgeting', arabic: 'ميزانية' },
 { id: '303-49', english: 'Readiness', arabic: 'الجاهزية' },
 { id: '303-50', english: 'Forcing', arabic: 'اجبار' }
-  ]
+]
 },
 
   '304': {
