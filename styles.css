@@ -25,8 +25,8 @@ body {
     position: sticky; 
     top: 0; 
     z-index: 1000; 
-    box-shadow: none; /* تم إزالة ظل الهيدر */
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: none !important; /* تم إلغاء الظل بالكامل */
+    border-bottom: 2px solid rgba(0,0,0,0.1);
 }
 
 .header-content { 
@@ -99,9 +99,9 @@ body {
     justify-content: center; 
     background: white; 
     border-radius: 24px; 
-    box-shadow: none; /* تم إزالة الظل من البطاقات */
+    box-shadow: none !important; /* إزالة ظل الكروت */
     padding: 30px;
-    border: 2px solid #e2e8f0; /* زيادة سمك الحدود لتعويض غياب الظل */
+    border: 3px solid #e2e8f0; /* زيادة سماكة الحدود لتعريف العنصر */
 }
 
 .flashcard-front h1, .flashcard-back h1 {
@@ -130,7 +130,7 @@ body {
     font-weight: 600;
     transition: all 0.2s ease;
     text-align: right;
-    box-shadow: none !important; /* التأكيد على إخفاء الظل تماماً */
+    box-shadow: none !important; /* إخفاء ظل أزرار الاختيارات */
 }
 
 .quiz-opt-btn:hover:not(:disabled) {
@@ -139,7 +139,7 @@ body {
     box-shadow: none !important;
 }
 
-/* ألوان النتيجة في الاختبار - صارمة جداً */
+/* ألوان النتيجة في الاختبار */
 .correct-flash { 
     background-color: #22c55e !important; 
     color: white !important; 
@@ -175,14 +175,14 @@ body {
     text-align: center; 
     cursor: pointer; 
     transition: 0.3s; 
-    box-shadow: none; /* إزالة الظل */
+    box-shadow: none !important; /* إزالة ظل بطاقات الدروس */
     border: 2px solid #e2e8f0;
     position: relative;
 }
 
 .feature-card:hover { 
     transform: translateY(-5px); 
-    box-shadow: none; 
+    box-shadow: none !important; 
     border-color: #1e40af;
 }
 
@@ -203,17 +203,17 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: none !important; /* إزالة ظل الأزرار البطولية */
+    box-shadow: none !important; /* إزالة ظل الأزرار الرئيسية */
 }
 
-.hero-btn:active { transform: scale(0.98); }
+.hero-btn:active { transform: scale(0.98); box-shadow: none !important; }
 
 /* 8. النص القرائي */
 .reading-card { 
     background: white; 
     padding: 2.5rem; 
     border-radius: 20px; 
-    box-shadow: none; /* إزالة الظل */
+    box-shadow: none !important; /* إزالة ظل حاوية النص */
     border: 2px solid #e2e8f0;
     margin-bottom: 20px;
     direction: ltr;         
@@ -238,6 +238,6 @@ body {
     padding: 15px;
     border-radius: 15px;
     margin-top: 15px;
-    box-shadow: none; /* إزالة الظل من شريط التحكم */
-    border: 1px solid #e2e8f0;
+    box-shadow: none !important; /* إزالة ظل أدوات التحكم */
+    border: 2px solid #e2e8f0;
 }
