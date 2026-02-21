@@ -1,6 +1,6 @@
 /**
- * BOOSTER APP - FINAL ULTIMATE VERSION (Marwan Edition)
- * التحديث النهائي: تفعيل كامل للمستويات، الحساب، إدارة النصوص، وإعادة تدوير البطاقات.
+ * BOOSTER APP - ULTIMATE MODEL (Marwan Edition)
+ * كود نموذجي: ثبات كامل، عدادات دقيقة، محاذاة يسار، منع تكرار، ونظام مستويات 100 كلمة.
  */
 
 class App {
@@ -29,7 +29,7 @@ class App {
         this.quizQuestions = [];
         this.quizOptions = [];
         this.isWaiting = false;
-        this.scrollPos = 0;
+        this.scrollPos = 0; 
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -52,7 +52,7 @@ class App {
         const email = document.getElementById('authEmail').value;
         const pass = document.getElementById('authPass').value;
         if (name && email && pass) {
-            this.userData = { name, email, points: 0 };
+            this.userData = { name, email };
             localStorage.setItem('userAccount', JSON.stringify(this.userData));
             this.currentPage = 'home';
             this.render();
@@ -91,15 +91,39 @@ class App {
         window.speechSynthesis.speak(u);
     }
 
+    async translateWord(word) {
+        if (!word || word.trim().length < 2) return "";
+        try {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
+            const data = await res.json();
+            return data.responseData ? data.responseData.translatedText : "";
+        } catch (error) { return ""; }
+    }
+
+    handleTypingTranslate(word) {
+        const arbInput = document.getElementById('newArb');
+        clearTimeout(this.typingTimer);
+        this.typingTimer = setTimeout(async () => {
+            if (word.trim().length > 1) {
+                const suggested = await this.translateWord(word);
+                if (suggested && (arbInput.value.trim() === "" || arbInput.dataset.auto === "true")) {
+                    arbInput.value = suggested;
+                    arbInput.dataset.auto = "true";
+                }
+            }
+        }, 500);
+    }
+
     prepareQuiz(terms, isUnlockMode = false) {
         this.isUnlockTest = isUnlockMode;
+        const addedByUser = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId && !this.hiddenFromCards.includes(String(v.id)));
+        const fullPool = [...terms, ...addedByUser];
+        
         if (this.isUnlockTest) {
-            const addedByUser = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId && !this.hiddenFromCards.includes(String(v.id)));
-            const fullPool = [...terms, ...addedByUser];
             const halfCount = Math.floor(fullPool.length / 2);
             this.quizQuestions = fullPool.sort(() => 0.5 - Math.random()).slice(0, Math.max(1, halfCount));
         } else {
-            this.quizQuestions = terms.filter(t => !this.hiddenFromCards.includes(String(t.id)));
+            this.quizQuestions = fullPool.filter(t => !this.hiddenFromCards.includes(String(t.id)));
         }
         this.quizIndex = 0; this.quizScore = 0; this.isWaiting = false;
         this.generateOptions();
@@ -111,6 +135,7 @@ class App {
         const lesson = window.lessonsData[this.selectedLessonId] || { terms: [] };
         let allPool = [...lesson.terms, ...this.userVocabulary].map(t => t.arabic);
         let wrongs = [...new Set(allPool.filter(a => a !== currentQ.arabic))].sort(() => 0.5 - Math.random()).slice(0, 3);
+        while(wrongs.length < 3) wrongs.push("خيار " + (wrongs.length + 1));
         this.quizOptions = [currentQ.arabic, ...wrongs].sort(() => 0.5 - Math.random());
     }
 
@@ -139,7 +164,7 @@ class App {
 
             switch(action) {
                 case 'goHome': this.currentPage = 'home'; this.selectedLessonId = null; break;
-                case 'logout': if(confirm('تسجيل خروج؟')){ localStorage.clear(); location.reload(); } break;
+                case 'logout': if(confirm('خروج؟')){ localStorage.clear(); location.reload(); } break;
                 case 'selLevel': this.selectedLevel = param; this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; break;
                 case 'selLesson':
                     const list = window.lessonsList[this.selectedLevel] || [];
@@ -156,35 +181,35 @@ class App {
                 case 'setPage':
                     if (param === 'quiz') {
                         const l = window.lessonsData[this.selectedLessonId];
-                        const a = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
-                        this.prepareQuiz([...l.terms, ...a], false);
+                        this.prepareQuiz(l.terms, false);
                     }
                     this.currentPage = param; this.currentCardIndex = 0; break;
                 case 'masterWord':
                     if(!this.masteredWords.includes(param)) this.masteredWords.push(param); this.saveData(); break;
-                case 'resetFlashcards':
-                    const lesson = window.lessonsData[this.selectedLessonId];
-                    const added = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
-                    const allIds = [...lesson.terms, ...added].map(t => String(t.id));
+                case 'resetMastered': // إعادة ممارسة نهائي
+                    const lData = window.lessonsData[this.selectedLessonId];
+                    const uAdded = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
+                    const allIds = [...lData.terms, ...uAdded].map(t => String(t.id));
                     this.masteredWords = this.masteredWords.filter(id => !allIds.includes(String(id)));
-                    this.saveData(); this.currentCardIndex = 0; this.render(); break;
+                    this.saveData(); this.currentCardIndex = 0; break;
+                case 'repeatCurrent': this.currentCardIndex = 0; break; // زر الـ 🔁
                 case 'deleteWord': if(confirm('حذف؟')) { this.hiddenFromCards.push(String(param)); this.saveData(); } break;
                 case 'speak': this.speak(param); break;
                 case 'nextC': if (this.currentCardIndex < (parseInt(total) - 1)) this.currentCardIndex++; break;
                 case 'prevC': if (this.currentCardIndex > 0) this.currentCardIndex--; break;
                 case 'renameLesson':
-                    const newTitle = prompt('الاسم الجديد:', this.customLessons[param].title);
-                    if(newTitle) { this.customLessons[param].title = newTitle; window.lessonsData[param].title = newTitle; this.saveData(); } break;
-                case 'deleteCustomLesson': if(confirm('حذف النص؟')) { delete this.customLessons[param]; delete window.lessonsData[param]; this.saveData(); } break;
+                    const nt = prompt('الاسم:', this.customLessons[param].title);
+                    if(nt){ this.customLessons[param].title = nt; window.lessonsData[param].title = nt; this.saveData(); } break;
+                case 'deleteCustomLesson': if(confirm('حذف؟')) { delete this.customLessons[param]; delete window.lessonsData[param]; this.saveData(); } break;
                 case 'addNewWord':
                     const eng = document.getElementById('newEng').value.trim();
                     const arb = document.getElementById('newArb').value.trim();
                     if(eng && arb) {
-                        const scrollBox = document.getElementById('textScrollBox');
-                        if(scrollBox) this.scrollPos = scrollBox.scrollTop;
-                        const lessonData = window.lessonsData[this.selectedLessonId];
-                        const exists = [...lessonData.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)].some(w => w.english.toLowerCase() === eng.toLowerCase());
-                        if(exists) { alert("⚠️ موجودة بالفعل!"); } else {
+                        const box = document.getElementById('textScrollBox');
+                        if(box) this.scrollPos = box.scrollTop; // حفظ الموقع
+                        const curLesson = window.lessonsData[this.selectedLessonId];
+                        const exists = [...curLesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)].some(w => w.english.toLowerCase() === eng.toLowerCase());
+                        if(exists) { alert("⚠️ الكلمة موجودة!"); } else {
                             this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
                             this.saveData();
                         }
@@ -192,7 +217,10 @@ class App {
                 case 'backToLessons': this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; this.selectedLessonId = null; break;
             }
             this.render();
-            if(action === 'addNewWord') { const scrollBox = document.getElementById('textScrollBox'); if(scrollBox) scrollBox.scrollTop = this.scrollPos; }
+            if(action === 'addNewWord') { 
+                const box = document.getElementById('textScrollBox');
+                if(box) box.scrollTop = this.scrollPos; // استعادة الموقع
+            }
         });
     }
 
@@ -249,8 +277,7 @@ class App {
         }
 
         if (this.currentPage === 'custom_lessons_view') {
-            return `<main class="main-content">
-                <button class="hero-btn" data-action="goHome">← الرئيسية</button>
+            return `<main class="main-content"><button class="hero-btn" data-action="goHome">← الرئيسية</button>
                 <div class="features-grid" style="margin-top:20px;">
                     ${Object.values(this.customLessons).map(l => `
                     <div class="feature-card" style="position:relative;">
@@ -277,20 +304,22 @@ class App {
         if (this.currentPage === 'reading') {
             return `<main class="main-content">
                 <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b; color:white;">⬅ تراجع</button>
-                <div id="textScrollBox" class="reading-card" style="direction:ltr; text-align:left; max-height:300px; overflow-y:auto; border:2px solid #e2e8f0;">${lesson.content}</div>
+                <h2 style="margin-bottom:10px;">${lesson.title}</h2>
+                <div id="textScrollBox" class="reading-card" style="direction:ltr; text-align:left; max-height:300px; overflow-y:auto; border:2px solid #e2e8f0; font-size:1.1rem; line-height:1.6;">${lesson.content}</div>
                 <div class="reading-card" style="margin-top:20px; background:#f9fafb;">
-                    <input id="newEng" placeholder="English" style="width:100%; padding:10px; margin:5px 0;">
-                    <input id="newArb" placeholder="العربية" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <h4>إضافة كلمة:</h4>
+                    <input id="newEng" placeholder="English" style="width:100%; padding:10px; margin:5px 0;" oninput="appInstance.handleTypingTranslate(this.value)">
+                    <input id="newArb" placeholder="الترجمة" style="width:100%; padding:10px; margin-bottom:10px;">
                     <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">حفظ في البطاقات</button>
                 </div></main>`;
         }
 
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
-            if (active.length === 0) return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>🎉 مراجعة شاملة!</h2><button class="hero-btn" data-action="resetFlashcards" style="background:#10b981;">إعادة ممارسة الكلمات</button></div></main>`;
+            if (active.length === 0) return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>🎉 مراجعة شاملة!</h2><button class="hero-btn" data-action="resetMastered" style="background:#10b981;">إعادة ممارسة الكلمات</button></div></main>`;
             const t = active[this.currentCardIndex] || active[0];
             return `<main class="main-content">
-                <button class="hero-btn" data-action="resetFlashcards" style="margin-bottom:10px; background:#f59e0b; color:white;">🔁 تصفير المحفوظ</button>
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b; color:white;">⬅ تراجع</button>
                 <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
                     <div class="flashcard"><div class="flashcard-front"><h1>${t.english}</h1></div><div class="flashcard-back"><h1>${t.arabic}</h1></div></div>
                 </div>
@@ -299,10 +328,12 @@ class App {
                     <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅</button>
                     <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️</button>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-top:25px; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px; gap:10px;">
                     <button class="hero-btn" data-action="prevC" style="flex:1;">⬅ السابق</button>
+                    <button class="hero-btn" data-action="repeatCurrent" style="background:#f59e0b; padding:10px 20px;">🔁</button>
                     <button class="hero-btn" data-action="nextC" data-total="${active.length}" style="flex:1;">التالي ➡</button>
                 </div>
+                <p style="text-align:center; margin-top:10px; color:#6b7280;">الكلمة ${this.currentCardIndex + 1} من ${active.length}</p>
             </main>`;
         }
 
@@ -311,14 +342,19 @@ class App {
                 const s = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
                 const pass = s >= 75;
                 if (this.isUnlockTest && pass) { this.unlockedLessons.push(String(this.tempLessonToUnlock)); this.saveData(); }
-                return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>${pass ? "🎉 مبروك!" : "💪 حاول ثانية (75%)"}</h2><h1 style="font-size:3rem; color:${pass?'#10b981':'#ef4444'};">${s}%</h1><button class="hero-btn" data-action="backToLessons" style="background:#3b82f6;">متابعة</button></div></main>`;
+                return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>${pass ? "🎉 نجحت!" : "💪 حاول ثانية (75%)"}</h2><h1 style="font-size:3rem; color:${pass?'#10b981':'#ef4444'};">${s}%</h1><button class="hero-btn" data-action="backToLessons" style="background:#3b82f6;">متابعة</button></div></main>`;
             }
             const q = this.quizQuestions[this.quizIndex];
-            return `<main class="main-content"><div class="reading-card" style="text-align:center;">
-                <p>سؤال ${this.quizIndex+1}/${this.quizQuestions.length}</p>
-                <h1 style="margin:30px 0;">${q.english}</h1>
-                <div style="display:grid; gap:10px;">${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}</div>
-            </div></main>`;
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b; color:white;">⬅ خروج</button>
+                <div class="reading-card" style="text-align:center;">
+                    <div style="display:flex; justify-content:space-between; color:#6b7280; margin-bottom:10px;">
+                        <span>سؤال ${this.quizIndex+1}/${this.quizQuestions.length}</span>
+                        <span>صح: ${this.quizScore}</span>
+                    </div>
+                    <h1 style="margin:30px 0;">${q.english}</h1>
+                    <div style="display:grid; gap:10px;">${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}</div>
+                </div></main>`;
         }
 
         if (this.currentPage === 'addLesson') {
