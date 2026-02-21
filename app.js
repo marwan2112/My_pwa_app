@@ -1,6 +1,7 @@
 /**
  * BOOSTER APP - ULTIMATE MODEL (Marwan Edition)
- * كود نموذجي: ثبات كامل، عدادات دقيقة، محاذاة يسار، منع تكرار، ونظام مستويات 100 كلمة.
+ * كود نموذجي معدل: ثبات التمرير عند الإضافة + زر نطق في الاختبارات.
+ * الالتزام: لا حذف، لا اختصار، الحفاظ على كل الميزات السابقة.
  */
 
 class App {
@@ -186,13 +187,13 @@ class App {
                     this.currentPage = param; this.currentCardIndex = 0; break;
                 case 'masterWord':
                     if(!this.masteredWords.includes(param)) this.masteredWords.push(param); this.saveData(); break;
-                case 'resetMastered': // إعادة ممارسة نهائي
+                case 'resetMastered': 
                     const lData = window.lessonsData[this.selectedLessonId];
                     const uAdded = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
                     const allIds = [...lData.terms, ...uAdded].map(t => String(t.id));
                     this.masteredWords = this.masteredWords.filter(id => !allIds.includes(String(id)));
                     this.saveData(); this.currentCardIndex = 0; break;
-                case 'repeatCurrent': this.currentCardIndex = 0; break; // زر الـ 🔁
+                case 'repeatCurrent': this.currentCardIndex = 0; break; 
                 case 'deleteWord': if(confirm('حذف؟')) { this.hiddenFromCards.push(String(param)); this.saveData(); } break;
                 case 'speak': this.speak(param); break;
                 case 'nextC': if (this.currentCardIndex < (parseInt(total) - 1)) this.currentCardIndex++; break;
@@ -205,8 +206,10 @@ class App {
                     const eng = document.getElementById('newEng').value.trim();
                     const arb = document.getElementById('newArb').value.trim();
                     if(eng && arb) {
+                        // حفظ موقع التمرير قبل الإضافة والرندر
                         const box = document.getElementById('textScrollBox');
-                        if(box) this.scrollPos = box.scrollTop; // حفظ الموقع
+                        if(box) this.scrollPos = box.scrollTop;
+
                         const curLesson = window.lessonsData[this.selectedLessonId];
                         const exists = [...curLesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)].some(w => w.english.toLowerCase() === eng.toLowerCase());
                         if(exists) { alert("⚠️ الكلمة موجودة!"); } else {
@@ -217,9 +220,10 @@ class App {
                 case 'backToLessons': this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; this.selectedLessonId = null; break;
             }
             this.render();
+            // استعادة موقع التمرير بعد الرندر لضمان الثبات
             if(action === 'addNewWord') { 
                 const box = document.getElementById('textScrollBox');
-                if(box) box.scrollTop = this.scrollPos; // استعادة الموقع
+                if(box) box.scrollTop = this.scrollPos;
             }
         });
     }
@@ -352,7 +356,10 @@ class App {
                         <span>سؤال ${this.quizIndex+1}/${this.quizQuestions.length}</span>
                         <span>صح: ${this.quizScore}</span>
                     </div>
-                    <h1 style="margin:30px 0;">${q.english}</h1>
+                    <div style="display:flex; justify-content:center; align-items:center; gap:15px; margin:30px 0;">
+                        <h1 style="margin:0;">${q.english}</h1>
+                        <button class="hero-btn" data-action="speak" data-param="${q.english}" style="background:#6366f1; padding:8px 15px; border-radius:50%;">🔊</button>
+                    </div>
                     <div style="display:grid; gap:10px;">${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}</div>
                 </div></main>`;
         }
