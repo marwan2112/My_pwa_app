@@ -25,7 +25,8 @@ body {
     position: sticky; 
     top: 0; 
     z-index: 1000; 
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    box-shadow: none; /* تم إزالة ظل الهيدر */
+    border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 .header-content { 
@@ -98,9 +99,9 @@ body {
     justify-content: center; 
     background: white; 
     border-radius: 24px; 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+    box-shadow: none; /* تم إزالة الظل من البطاقات */
     padding: 30px;
-    border: 1px solid #e2e8f0;
+    border: 2px solid #e2e8f0; /* زيادة سمك الحدود لتعويض غياب الظل */
 }
 
 .flashcard-front h1, .flashcard-back h1 {
@@ -129,11 +130,13 @@ body {
     font-weight: 600;
     transition: all 0.2s ease;
     text-align: right;
+    box-shadow: none !important; /* التأكيد على إخفاء الظل تماماً */
 }
 
 .quiz-opt-btn:hover:not(:disabled) {
     border-color: #1e40af;
     background: #f0f9ff;
+    box-shadow: none !important;
 }
 
 /* ألوان النتيجة في الاختبار - صارمة جداً */
@@ -142,12 +145,14 @@ body {
     color: white !important; 
     border-color: #16a34a !important; 
     animation: pulse 0.5s;
+    box-shadow: none !important;
 }
 
 .wrong-flash { 
     background-color: #ef4444 !important; 
     color: white !important; 
     border-color: #dc2626 !important; 
+    box-shadow: none !important;
 }
 
 @keyframes pulse {
@@ -170,14 +175,14 @@ body {
     text-align: center; 
     cursor: pointer; 
     transition: 0.3s; 
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-    border: 1px solid #e2e8f0;
+    box-shadow: none; /* إزالة الظل */
+    border: 2px solid #e2e8f0;
     position: relative;
 }
 
 .feature-card:hover { 
     transform: translateY(-5px); 
-    box-shadow: 0 12px 20px rgba(0,0,0,0.1); 
+    box-shadow: none; 
     border-color: #1e40af;
 }
 
@@ -198,6 +203,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-shadow: none !important; /* إزالة ظل الأزرار البطولية */
 }
 
 .hero-btn:active { transform: scale(0.98); }
@@ -207,12 +213,12 @@ body {
     background: white; 
     padding: 2.5rem; 
     border-radius: 20px; 
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-    border: 1px solid #e2e8f0;
+    box-shadow: none; /* إزالة الظل */
+    border: 2px solid #e2e8f0;
     margin-bottom: 20px;
-    direction: ltr;         /* لتغيير اتجاه القراءة من اليسار لليمين */
-    text-align: left;       /* لمحاذاة النص لجهة اليسار */
-    line-height: 1.8;       /* اختياري: لجعل النص مريحاً للعين */
+    direction: ltr;         
+    text-align: left;       
+    line-height: 1.8;       
 }
 
 /* 9. شاشات الجوال */
@@ -232,5 +238,6 @@ body {
     padding: 15px;
     border-radius: 15px;
     margin-top: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: none; /* إزالة الظل من شريط التحكم */
+    border: 1px solid #e2e8f0;
 }
