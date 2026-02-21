@@ -21,7 +21,7 @@ body {
 .header { 
     background: #1e40af; 
     color: white; 
-    padding: 1rem; 
+    padding: 0.6rem 1rem; /* تقليل السماكة لتوفير مساحة */
     position: sticky; 
     top: 0; 
     z-index: 1000; 
@@ -45,7 +45,7 @@ body {
 }
 
 .nav-btn { 
-    padding: 8px 16px; 
+    padding: 6px 12px; 
     border-radius: 20px; 
     border: none; 
     background: rgba(255,255,255,0.15); 
@@ -64,8 +64,8 @@ body {
 /* 3. الحاوية الرئيسية */
 .main-content { 
     max-width: 800px; 
-    margin: 1.5rem auto; 
-    padding: 1rem; 
+    margin: 0.5rem auto; /* تقليل المسافة العلوية لعرض أكبر للنص */
+    padding: 0.5rem; 
 }
 
 /* 4. تصميم البطاقات (Flashcards) */
@@ -192,7 +192,7 @@ body {
 .hero-btn { 
     background: #1e40af; 
     color: white; 
-    padding: 14px 28px; 
+    padding: 12px 24px; 
     border-radius: 14px; 
     border: none; 
     cursor: pointer; 
@@ -208,25 +208,39 @@ body {
 
 .hero-btn:active { transform: scale(0.98); box-shadow: none !important; }
 
-/* 8. النص القرائي */
+/* 8. النص القرائي - تم تعديله لعرض أكبر جزء ممكن */
 .reading-card { 
     background: white; 
-    padding: 2.5rem; 
-    border-radius: 20px; 
-    box-shadow: none !important; /* إزالة ظل حاوية النص */
+    padding: 1.2rem; /* تقليل الحشو من 2.5rem لتوفير مساحة */
+    border-radius: 15px; 
+    box-shadow: none !important; 
     border: 2px solid #e2e8f0;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     direction: ltr;         
     text-align: left;       
-    line-height: 1.8;       
+    line-height: 1.5; /* تضييق المسافة بين الأسطر قليلاً */
+    max-height: 60vh; /* جعل النص يأخذ حتى 60% من طول الشاشة */
+    overflow-y: auto; 
+}
+
+/* تحسين منطقة الإدخال لتكون مضغوطة ولا تأخذ مساحة كبيرة */
+.reading-card + .reading-card {
+    padding: 0.8rem;
+    background: #f8fafc;
+}
+
+.reading-card input {
+    padding: 8px !important;
+    margin: 4px 0 !important;
 }
 
 /* 9. شاشات الجوال */
 @media (max-width: 600px) {
     .flashcard-container { height: 280px; }
     .flashcard-front h1, .flashcard-back h1 { font-size: 1.8rem; }
-    .main-content { padding: 0.5rem; margin: 1rem auto; }
+    .main-content { padding: 0.5rem; margin: 0.5rem auto; }
     .features-grid { grid-template-columns: 1fr; }
+    .reading-card { padding: 1rem; font-size: 0.95rem; }
 }
 
 /* 10. إضافات الحذف والتحكم */
@@ -235,9 +249,9 @@ body {
     justify-content: space-between;
     align-items: center;
     background: white;
-    padding: 15px;
-    border-radius: 15px;
-    margin-top: 15px;
+    padding: 10px;
+    border-radius: 12px;
+    margin-top: 10px;
     box-shadow: none !important; /* إزالة ظل أدوات التحكم */
     border: 2px solid #e2e8f0;
 }
