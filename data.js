@@ -316,8 +316,45 @@ Skeptics, however, challenge the utility of this new generational label. They co
     content: `Global governance in the 21st century presents a complex paradox. The need for multilateral cooperation is escalating to address pressing transnational challenges—such as climate change, pandemics, and cybersecurity—at a time when nationalistic tendencies and assertions of state sovereignty are intensifying. These challenges have effectively led to an erosion of the concept of absolute sovereignty as defined by the Westphalian system, where domestic decisions are now significantly influenced by variables outside a state’s direct control. However, the existing international institutions, whose foundational rules were established in the mid-20th century, suffer from structural inertia that impedes their capacity to respond effectively to the speed and complexity of the evolving global landscape.
 Many analysts suggest that the lack of consensus regarding the reform of the UN Security Council, and the increasing use of the veto power, is not merely a procedural disagreement; it is a reflection of major powers’ reluctance to relinquish their privileges in favor of a more representative and equitable structure. This inertia has created "Grey Zones" filled by non-governmental initiatives or temporary regional coalitions attempting to fill the vacuum, which often results in scattered efforts instead of cohesive integration. The fundamental question facing the international system now is: Can the concept of Flexible Sovereignty, which involves a partial delegation to supranational organizations in specific domains, offer a compromise? Or are we inevitably heading towards a world dominated by narrow self-interests, where global solidarity becomes increasingly ineffective? The answer lies in the ability of leaders to move beyond zero-sum thinking.
  `,
-    terms: [{ id: '304-1', english: 'Governance', arabic: 'حوكمة' }]
-  },
+    terms: [
+    { id: '304-1', english: 'Governance', arabic: 'حوكمة' },
+    { id: '304-2', english: 'Paradox', arabic: 'مفارقة' },
+    { id: '304-3', english: 'Escalating', arabic: 'متزايد' },
+    { id: '304-4', english: 'to address', arabic: 'يواجه / يتعامل مع' },
+    { id: '304-5', english: 'Pressing', arabic: 'ملحّة' },
+    { id: '304-6', english: 'cybersecurity', arabic: 'الأمن السيبراني' },
+    { id: '304-7', english: 'Intensifying', arabic: 'مكثّف / متصاعد' },
+    { id: '304-8', english: 'Erosion', arabic: 'تآكل' },
+    { id: '304-9', english: 'significantly', arabic: 'بشكل كبير' },
+    { id: '304-10', english: 'Variable', arabic: 'متغيّر' },
+    { id: '304-11', english: 'Inertia', arabic: 'قصور ذاتي / جمود' },
+    { id: '304-12', english: 'Impede', arabic: 'يعيق / يعترض السبيل' },
+    { id: '304-13', english: 'Capacity', arabic: 'قدرة / سعة' },
+    { id: '304-14', english: 'Landscape', arabic: 'مشهد / بيئة عامة' },
+    { id: '304-15', english: 'Analyst', arabic: 'محلّل' },
+    { id: '304-16', english: 'Consensus', arabic: 'توافق / إجماع' },
+    { id: '304-17', english: 'Reform', arabic: 'إصلاح' },
+    { id: '304-18', english: 'council', arabic: 'مجلس' },
+    { id: '304-19', english: 'Procedural', arabic: 'إجرائي' },
+    { id: '304-20', english: 'Disagreement', arabic: 'اختلاف / نزاع' },
+    { id: '304-21', english: 'Reluctance', arabic: 'ممانعة / تردّد' },
+    { id: '304-22', english: 'Relinquish', arabic: 'يتخلّى عن / يترك' },
+    { id: '304-23', english: 'In favor of', arabic: 'لصالح' },
+    { id: '304-24', english: 'representative', arabic: 'تمثيلي / مندوب' },
+    { id: '304-25', english: 'Equitable', arabic: 'عادل / منصف' },
+    { id: '304-26', english: 'Initiative', arabic: 'مبادرة' },
+    { id: '304-27', english: 'Coalition', arabic: 'تحالف' },
+    { id: '304-28', english: 'Scatter', arabic: 'يشتّت / يبعثر' },
+    { id: '304-29', english: 'Cohesive', arabic: 'متماسك / منسجم' },
+    { id: '304-30', english: 'Partial', arabic: 'جزئي' },
+    { id: '304-31', english: 'Delegation', arabic: 'تفويض / وفد' },
+    { id: '304-32', english: 'Supranational', arabic: 'فوق السلطة الوطنية' },
+    { id: '304-33', english: 'Domain', arabic: 'مجال / نطاق' },
+    { id: '304-34', english: 'Compromise', arabic: 'حل وسط / تسوية' },
+    { id: '304-35', english: 'Inevitable', arabic: 'حتمي' },
+    { id: '304-36', english: 'Solidarity', arabic: 'تضامن' }
+  ]
+},
   '305': {
     title: "The Digital Shift and the Call for a New Social Contract",
     content: `The latest wave of automation and Artificial Intelligence has imposed profound challenges on economic and social structures built over decades, subjecting the traditional notion of the "Social Contract" to intense scrutiny. The risk is no longer limited merely to the loss of routine jobs but lies in a fundamental alteration of the nature of work itself, creating a significant bifurcation in the labor market. This split divides workers into an upper tier of highly skilled professionals in technology and analysis, and a lower tier of workers in low-wage personal services that are difficult to automate. Consequently, the middle class, which traditionally anchored social stability, is eroding.
