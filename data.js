@@ -267,7 +267,9 @@ Skeptics, however, challenge the utility of this new generational label. They co
 { id: '303-47', english: 'Academic', arabic: 'نظري/ أكاديمي' },
 { id: '303-48', english: 'Budgeting', arabic: 'ميزانية' },
 { id: '303-49', english: 'Readiness', arabic: 'الجاهزية' },
-{ id: '303-50', english: 'Forcing', arabic: 'اجبار' },
+{ id: '303-50', english: 'Forcing', arabic: 'اجبار' }]
+},
+
   '304': {
     title: "The Paradox of Sovereignty in Global Governance",
     content: `Global governance in the 21st century presents a complex paradox. The need for multilateral cooperation is escalating to address pressing transnational challenges—such as climate change, pandemics, and cybersecurity—at a time when nationalistic tendencies and assertions of state sovereignty are intensifying. These challenges have effectively led to an erosion of the concept of absolute sovereignty as defined by the Westphalian system, where domestic decisions are now significantly influenced by variables outside a state’s direct control. However, the existing international institutions, whose foundational rules were established in the mid-20th century, suffer from structural inertia that impedes their capacity to respond effectively to the speed and complexity of the evolving global landscape.
