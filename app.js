@@ -1,6 +1,6 @@
 /**
  * BOOSTER APP - PRO VERSION (Marwan Edition)
- * التحديث: رفع نسبة النجاح لـ 75%، إخفاء أزرار التنقل أثناء اختبار الفتح، والحفاظ على كافة الميزات.
+ * التحديث: ثبات موقع النص، منع تكرار الكلمات، وضبط معادلة نصف الأسئلة (50%).
  */
 
 class App {
@@ -27,6 +27,7 @@ class App {
         this.quizQuestions = [];
         this.quizOptions = [];
         this.isWaiting = false;
+        this.scrollPos = 0; // لحفظ موقع النص
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -39,7 +40,6 @@ class App {
         this.isUnlockTest = false;
         this.tempLessonToUnlock = null;
 
-        // إعداد أصوات الاختبار
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         this.setupGlobalEvents();
@@ -109,11 +109,14 @@ class App {
         this.isUnlockTest = isUnlockMode;
         
         if (this.isUnlockTest) {
+            // جلب كلمات الدرس الأصلي + كلمات المستخدم لهذا الدرس
             const originalTerms = [...terms];
-            const halfCount = Math.max(1, Math.floor(originalTerms.length / 2));
-            let selectedPool = originalTerms.sort(() => 0.5 - Math.random()).slice(0, halfCount);
             const addedByUser = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId && !this.hiddenFromCards.includes(String(v.id)));
-            this.quizQuestions = [...selectedPool, ...addedByUser];
+            
+            // دمج الكل ثم أخذ النصف تماماً
+            const fullPool = [...originalTerms, ...addedByUser];
+            const halfCount = Math.floor(fullPool.length / 2);
+            this.quizQuestions = fullPool.sort(() => 0.5 - Math.random()).slice(0, Math.max(1, halfCount));
         } else {
             this.quizQuestions = terms.filter(t => !this.hiddenFromCards.includes(String(t.id)));
         }
@@ -170,7 +173,7 @@ class App {
             if (action === 'ansQ') { this.handleAnswer(param, correct, btn); return; }
 
             switch(action) {
-                case 'goHome': this.currentPage = 'home'; this.selectedLevel = null; break;
+                case 'goHome': this.currentPage = 'home'; this.selectedLessonId = null; break;
                 case 'selLevel': 
                     this.selectedLevel = param; 
                     this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
@@ -181,7 +184,7 @@ class App {
                     if (isUnlocked) {
                         this.selectedLessonId = param;
                         this.currentPage = 'reading';
-                        this.isUnlockTest = false; // نضمن أنه ليس اختبار فتح
+                        this.isUnlockTest = false;
                     } else {
                         const currentIdx = list.findIndex(l => l.id == param);
                         const prevLessonId = list[currentIdx - 1].id;
@@ -217,9 +220,25 @@ class App {
                     if(confirm('حذف النص نهائياً؟')) { delete this.customLessons[param]; delete window.lessonsData[param]; this.saveData(); }
                     break;
                 case 'addNewWord':
-                    const eng = document.getElementById('newEng').value;
-                    const arb = document.getElementById('newArb').value;
-                    if(eng && arb) { this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb }); this.saveData(); } 
+                    const eng = document.getElementById('newEng').value.trim();
+                    const arb = document.getElementById('newArb').value.trim();
+                    if(eng && arb) {
+                        // حفظ موقع التمرير قبل التحديث
+                        const scrollBox = document.getElementById('textScrollBox');
+                        if(scrollBox) this.scrollPos = scrollBox.scrollTop;
+
+                        // فحص التكرار
+                        const lesson = window.lessonsData[this.selectedLessonId];
+                        const exists = [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)]
+                                      .some(w => w.english.toLowerCase() === eng.toLowerCase());
+                        
+                        if(exists) {
+                            alert("⚠️ هذه الكلمة موجودة بالفعل في هذا الدرس!");
+                        } else {
+                            this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
+                            this.saveData();
+                        }
+                    } 
                     break;
                 case 'backToLessons':
                     this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons';
@@ -228,6 +247,12 @@ class App {
                     break;
             }
             this.render();
+            
+            // استعادة موقع التمرير بعد الرندر إذا كنا في صفحة القراءة
+            if(action === 'addNewWord') {
+                const scrollBox = document.getElementById('textScrollBox');
+                if(scrollBox) scrollBox.scrollTop = this.scrollPos;
+            }
         });
     }
 
@@ -243,13 +268,11 @@ class App {
     getHeader() {
         let nav = '';
         const list = window.lessonsList[this.selectedLevel] || [];
-        // التحقق مما إذا كان الدرس مفتوحاً فعلياً
         const isUnlocked = this.selectedLessonId && 
             (this.unlockedLessons.includes(String(this.selectedLessonId)) || 
             (list[0] && list[0].id == this.selectedLessonId) || 
             this.selectedLevel === 'custom_list');
 
-        // لا تظهر القائمة إلا إذا كان الدرس فاتحاً ولسنا في حالة "اختبار فتح درس جديد"
         if (isUnlocked && !this.isUnlockTest && !['home', 'lessons', 'custom_lessons_view', 'addLesson'].includes(this.currentPage)) {
             nav = `<nav class="nav-menu">
                 <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
@@ -298,7 +321,9 @@ class App {
             return `<main class="main-content">
                 <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b; color:white;">⬅ تراجع للدروس</button>
                 <h2 style="margin-bottom:15px;">${lesson.title}</h2>
-                <div class="reading-card" style="direction:ltr; text-align:left; font-size:1.1rem; line-height:1.6;">${lesson.content}</div>
+                <div id="textScrollBox" class="reading-card" style="direction:ltr; text-align:left; font-size:1.1rem; line-height:1.6; max-height:300px; overflow-y:auto; border:2px solid #e2e8f0;">
+                    ${lesson.content}
+                </div>
                 <div class="reading-card" style="margin-top:20px; background:#f9fafb;">
                     <h4>أضف كلمة للبطاقات:</h4>
                     <input id="newEng" placeholder="English" style="width:100%; padding:10px; margin:5px 0;" oninput="appInstance.handleTypingTranslate(this.value)">
@@ -336,7 +361,7 @@ class App {
         if (this.currentPage === 'quiz') {
             if (this.quizIndex >= this.quizQuestions.length) {
                 const s = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
-                const pass = s >= 75; // النسبة الجديدة 75%
+                const pass = s >= 75;
                 let title = pass ? "🎉 مبروك! نجحت في الاختبار" : "💪 حاول مرة أخرى (مطلوب 75%)";
                 if (this.isUnlockTest && pass) { this.unlockedLessons.push(String(this.tempLessonToUnlock)); this.saveData(); }
                 
