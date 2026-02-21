@@ -1,6 +1,6 @@
 /**
  * BOOSTER APP - PRO VERSION (Marwan Edition)
- * التحديث: أزرار التنقل كاملة، حذف النصوص المحفوظة، وزر تراجع داخل الدروس.
+ * التحديث: إضافة أزرار التنقل بوضوح + ميزة السحب (Swipe) لليمين واليسار
  */
 
 class App {
@@ -27,6 +27,10 @@ class App {
         this.quizQuestions = [];
         this.quizOptions = [];
         this.isWaiting = false;
+        
+        // متغيرات السحب (Swipe)
+        this.touchStartX = 0;
+        this.touchEndX = 0;
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -124,7 +128,29 @@ class App {
         }, 1200);
     }
 
+    // وظيفة معالجة السحب
+    handleGesture() {
+        const threshold = 50;
+        if (this.touchEndX < this.touchStartX - threshold) {
+            // سحب لليسار -> التالي
+            const nextBtn = document.querySelector('[data-action="nextC"]');
+            if (nextBtn) nextBtn.click();
+        }
+        if (this.touchEndX > this.touchStartX + threshold) {
+            // سحب لليمين -> السابق
+            const prevBtn = document.querySelector('[data-action="prevC"]');
+            if (prevBtn) prevBtn.click();
+        }
+    }
+
     setupGlobalEvents() {
+        // أحداث اللمس للسحب (Swipe)
+        document.addEventListener('touchstart', e => { this.touchStartX = e.changedTouches[0].screenX; }, false);
+        document.addEventListener('touchend', e => { 
+            this.touchEndX = e.changedTouches[0].screenX; 
+            if (this.currentPage === 'flashcards') this.handleGesture();
+        }, false);
+
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
             if (!btn) return;
@@ -168,11 +194,11 @@ class App {
                 case 'deleteWord':
                     if(confirm('حذف نهائي؟')) { this.hiddenFromCards.push(String(param)); this.saveData(); this.render(); } break;
                 case 'speak': this.speak(param); break;
-                case 'nextC': if (this.currentCardIndex < (total - 1)) this.currentCardIndex++; break;
-                case 'prevC': if (this.currentCardIndex > 0) this.currentCardIndex--; break;
+                case 'nextC': if (this.currentCardIndex < (total - 1)) { this.currentCardIndex++; this.render(); } break;
+                case 'prevC': if (this.currentCardIndex > 0) { this.currentCardIndex--; this.render(); } break;
                 case 'repeatList': this.currentCardIndex = 0; this.render(); break;
                 case 'renameLesson':
-                    const newName = prompt('أدخل الاسم الجديد للدرس:', this.customLessons[param].title);
+                    const newName = prompt('أدخل الاسم الجديد:', this.customLessons[param].title);
                     if (newName) {
                         this.customLessons[param].title = newName;
                         window.lessonsData[param].title = newName;
@@ -180,7 +206,7 @@ class App {
                     }
                     break;
                 case 'deleteCustomLesson':
-                    if(confirm('هل تريد حذف هذا النص بالكامل؟')) {
+                    if(confirm('حذف النص بالكامل؟')) {
                         delete this.customLessons[param];
                         delete window.lessonsData[param];
                         this.saveData(); this.render();
@@ -199,7 +225,6 @@ class App {
                     this.render();
                     break;
             }
-            this.render();
         });
     }
 
@@ -286,16 +311,16 @@ class App {
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:20px;">
-                    <button class="hero-btn" data-action="speak" data-param="${t.english}" style="background:#6366f1;">🔊 نطق</button>
-                    <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅ حفظت</button>
                     <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️ حذف</button>
+                    <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅ حفظت</button>
+                    <button class="hero-btn" data-action="speak" data-param="${t.english}" style="background:#6366f1;">🔊 نطق</button>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px;">
-                    <button class="nav-btn" data-action="prevC">السابق</button>
-                    <button class="nav-btn" data-action="repeatList" style="background:#f59e0b;">🔁 تكرار</button>
-                    <button class="nav-btn" data-action="nextC" data-total="${active.length}">التالي</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px;">
+                    <button class="hero-btn" data-action="prevC" style="background:#94a3b8; font-weight:bold;">⬅ السابق</button>
+                    <button class="hero-btn" data-action="repeatList" style="background:#f59e0b;">🔁 تكرار</button>
+                    <button class="hero-btn" data-action="nextC" data-total="${active.length}" style="background:#3b82f6; font-weight:bold;">التالي ➡</button>
                 </div>
-                <p style="text-align:center; margin-top:10px; color:#6b7280;">الكلمة ${this.currentCardIndex + 1} من ${active.length}</p>
+                <p style="text-align:center; margin-top:10px; color:#6b7280; font-weight:bold;">الكلمة ${this.currentCardIndex + 1} من ${active.length}</p>
             </main>`;
         }
 
@@ -326,7 +351,7 @@ class App {
                     <h3>📸 تصوير نص جديد</h3>
                     <input type="file" id="camIn" accept="image/*" style="display:none;" onchange="const f=this.files[0]; if(f){ Tesseract.recognize(f,'eng').then(r=>{document.getElementById('ocrText').value=r.data.text;}) }">
                     <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="width:100%; background:#8b5cf6;">📷 فتح الكاميرا</button>
-                    <textarea id="ocrText" placeholder="النص المستخرج..." style="width:100%; height:150px; margin-top:15px;"></textarea>
+                    <textarea id="ocrText" placeholder="النص المستخرج..." style="width:100%; height:150px; margin-top:15px; padding:10px;"></textarea>
                     <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ 
                         const id='c'+Date.now(); 
                         const newL={id, title:'نص جديد', content:t, terms:[]};
