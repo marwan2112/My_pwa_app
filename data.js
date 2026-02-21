@@ -210,7 +210,8 @@ terms: [
 { id: '302-57', english: 'Detrimental', arabic: 'مضر' },
 { id: '302-58', english: 'Triggering', arabic: 'التسبب في' },
 { id: '302-59', english: 'Navigate', arabic: 'إدارة/ توجيه' },
-{ id: '302-60', english: 'Pure', arabic: 'بحت/ صاف' }]
+{ id: '302-60', english: 'Pure', arabic: 'بحت/ صاف' }
+]
 },
   '303': {
     title: "Modern Conflict in the Information Age",
@@ -218,7 +219,8 @@ terms: [
 Proponents of the 5GW concept argue that the very nature of the battlefield has dissolved. They posit that modern conflict is dominated by non-kinetic, informational, and cognitive dimensions, where the primary objectives are to manipulate the adversary's perception, decision-making, and social cohesion. Key tools include sophisticated cyber operations, pervasive disinformation campaigns, economic coercion, and the weaponization of social media to create societal division and erode trust in institutions. In this view, a successful 5GW campaign could achieve strategic objectives without firing a single shot, by crippling an enemy from within.
 Skeptics, however, challenge the utility of this new generational label. They contend that many described 5GW tactics are merely modern iterations of age-old strategies of deception, subversion, and political warfare, now amplified by new technology. They warn that an overemphasis on this nebulous concept risks diverting attention and resources from the enduring realities of combined arms warfare, territorial defense, and the potential for high-intensity kinetic conflict, which remains a definitive element of state power. The debate, therefore, is not merely academic; it directly influences defense budgeting, force structure design, and the training of military personnel, forcing institutions to balance preparation for invisible, pervasive threats with readiness for traditional combat.
 `,
-  terms: [  { id: '303-1', english: 'Asymmetric', arabic: 'غير متماثل' },
+  terms: [  
+{ id: '303-1', english: 'Asymmetric', arabic: 'غير متماثل' },
 { id: '303-2', english: 'categorize', arabic: 'يصنف' },
 { id: '303-3', english: 'Warfare', arabic: 'صراع/ حرب' },
 { id: '303-4', english: 'Distinct', arabic: 'متميز, جلي, بارز' },
@@ -267,7 +269,8 @@ Skeptics, however, challenge the utility of this new generational label. They co
 { id: '303-47', english: 'Academic', arabic: 'نظري/ أكاديمي' },
 { id: '303-48', english: 'Budgeting', arabic: 'ميزانية' },
 { id: '303-49', english: 'Readiness', arabic: 'الجاهزية' },
-{ id: '303-50', english: 'Forcing', arabic: 'اجبار' }]
+{ id: '303-50', english: 'Forcing', arabic: 'اجبار' }
+  ]
 },
 
   '304': {
