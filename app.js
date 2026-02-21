@@ -1,6 +1,6 @@
 /**
  * BOOSTER APP - PRO VERSION (Marwan Edition)
- * كود كامل: يشمل الكاميرا، تعديل أسماء الدروس، القفل، البطاقات بالتنقل، والترجمة.
+ * التحديث: أزرار التنقل كاملة، حذف النصوص المحفوظة، وزر تراجع داخل الدروس.
  */
 
 class App {
@@ -179,6 +179,13 @@ class App {
                         this.saveData(); this.render();
                     }
                     break;
+                case 'deleteCustomLesson':
+                    if(confirm('هل تريد حذف هذا النص بالكامل؟')) {
+                        delete this.customLessons[param];
+                        delete window.lessonsData[param];
+                        this.saveData(); this.render();
+                    }
+                    break;
                 case 'addNewWord':
                     const eng = document.getElementById('newEng').value;
                     const arb = document.getElementById('newArb').value;
@@ -186,6 +193,11 @@ class App {
                         this.userVocabulary.push({ id: "u"+Date.now(), lessonId: String(this.selectedLessonId), english: eng, arabic: arb });
                         this.saveData(); this.render();
                     } break;
+                case 'backToLessons':
+                    this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons';
+                    this.selectedLessonId = null;
+                    this.render();
+                    break;
             }
             this.render();
         });
@@ -232,22 +244,25 @@ class App {
                 <div class="features-grid">${Object.values(this.customLessons).map(l => `
                     <div class="feature-card" style="position:relative;">
                         <div data-action="selLesson" data-param="${l.id}"><h3>📝 ${l.title}</h3></div>
-                        <button data-action="renameLesson" data-param="${l.id}" style="position:absolute; top:5px; left:5px; background:none; border:none; font-size:1rem;">✏️</button>
+                        <div style="position:absolute; top:5px; left:5px; display:flex; gap:10px;">
+                            <button data-action="renameLesson" data-param="${l.id}" style="background:none; border:none; font-size:1.2rem;">✏️</button>
+                            <button data-action="deleteCustomLesson" data-param="${l.id}" style="background:none; border:none; font-size:1.2rem;">🗑️</button>
+                        </div>
                     </div>`).join('')}</div></main>`;
         }
 
         if (this.currentPage === 'lessons') {
-            const list = window.lessonsList[this.selectedLevel] || [];
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome">← الرئيسية</button>
-                <div class="features-grid" style="margin-top:20px;">${list.map(l => {
-                    const ok = (list[0].id == l.id || this.unlockedLessons.includes(String(l.id)));
+                <div class="features-grid" style="margin-top:20px;">${(window.lessonsList[this.selectedLevel] || []).map(l => {
+                    const ok = (window.lessonsList[this.selectedLevel][0].id == l.id || this.unlockedLessons.includes(String(l.id)));
                     return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${ok?'':'opacity:0.6;'}"><h3>${ok?'':'🔒 '}${l.title}</h3></div>`;
                 }).join('')}</div></main>`;
         }
 
         if (this.currentPage === 'reading') {
             return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع للدروس</button>
                 <h2 style="margin-bottom:15px;">${lesson.title}</h2>
                 <div class="reading-card" style="direction:ltr; text-align:left; font-size:1.1rem; line-height:1.6;">${lesson.content}</div>
                 <div class="reading-card" style="margin-top:20px; background:#f9fafb;">
@@ -260,9 +275,10 @@ class App {
 
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(t.id) && !this.hiddenFromCards.includes(String(t.id)));
-            if (active.length === 0) return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>تم إنهاء الكلمات! 🎉</h2><button class="hero-btn" data-action="goHome">الرئيسية</button></div></main>`;
+            if (active.length === 0) return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>تم إنهاء الكلمات! 🎉</h2><button class="hero-btn" data-action="backToLessons">العودة للدروس</button></div></main>`;
             const t = active[this.currentCardIndex] || active[0];
             return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع للدروس</button>
                 <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
                     <div class="flashcard">
                         <div class="flashcard-front"><h1>${t.english}</h1></div>
@@ -279,7 +295,7 @@ class App {
                     <button class="nav-btn" data-action="repeatList" style="background:#f59e0b;">🔁 تكرار</button>
                     <button class="nav-btn" data-action="nextC" data-total="${active.length}">التالي</button>
                 </div>
-                <p style="text-align:center; margin-top:10px; color:#6b7280;">${this.currentCardIndex + 1} / ${active.length}</p>
+                <p style="text-align:center; margin-top:10px; color:#6b7280;">الكلمة ${this.currentCardIndex + 1} من ${active.length}</p>
             </main>`;
         }
 
@@ -288,10 +304,11 @@ class App {
                 const s = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
                 let msg = (this.isUnlockTest && s >= 50) ? "🎉 مبروك! تم فتح الدرس" : `النتيجة: ${s}%`;
                 if (this.isUnlockTest && s >= 50) { this.unlockedLessons.push(String(this.tempLessonToUnlock)); this.saveData(); }
-                return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>${msg}</h2><button class="hero-btn" data-action="goHome">متابعة</button></div></main>`;
+                return `<main class="main-content" style="text-align:center;"><div class="reading-card"><h2>${msg}</h2><button class="hero-btn" data-action="backToLessons">متابعة</button></div></main>`;
             }
             const q = this.quizQuestions[this.quizIndex];
             return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع للدروس</button>
                 <div class="reading-card" style="text-align:center;">
                     <span data-action="speak" data-param="${q.english}" style="cursor:pointer; font-size:1.5rem; float:right;">🔊</span>
                     <p>سؤال ${this.quizIndex+1}/${this.quizQuestions.length}</p>
@@ -308,8 +325,8 @@ class App {
                 <div class="reading-card" style="margin-top:20px;">
                     <h3>📸 تصوير نص جديد</h3>
                     <input type="file" id="camIn" accept="image/*" style="display:none;" onchange="const f=this.files[0]; if(f){ Tesseract.recognize(f,'eng').then(r=>{document.getElementById('ocrText').value=r.data.text;}) }">
-                    <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="width:100%; background:#8b5cf6;">📷 فتح الكاميرا / الاستوديو</button>
-                    <textarea id="ocrText" placeholder="النص سيظهر هنا..." style="width:100%; height:150px; margin-top:15px; padding:10px;"></textarea>
+                    <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="width:100%; background:#8b5cf6;">📷 فتح الكاميرا</button>
+                    <textarea id="ocrText" placeholder="النص المستخرج..." style="width:100%; height:150px; margin-top:15px;"></textarea>
                     <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ 
                         const id='c'+Date.now(); 
                         const newL={id, title:'نص جديد', content:t, terms:[]};
@@ -319,7 +336,7 @@ class App {
                         appInstance.selectedLessonId=id;
                         appInstance.currentPage='reading';
                         appInstance.render(); 
-                    }" style="width:100%; background:#10b981; margin-top:10px;">💾 حفظ وبدء الدراسة</button>
+                    }" style="width:100%; background:#10b981; margin-top:10px;">💾 حفظ النص</button>
                 </div></main>`;
         }
     }
