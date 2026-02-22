@@ -6,11 +6,28 @@ window.levels = [
 
 window.lessonsList = {
   'beginner': [
-    { id: '101', title: "1: Adam's Introduction" },
-    { id: '102', title: "2: Adam and His Friend"},
+    { id: '101', title: "1. Adam's Introduction" },
+    { id: '102', title: "2. Adam and His Friend"},
     { id: '103', title: "3. Adam's Morning Routine" },
     { id: '104', title: "4. Adam at School" },
-    { id: '105', title: "5.Adam at the Café" }
+    { id: '105', title: "5. Adam at the Café" },
+    { id: '106', title: "6. Adam's Family" },
+    { id: '107', title: "7. Shopping Day"},
+    { id: '108', title: "8. Adam's Hobby" },
+    { id: '109', title: "9. A Rainy Day" },
+    { id: '110', title: "10. Helping a Neighbor" },
+    { id: '111', title: "11. "},
+    { id: '112', title: "12. " },
+    { id: '113', title: "13. " },
+    { id: '114', title: "14. " },
+    { id: '115', title: "15. "},
+    { id: '1016', title: "16. " },
+    { id: '117', title: "17. " },
+    { id: '118', title: "18. " },
+    { id: '119', title: "19. "},
+    { id: '120', title: "20. " },
+    { id: '121', title: "21. " },
+
   ],
   'intermediate': [
     { id: '201', title: 'marwan', description: 'تحليل نص سياسي معمق' }
@@ -141,6 +158,110 @@ window.lessonsData = {
     { id: '105-12', english: 'hopeful', arabic: 'متفائل' },
     { id: '105-13', english: 'very', arabic: 'جيدًا' },
     { id: '105-14', english: 'with', arabic: 'مع' }
+  ]
+},
+  '106': {
+  title: "Adam's Family",
+  content: "Adam lives with his family in a small house. His father works in an office. His mother stays at home and cooks food. Adam has one sister and one brother. In the evening, they sit together and talk about their day. Adam feels happy with his family.",
+  terms: [
+    { id: '106-1', english: 'family', arabic: 'عائلة' },
+    { id: '106-2', english: 'house', arabic: 'بيت' },
+    { id: '106-3', english: 'father', arabic: 'أب' },
+    { id: '106-4', english: 'mother', arabic: 'أم' },
+    { id: '106-5', english: 'office', arabic: 'مكتب' },
+    { id: '106-6', english: 'stay', arabic: 'يبقى' },
+    { id: '106-7', english: 'cook', arabic: 'يطبخ' },
+    { id: '106-8', english: 'sister', arabic: 'أخت' },
+    { id: '106-9', english: 'brother', arabic: 'أخ' },
+    { id: '106-10', english: 'together', arabic: 'معًا' },
+    { id: '106-11', english: 'talk', arabic: 'يتحدث' },
+    { id: '106-12', english: 'day', arabic: 'يوم' },
+    { id: '106-13', english: 'feel', arabic: 'يشعر' },
+    { id: '106-14', english: 'happy', arabic: 'سعيد' }
+  ]
+},
+
+'107': {
+  title: "Shopping Day",
+  content: "On Saturday, Adam goes to the market with his mother. They buy bread, fruit, and vegetables. The market is busy and noisy. Adam helps his mother carry the bags. After shopping, they go home and rest.",
+  terms: [
+    { id: '107-1', english: 'Saturday', arabic: 'السبت' },
+    { id: '107-2', english: 'market', arabic: 'سوق' },
+    { id: '107-3', english: 'buy', arabic: 'يشتري' },
+    { id: '107-4', english: 'bread', arabic: 'خبز' },
+    { id: '107-5', english: 'fruit', arabic: 'فاكهة' },
+    { id: '107-6', english: 'vegetables', arabic: 'خضار' },
+    { id: '107-7', english: 'busy', arabic: 'مزدحم' },
+    { id: '107-8', english: 'noisy', arabic: 'صاخب' },
+    { id: '107-9', english: 'help', arabic: 'يساعد' },
+    { id: '107-10', english: 'carry', arabic: 'يحمل' },
+    { id: '107-11', english: 'bags', arabic: 'أكياس' },
+    { id: '107-12', english: 'after', arabic: 'بعد' },
+    { id: '107-13', english: 'go home', arabic: 'يعود إلى البيت' },
+    { id: '107-14', english: 'rest', arabic: 'يستريح' }
+  ]
+},
+
+'108': {
+  title: "Adam's Hobby",
+  content: "In his free time, Adam likes to read books and watch movies. He reads English stories to learn new words. Sometimes he watches movies with English subtitles. This helps him understand the language better.",
+  terms: [
+    { id: '108-1', english: 'free time', arabic: 'وقت الفراغ' },
+    { id: '108-2', english: 'read', arabic: 'يقرأ' },
+    { id: '108-3', english: 'books', arabic: 'كتب' },
+    { id: '108-4', english: 'watch', arabic: 'يشاهد' },
+    { id: '108-5', english: 'movies', arabic: 'أفلام' },
+    { id: '108-6', english: 'stories', arabic: 'قصص' },
+    { id: '108-7', english: 'learn', arabic: 'يتعلم' },
+    { id: '108-8', english: 'words', arabic: 'كلمات' },
+    { id: '108-9', english: 'sometimes', arabic: 'أحيانًا' },
+    { id: '108-10', english: 'subtitles', arabic: 'ترجمة' },
+    { id: '108-11', english: 'help', arabic: 'يساعد' },
+    { id: '108-12', english: 'understand', arabic: 'يفهم' },
+    { id: '108-13', english: 'language', arabic: 'لغة' },
+    { id: '108-14', english: 'better', arabic: 'أفضل' }
+  ]
+},
+
+'109': {
+  title: "A Rainy Day",
+  content: "Today, the weather is rainy and cold. Adam wears a jacket and takes an umbrella. He walks carefully in the street because the road is wet. When he arrives at school, his clothes are wet but he feels safe.",
+  terms: [
+    { id: '109-1', english: 'weather', arabic: 'طقس' },
+    { id: '109-2', english: 'rainy', arabic: 'ممطر' },
+    { id: '109-3', english: 'cold', arabic: 'بارد' },
+    { id: '109-4', english: 'wear', arabic: 'يرتدي' },
+    { id: '109-5', english: 'jacket', arabic: 'سترة' },
+    { id: '109-6', english: 'umbrella', arabic: 'مظلة' },
+    { id: '109-7', english: 'walk', arabic: 'يمشي' },
+    { id: '109-8', english: 'street', arabic: 'شارع' },
+    { id: '109-9', english: 'road', arabic: 'طريق' },
+    { id: '109-10', english: 'wet', arabic: 'مبلل' },
+    { id: '109-11', english: 'arrive', arabic: 'يصل' },
+    { id: '109-12', english: 'clothes', arabic: 'ملابس' },
+    { id: '109-13', english: 'safe', arabic: 'آمن' },
+    { id: '109-14', english: 'today', arabic: 'اليوم' }
+  ]
+},
+
+'110': {
+  title: "Helping a Neighbor",
+  content: "Adam has a neighbor who is old and tired. One day, Adam helps him carry heavy bags from the shop to his house. The neighbor thanks Adam and feels happy. Adam feels good because he helps other people.",
+  terms: [
+    { id: '110-1', english: 'neighbor', arabic: 'جار' },
+    { id: '110-2', english: 'old', arabic: 'عجوز' },
+    { id: '110-3', english: 'tired', arabic: 'متعب' },
+    { id: '110-4', english: 'help', arabic: 'يساعد' },
+    { id: '110-5', english: 'carry', arabic: 'يحمل' },
+    { id: '110-6', english: 'heavy', arabic: 'ثقيل' },
+    { id: '110-7', english: 'bags', arabic: 'أكياس' },
+    { id: '110-8', english: 'thanks', arabic: 'يشكر' },
+    { id: '110-9', english: 'feel', arabic: 'يشعر' },
+    { id: '110-10', english: 'good', arabic: 'جيد' },
+    { id: '110-11', english: 'other', arabic: 'آخر' },
+    { id: '110-12', english: 'people', arabic: 'ناس' },
+    { id: '110-13', english: 'one day', arabic: 'ذات يوم' },
+    { id: '110-14', english: 'from', arabic: 'من' }
   ]
 },
   '201': {
