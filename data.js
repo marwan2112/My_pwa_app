@@ -108,7 +108,7 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-  '101': {
+  "101": {
     "title": "Adam’s Introduction",
     "content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
     "terms": [
@@ -332,7 +332,7 @@ window.lessonsData = {
       {"id": "110-16", "english": "Proud", "arabic": "فخور"}
     ]
   },
-    "id": "111",{
+  "111": {
     "title": "A Busy Morning",
     "content": "Today is a very busy morning for Adam. He has many things to do before school. First, he makes his bed. Then, he packs his lunchbox with a sandwich and an apple. He looks for his keys on the shelf. He finds them under a magazine. Adam needs to feed his cat before he leaves. The cat is hungry and meows loudly. After that, he checks his timetable. He has a math test today. He feels a bit nervous but ready. He puts on his yellow jacket because it is chilly outside. Finally, he locks the door and runs to the bus stop. He sees his friend Ali waiting there. They greet each other and get on the bus together.",
     "terms": [
@@ -354,7 +354,7 @@ window.lessonsData = {
       {"id": "111-16", "english": "Greet", "arabic": "يحيي"}
     ]
   },
-    "id": "112",{
+  "112": {
     "title": "At the Library",
     "content": "Adam and Sara go to the city library. The building is very large and full of books. Inside, people must be silent. They walk past many tall bookcases. Sara wants a book about history. Adam looks for a science fiction novel. They find a comfortable sofa in the corner. Adam starts to read quietly. He finds a map inside his book. The map shows a hidden island. It is very exciting. Sara finds a thick encyclopedia about ancient kings. They stay there for two hours. Later, they go to the desk to borrow the books. The librarian is a kind woman. She scans the barcodes and smiles. They put the books in their backpacks and leave. It was a productive visit.",
     "terms": [
@@ -376,7 +376,7 @@ window.lessonsData = {
       {"id": "112-16", "english": "Productive", "arabic": "مثمر/مفيد"}
     ]
   },
-    "id": "113",{
+  "113": {
     "title": "A Phone Call",
     "content": "Lina's phone rings loudly on the table. It is her friend Mona. Lina answers the call. 'Hello Mona, how are you?' she says. Mona wants to invite Lina to a party. They talk about the time and place. The party is on Friday evening. Lina needs to check her calendar. She is free that day. They discuss what to wear. Mona suggests a purple dress. Lina agrees. They also talk about a gift for their friend. Maybe a box of chocolates or a new scarf. The connection is a bit weak, so they speak clearly. After ten minutes, they say goodbye. Lina hangs up the phone. She is very excited about the weekend. She writes a reminder on a small piece of paper.",
     "terms": [
@@ -647,7 +647,7 @@ window.lessonsData = {
       {"id": "124-10", "english": "Dolphins", "arabic": "دلافين"},
       {"id": "124-11", "english": "Performed", "arabic": "أدى/عرض"},
       {"id": "124-12", "english": "Impressive", "arabic": "مبهر"},
-      {"id": "124-13": "english": "Intelligent", "arabic": "ذكي"},
+      {"id": "124-13", "english": "Intelligent", "arabic": "ذكي"},
       {"id": "124-14", "english": "Mammals", "arabic": "ثدييات"},
       {"id": "124-15", "english": "Poster", "arabic": "ملصق"},
       {"id": "124-16", "english": "Fierce", "arabic": "شرس"},
@@ -1072,7 +1072,9 @@ window.lessonsData = {
       {"id": "140-19", "english": "Appreciates", "arabic": "يقدر"},
       {"id": "140-20", "english": "Managing", "arabic": "إدارة"}
     ]
-  },
+  }
+};
+
         '301': {
     title: "Cooperative Sovereignty in a Globalized Era",
     content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory, resources, and population without external interference. However, the emergence of transnational challenges such as climate change, cyber-organized crime, and global pandemics has starkly revealed the limits of this concept. States are no longer capable of confronting these challenges individually, which has compelled them to negotiate and cede portions of their authority to global governance bodies. This shift propels a model known as "cooperative sovereignty" or "sovereignty as responsibility." Proponents argue that in an interconnected world, the ultimate exercise of sovereignty is the ability to participate effectively in international systems, shape global norms, and protect one's citizens from threats that originate beyond borders. This requires a pragmatic surrender of absolute autonomy in exchange for influence and collective security. For example, a country adhering to World Trade Organization rules accepts constraints on its domestic trade policies but gains access to a dispute resolution mechanism and a vast global market. Critics, however, view this evolution with suspicion, interpreting it as a dilution of statehood and a potential infringement on national self-determination. They warn that powerful states or unaccountable bureaucracies in international organizations can dominate the rule-setting process, effectively imposing their will on smaller nations under the guise of global cooperation. The tension between the imperative for international collaboration and the desire to preserve national autonomy and identity forms the core of contemporary geopolitical discourse, influencing debates on issues ranging from migration and environmental treaties to data privacy regulations and military alliances.`,
