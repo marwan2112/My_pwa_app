@@ -108,7 +108,7 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-  '101': 
+  '101': {
     "title": "Adam’s Introduction",
     "content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
     "terms": [
@@ -195,7 +195,6 @@ window.lessonsData = {
       { id: '301-59', english: 'Migration', arabic: 'هجرة' },
       { id: '301-60', english: 'Treaty', arabic: 'معاهدة' }
     ]
-        }
   },
 
 '302': {
@@ -422,7 +421,7 @@ However, the proliferation of these financing mechanisms has simultaneously inte
     content: `The twenty-first century public sphere, once envisioned as a digital extension of the Enlightenment’s marketplace of ideas, is increasingly defined by fragmentation and epistemological isolation. The algorithms that govern social media platforms are fundamentally optimized for engagement—a metric often maximized by sensationalism, emotional resonance, and the reinforcement of pre-existing beliefs. This algorithmic architecture creates "echo chambers" and "filter bubbles," which insulate individuals from contradictory viewpoints and challenge the foundational premise of shared reality necessary for functional democratic discourse. The consequence is not merely political polarization, but a deeper schism where citizens, operating within different informational ecosystems, often cannot agree on the basic factual premises that should govern debate.
 This isolation leads to the phenomenon of epistemological closure, where individuals and groups become resistant to external evidence that conflicts with their internal narrative, viewing any dissenting information as inherently partisan or malicious. The public discourse thus transitions from rational disagreement about policy to fundamental, often intractable, disputes over truth itself. Furthermore, the capacity for collective action is undermined. Historically, shared facts, disseminated through unified sources, provided the civic glue necessary to mobilize public opinion around complex national issues. When this shared factual ground dissolves, the possibility of reaching a cross-partisan consensus on urgent challenges, such as climate change or pandemic response, diminishes significantly. Critics contend that platforms must adopt radical measures—such as algorithmic transparency and a shift away from pure engagement metrics—to restore informational diversity. However, others argue that governmental intervention to regulate the speech environment, even to curb disinformation, risks impinging upon fundamental freedoms and could be weaponized by authoritarian regimes. The long-term stability of liberal democracies may, therefore, hinge upon the difficult societal project of intentionally fostering habits of informational skepticism and re-establishing the legitimacy of authoritative, non-partisan knowledge sources. 
 `,
-    terms: [{ id: '3112-1', english: 'Governance', arabic: 'حوكمة' }]
+    terms: [{ id: '312-1', english: 'Governance', arabic: 'حوكمة' }]
   },
   '313': {
     title: "The Erosion of Multilateralism and the Rise of Strategic Hedging",
