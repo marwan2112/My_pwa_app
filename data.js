@@ -108,7 +108,7 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-    "id": "101",
+    "id": "101",{
     "title": "Adam’s Introduction",
     "content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
     "terms": [
@@ -131,7 +131,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "102",
+    "id": "102",{
     "title": "Adam and His Friend",
     "content": "Adam has a best friend. His name is Omar. Omar is a tall boy. He wears a blue shirt and black pants. They meet in the park every afternoon. The park has green grass and many trees. Adam and Omar sit on a wooden bench. They talk about football and films. Omar has a bicycle. It is fast and new. Sometimes, they eat an apple or an orange. Omar is very kind. He helps Adam with his homework. They laugh a lot together. Friendship is important. A bird sings on a branch. The air is fresh. They feel lucky to be friends. It is a beautiful afternoon for both of them.",
     "terms": [
@@ -155,7 +155,7 @@ window.lessonsData = {
       {"id": "102-18", "english": "Important", "arabic": "مهم"}
     ]
   },
-    "id": "103",
+    "id": "103",{
     "title": "Adam’s Morning Routine",
     "content": "Every morning, Adam follows a routine. He gets out of bed at seven o'clock. First, he goes to the bathroom to wash his face. He uses cold water and soap. Then, he brushes his teeth with a small toothbrush. Adam goes to the kitchen. He sees his mother, Sara. She makes tea in a large pot. Adam helps her. He puts plates and spoons on the table. They sit down to eat. He likes eggs and cheese. After food, he puts on his shoes. He grabs his heavy bag. He says goodbye to his dog. The dog wags its tail. Adam is ready for a new day. He feels very energetic and strong now.",
     "terms": [
@@ -180,7 +180,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "104",
+    "id": "104",{
     "title": "Adam at School",
     "content": "Adam arrives at school at eight. He enters the building and finds his desk. The classroom is big. There is a wide blackboard on the wall. The teacher writes English words with white chalk. Adam has a red pen and a yellow pencil. He uses an eraser to fix mistakes. Today, they learn about animals. A lion is strong. An elephant is huge. Adam takes notes in his notebook. He listens to the lesson carefully. During the break, he talks to Lina. Lina is a new girl. She is smart and friendly. They share a sandwich and water. The school bell rings loudly. It is time for the next class. Adam loves his school very much.",
     "terms": [
@@ -203,7 +203,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "105",
+    "id": "105",{
     "title": "Adam at the Café",
     "content": "Adam goes to a small café near the library. The café is quiet and warm. He sits near the window. A waiter comes to the table. The waiter says, 'Hello, what do you want today?' Adam looks at the menu. He wants a glass of juice and a piece of chocolate cake. The cake is delicious. Adam watches the cars and people on the street. He sees a man with a big umbrella. He also sees a woman with a small bag. Adam opens his laptop to finish some work. He types slowly. The café smells like roasted beans. He feels relaxed. It is a good place to think. He pays the money and leaves a small tip. He walks home slowly.",
     "terms": [
@@ -226,7 +226,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "106",
+    "id": "106",{
     "title": "Adam’s Family",
     "content": "Adam lives with a wonderful family. His father, Ali, is a doctor. He works at a hospital. His mother, Sara, is a cook in a famous restaurant. Adam has a sister. Her name is Lina. Lina is younger than Adam. She has long brown hair and big eyes. They have a baby brother named Ahmed. Ahmed is only one year old. He sleeps in a small cradle. In the evening, the family sits in the living room. They watch a funny movie on the television. Sometimes, they play a board game together. Adam loves his parents very much. His grandfather and grandmother visit them every Sunday. They bring gifts and sweets. The house is full of love and joy.",
     "terms": [
@@ -249,7 +249,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "107",
+    "id": "107",{
     "title": "Shopping Day",
     "content": "Today is Saturday. Adam and his mother go to the supermarket. The supermarket is very crowded. Adam pushes a metal cart. His mother has a long shopping list. First, they go to the fruit section. They buy bananas and grapes. Then, they look for vegetables. They pick tomatoes, potatoes, and onions. Adam wants some milk and yogurt from the fridge. They find a box of eggs too. His mother buys flour and sugar to bake a cake. Adam sees a jar of honey. He puts it in the cart. At the end, they go to the cashier. The man counts the items and puts them in plastic bags. Adam carries the bags to the car. It is a busy day for everyone.",
     "terms": [
@@ -272,7 +272,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "108",
+    "id": "108",{
     "title": "Adam’s Hobby",
     "content": "Adam has an interesting hobby. He loves photography. He has a professional camera. On weekends, he goes to the forest or the beach. He takes pictures of nature. He likes to photograph small insects and colorful flowers. Sometimes, he takes photos of his friends, Omar and Ali. They pose and smile. Adam uses a tripod to keep the camera steady. He learns how to change the light and focus. At home, he prints the photos and puts them in a large album. His hobby makes him see the world differently. He wants to be a famous photographer one day. He shows his work to his teacher. The teacher says the photos are artistic. Adam is very proud of his talent.",
     "terms": [
@@ -295,7 +295,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "109",
+    "id": "109",{
     "title": "A Rainy Day",
     "content": "Today, the weather is not sunny. It is a rainy day. Dark clouds cover the sky. Adam stays inside his house. He hears the rain on the roof. He wears a thick sweater and warm socks. He looks through the window. The garden is very wet. There are puddles of water on the ground. Adam decides to read a storybook. He sits on a soft chair near the fireplace. The fire is bright and hot. He drinks hot chocolate from a mug. It feels very cozy. His cat sits on his lap and purrs. Adam likes the sound of the rain. It is a peaceful day. He does not go to the park today. He enjoys the quiet time at home with his books.",
     "terms": [
@@ -318,7 +318,7 @@ window.lessonsData = {
     ]
   },
   
-    "id": "110",
+    "id": "110", {
     "title": "Helping a Neighbor",
     "content": "Adam has an old neighbor named Mr. Ahmed. Mr. Ahmed lives alone in a small cottage. He is very kind but he is tired today. Adam decides to help him. First, Adam cleans the leaves from the front yard. He uses a rake. Then, he paints the wooden fence. The fence is now white and clean. Mr. Ahmed is very happy. He gives Adam a cold glass of lemonade. They sit on the porch and talk. Adam carries the heavy trash bags to the bin. He also waters the plants in the garden. Helping others is a good thing. Adam feels proud and helpful. Mr. Ahmed smiles and says, 'Thank you, Adam. You are a good boy.' Adam goes home with a happy heart.",
     "terms": [
