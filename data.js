@@ -27,7 +27,29 @@ window.lessonsList = {
     { id: '119', title: "19. A Problem at Home"},
     { id: '120', title: "20. Looking to the Future" },
     { id: '121', title: "21. " },
-
+    { id: '122', title: "22. " },
+    { id: '123', title: "21. " },
+    { id: '124', title: "21. " },
+    { id: '125', title: "21. " },
+    { id: '126', title: "21. " },
+    { id: '127', title: "21. " },
+    { id: '128', title: "21. " },
+    { id: '129', title: "21. " },
+    { id: '130', title: "21. " },
+    { id: '131', title: "21. " },
+    { id: '132', title: "21. " },
+    { id: '133', title: "21. " },
+    { id: '134', title: "21. " },
+    { id: '135', title: "21. " },
+    { id: '136', title: "21. " },
+    { id: '137', title: "21. " },
+    { id: '138', title: "21. " },
+    { id: '139', title: "21. " },
+    { id: '140', title: "21. " },
+    { id: '141', title: "21. " },
+    { id: '142', title: "21. " },
+    { id: '143', title: "21. " },
+    { id: '144', title: "21. " },
   ],
   'intermediate': [
     { id: '201', title: 'marwan', description: 'تحليل نص سياسي معمق' }
@@ -500,6 +522,280 @@ window.lessonsData = {
     { id: '120-16', english: 'not', arabic: 'لا' },
     { id: '120-17', english: 'give up', arabic: 'يستسلم' },
     { id: '120-18', english: 'about', arabic: 'عن' }
+  ]
+},
+  '21': {
+  title: "Ali's First Job",
+  content: "Ali got his first job last month. He worked in a small café near his home. Every day, he cleaned the tables and helped customers. He learned many new things at work. Sometimes he felt tired, but he was happy because he earned money. His family was proud of him.",
+  terms: [
+    { id: '21-1', english: 'job', arabic: 'وظيفة' },
+    { id: '21-2', english: 'worked', arabic: 'عمل' },
+    { id: '21-3', english: 'café', arabic: 'مقهى' },
+    { id: '21-4', english: 'cleaned', arabic: 'نظف' },
+    { id: '21-5', english: 'tables', arabic: 'طاولات' },
+    { id: '21-6', english: 'customers', arabic: 'زبائن' },
+    { id: '21-7', english: 'learned', arabic: 'تعلّم' },
+    { id: '21-8', english: 'things', arabic: 'أشياء' },
+    { id: '21-9', english: 'sometimes', arabic: 'أحيانًا' },
+    { id: '21-10', english: 'tired', arabic: 'متعب' },
+    { id: '21-11', english: 'happy', arabic: 'سعيد' },
+    { id: '21-12', english: 'because', arabic: 'لأن' },
+    { id: '21-13', english: 'earned', arabic: 'كسب' },
+    { id: '21-14', english: 'money', arabic: 'مال' },
+    { id: '21-15', english: 'family', arabic: 'عائلة' },
+    { id: '21-16', english: 'proud', arabic: 'فخور' },
+    { id: '21-17', english: 'first', arabic: 'الأول' },
+    { id: '21-18', english: 'month', arabic: 'شهر' }
+  ]
+},
+
+'22': {
+  title: "Sara's Busy Day",
+  content: "Yesterday, Sara had a busy day. She went to school in the morning and studied English and math. After school, she visited her grandmother. They talked and drank tea together. In the evening, Sara did her homework and watched a short movie.",
+  terms: [
+    { id: '22-1', english: 'yesterday', arabic: 'أمس' },
+    { id: '22-2', english: 'busy', arabic: 'مشغول' },
+    { id: '22-3', english: 'went', arabic: 'ذهب' },
+    { id: '22-4', english: 'studied', arabic: 'درس' },
+    { id: '22-5', english: 'math', arabic: 'رياضيات' },
+    { id: '22-6', english: 'after', arabic: 'بعد' },
+    { id: '22-7', english: 'visited', arabic: 'زار' },
+    { id: '22-8', english: 'grandmother', arabic: 'جدة' },
+    { id: '22-9', english: 'talked', arabic: 'تحدث' },
+    { id: '22-10', english: 'drank', arabic: 'شرب' },
+    { id: '22-11', english: 'tea', arabic: 'شاي' },
+    { id: '22-12', english: 'together', arabic: 'معًا' },
+    { id: '22-13', english: 'evening', arabic: 'مساء' },
+    { id: '22-14', english: 'homework', arabic: 'واجب' },
+    { id: '22-15', english: 'watched', arabic: 'شاهد' },
+    { id: '22-16', english: 'movie', arabic: 'فيلم' },
+    { id: '22-17', english: 'short', arabic: 'قصير' },
+    { id: '22-18', english: 'day', arabic: 'يوم' }
+  ]
+},
+
+'23': {
+  title: "Omar's Trip",
+  content: "Last week, Omar traveled to another city. He went there by bus and stayed in a small hotel. He saw new places and met new people. Omar took many photos and shared them with his friends when he came back home.",
+  terms: [
+    { id: '23-1', english: 'last', arabic: 'الماضي' },
+    { id: '23-2', english: 'week', arabic: 'أسبوع' },
+    { id: '23-3', english: 'traveled', arabic: 'سافر' },
+    { id: '23-4', english: 'another', arabic: 'آخر' },
+    { id: '23-5', english: 'bus', arabic: 'حافلة' },
+    { id: '23-6', english: 'stayed', arabic: 'أقام' },
+    { id: '23-7', english: 'hotel', arabic: 'فندق' },
+    { id: '23-8', english: 'saw', arabic: 'رأى' },
+    { id: '23-9', english: 'places', arabic: 'أماكن' },
+    { id: '23-10', english: 'met', arabic: 'قابل' },
+    { id: '23-11', english: 'people', arabic: 'ناس' },
+    { id: '23-12', english: 'took', arabic: 'أخذ' },
+    { id: '23-13', english: 'photos', arabic: 'صور' },
+    { id: '23-14', english: 'shared', arabic: 'شارك' },
+    { id: '23-15', english: 'friends', arabic: 'أصدقاء' },
+    { id: '23-16', english: 'when', arabic: 'عندما' },
+    { id: '23-17', english: 'came', arabic: 'عاد' },
+    { id: '23-18', english: 'back', arabic: 'عودة' }
+  ]
+},
+
+'24': {
+  title: "Lina Felt Sick",
+  content: "Lina did not go to school yesterday because she felt sick. She stayed in bed and drank warm water. Her mother cooked soup for her and gave her some medicine. In the evening, Lina felt better and smiled again.",
+  terms: [
+    { id: '24-1', english: 'felt', arabic: 'شعر' },
+    { id: '24-2', english: 'sick', arabic: 'مريض' },
+    { id: '24-3', english: 'stayed', arabic: 'بقي' },
+    { id: '24-4', english: 'bed', arabic: 'سرير' },
+    { id: '24-5', english: 'warm', arabic: 'دافئ' },
+    { id: '24-6', english: 'water', arabic: 'ماء' },
+    { id: '24-7', english: 'mother', arabic: 'أم' },
+    { id: '24-8', english: 'cooked', arabic: 'طبخ' },
+    { id: '24-9', english: 'soup', arabic: 'شوربة' },
+    { id: '24-10', english: 'gave', arabic: 'أعطى' },
+    { id: '24-11', english: 'medicine', arabic: 'دواء' },
+    { id: '24-12', english: 'better', arabic: 'أفضل' },
+    { id: '24-13', english: 'smiled', arabic: 'ابتسم' },
+    { id: '24-14', english: 'again', arabic: 'مرة أخرى' },
+    { id: '24-15', english: 'evening', arabic: 'مساء' },
+    { id: '24-16', english: 'because', arabic: 'لأن' },
+    { id: '24-17', english: 'yesterday', arabic: 'أمس' },
+    { id: '24-18', english: 'school', arabic: 'مدرسة' }
+  ]
+},
+
+'25': {
+  title: "Adam Lost His Phone",
+  content: "Adam lost his phone in the street yesterday. He looked for it in many places, but he did not find it. Later, a kind man called Adam and said he found the phone near a shop. Adam thanked him and felt very relieved.",
+  terms: [
+    { id: '25-1', english: 'lost', arabic: 'فقد' },
+    { id: '25-2', english: 'phone', arabic: 'هاتف' },
+    { id: '25-3', english: 'street', arabic: 'شارع' },
+    { id: '25-4', english: 'looked', arabic: 'بحث' },
+    { id: '25-5', english: 'places', arabic: 'أماكن' },
+    { id: '25-6', english: 'find', arabic: 'يجد' },
+    { id: '25-7', english: 'later', arabic: 'لاحقًا' },
+    { id: '25-8', english: 'kind', arabic: 'طيب' },
+    { id: '25-9', english: 'man', arabic: 'رجل' },
+    { id: '25-10', english: 'called', arabic: 'اتصل' },
+    { id: '25-11', english: 'said', arabic: 'قال' },
+    { id: '25-12', english: 'found', arabic: 'وجد' },
+    { id: '25-13', english: 'near', arabic: 'قريب من' },
+    { id: '25-14', english: 'shop', arabic: 'محل' },
+    { id: '25-15', english: 'thanked', arabic: 'شكر' },
+    { id: '25-16', english: 'relieved', arabic: 'مرتاح' },
+    { id: '25-17', english: 'very', arabic: 'جداً' },
+    { id: '25-18', english: 'yesterday', arabic: 'أمس' }
+  ]
+},
+
+'26': {
+  title: "A Rainy Day",
+  content: "It rained all day yesterday, so people stayed at home. Huda read a book and listened to music. Her brother played games on his phone. The weather was cold, but the family felt warm inside the house.",
+  terms: [
+    { id: '26-1', english: 'rained', arabic: 'أمطرت' },
+    { id: '26-2', english: 'all', arabic: 'طوال' },
+    { id: '26-3', english: 'day', arabic: 'اليوم' },
+    { id: '26-4', english: 'people', arabic: 'الناس' },
+    { id: '26-5', english: 'stayed', arabic: 'بقوا' },
+    { id: '26-6', english: 'home', arabic: 'البيت' },
+    { id: '26-7', english: 'read', arabic: 'قرأ' },
+    { id: '26-8', english: 'book', arabic: 'كتاب' },
+    { id: '26-9', english: 'listened', arabic: 'استمع' },
+    { id: '26-10', english: 'music', arabic: 'موسيقى' },
+    { id: '26-11', english: 'brother', arabic: 'أخ' },
+    { id: '26-12', english: 'played', arabic: 'لعب' },
+    { id: '26-13', english: 'games', arabic: 'ألعاب' },
+    { id: '26-14', english: 'weather', arabic: 'الطقس' },
+    { id: '26-15', english: 'cold', arabic: 'بارد' },
+    { id: '26-16', english: 'family', arabic: 'عائلة' },
+    { id: '26-17', english: 'felt', arabic: 'شعر' },
+    { id: '26-18', english: 'inside', arabic: 'داخل' }
+  ]
+},
+
+'27': {
+  title: "Mona's New Hobby",
+  content: "Mona started a new hobby last month. She learned how to paint and draw pictures. Every weekend, she practiced at home and watched videos about art. Painting made her feel calm and happy.",
+  terms: [
+    { id: '27-1', english: 'started', arabic: 'بدأ' },
+    { id: '27-2', english: 'hobby', arabic: 'هواية' },
+    { id: '27-3', english: 'learned', arabic: 'تعلّم' },
+    { id: '27-4', english: 'paint', arabic: 'يرسم بالألوان' },
+    { id: '27-5', english: 'draw', arabic: 'يرسم' },
+    { id: '27-6', english: 'pictures', arabic: 'صور' },
+    { id: '27-7', english: 'weekend', arabic: 'عطلة نهاية الأسبوع' },
+    { id: '27-8', english: 'practiced', arabic: 'تدرّب' },
+    { id: '27-9', english: 'videos', arabic: 'فيديوهات' },
+    { id: '27-10', english: 'art', arabic: 'فن' },
+    { id: '27-11', english: 'made', arabic: 'جعل' },
+    { id: '27-12', english: 'feel', arabic: 'يشعر' },
+    { id: '27-13', english: 'calm', arabic: 'هادئ' },
+    { id: '27-14', english: 'happy', arabic: 'سعيد' },
+    { id: '27-15', english: 'every', arabic: 'كل' },
+    { id: '27-16', english: 'home', arabic: 'البيت' },
+    { id: '27-17', english: 'month', arabic: 'شهر' },
+    { id: '27-18', english: 'new', arabic: 'جديد' }
+  ]
+},
+
+'28': {
+  title: "A Small Accident",
+  content: "On his way to work, Sam fell from his bike. He hurt his leg and could not walk fast. A woman helped him and called a taxi. Sam thanked her and went to the doctor.",
+  terms: [
+    { id: '28-1', english: 'fell', arabic: 'سقط' },
+    { id: '28-2', english: 'bike', arabic: 'دراجة' },
+    { id: '28-3', english: 'hurt', arabic: 'جرح' },
+    { id: '28-4', english: 'leg', arabic: 'ساق' },
+    { id: '28-5', english: 'walk', arabic: 'يمشي' },
+    { id: '28-6', english: 'fast', arabic: 'سريع' },
+    { id: '28-7', english: 'woman', arabic: 'امرأة' },
+    { id: '28-8', english: 'helped', arabic: 'ساعد' },
+    { id: '28-9', english: 'called', arabic: 'اتصل' },
+    { id: '28-10', english: 'taxi', arabic: 'سيارة أجرة' },
+    { id: '28-11', english: 'doctor', arabic: 'طبيب' },
+    { id: '28-12', english: 'way', arabic: 'طريق' },
+    { id: '28-13', english: 'work', arabic: 'عمل' },
+    { id: '28-14', english: 'went', arabic: 'ذهب' },
+    { id: '28-15', english: 'thanked', arabic: 'شكر' },
+    { id: '28-16', english: 'could', arabic: 'استطاع' },
+    { id: '28-17', english: 'not', arabic: 'لم' },
+    { id: '28-18', english: 'small', arabic: 'صغير' }
+  ]
+},
+
+'29': {
+  title: "Nour's Birthday",
+  content: "Nour had a birthday party last night. Her friends came to her house and brought gifts. They ate cake, played games, and listened to music. Nour felt very happy on her special day.",
+  terms: [
+    { id: '29-1', english: 'birthday', arabic: 'عيد ميلاد' },
+    { id: '29-2', english: 'party', arabic: 'حفلة' },
+    { id: '29-3', english: 'night', arabic: 'ليلة' },
+    { id: '29-4', english: 'friends', arabic: 'أصدقاء' },
+    { id: '29-5', english: 'came', arabic: 'جاؤوا' },
+    { id: '29-6', english: 'house', arabic: 'بيت' },
+    { id: '29-7', english: 'brought', arabic: 'أحضروا' },
+    { id: '29-8', english: 'gifts', arabic: 'هدايا' },
+    { id: '29-9', english: 'ate', arabic: 'أكلوا' },
+    { id: '29-10', english: 'cake', arabic: 'كعكة' },
+    { id: '29-11', english: 'played', arabic: 'لعبوا' },
+    { id: '29-12', english: 'games', arabic: 'ألعاب' },
+    { id: '29-13', english: 'listened', arabic: 'استمعوا' },
+    { id: '29-14', english: 'music', arabic: 'موسيقى' },
+    { id: '29-15', english: 'felt', arabic: 'شعر' },
+    { id: '29-16', english: 'special', arabic: 'مميز' },
+    { id: '29-17', english: 'day', arabic: 'يوم' },
+    { id: '29-18', english: 'very', arabic: 'جداً' }
+  ]
+},
+
+'30': {
+  title: "A Hard Exam",
+  content: "Khaled had a hard exam yesterday. He studied all night and drank a lot of coffee. During the exam, he felt nervous but tried his best. After the exam, he felt tired but hopeful.",
+  terms: [
+    { id: '30-1', english: 'hard', arabic: 'صعب' },
+    { id: '30-2', english: 'exam', arabic: 'امتحان' },
+    { id: '30-3', english: 'studied', arabic: 'درس' },
+    { id: '30-4', english: 'night', arabic: 'ليل' },
+    { id: '30-5', english: 'drank', arabic: 'شرب' },
+    { id: '30-6', english: 'coffee', arabic: 'قهوة' },
+    { id: '30-7', english: 'during', arabic: 'خلال' },
+    { id: '30-8', english: 'felt', arabic: 'شعر' },
+    { id: '30-9', english: 'nervous', arabic: 'متوتر' },
+    { id: '30-10', english: 'tried', arabic: 'حاول' },
+    { id: '30-11', english: 'best', arabic: 'أفضل ما عنده' },
+    { id: '30-12', english: 'after', arabic: 'بعد' },
+    { id: '30-13', english: 'tired', arabic: 'متعب' },
+    { id: '30-14', english: 'hopeful', arabic: 'متفائل' },
+    { id: '30-15', english: 'a lot', arabic: 'كثيراً' },
+    { id: '30-16', english: 'yesterday', arabic: 'أمس' },
+    { id: '30-17', english: 'all', arabic: 'طوال' },
+    { id: '30-18', english: 'exam', arabic: 'امتحان' }
+  ]
+},
+
+'31': {
+  title: "Helping a Neighbor",
+  content: "Last weekend, Rami helped his neighbor move to a new house. They carried boxes and cleaned the old place. After they finished, the neighbor thanked Rami and gave him some food.",
+  terms: [
+    { id: '31-1', english: 'weekend', arabic: 'عطلة نهاية الأسبوع' },
+    { id: '31-2', english: 'helped', arabic: 'ساعد' },
+    { id: '31-3', english: 'neighbor', arabic: 'جار' },
+    { id: '31-4', english: 'move', arabic: 'ينتقل' },
+    { id: '31-5', english: 'new', arabic: 'جديد' },
+    { id: '31-6', english: 'house', arabic: 'بيت' },
+    { id: '31-7', english: 'carried', arabic: 'حمل' },
+    { id: '31-8', english: 'boxes', arabic: 'صناديق' },
+    { id: '31-9', english: 'cleaned', arabic: 'نظف' },
+    { id: '31-10', english: 'old', arabic: 'قديم' },
+    { id: '31-11', english: 'place', arabic: 'مكان' },
+    { id: '31-12', english: 'finished', arabic: 'انتهى' },
+    { id: '31-13', english: 'thanked', arabic: 'شكر' },
+    { id: '31-14', english: 'gave', arabic: 'أعطى' },
+    { id: '31-15', english: 'food', arabic: 'طعام' },
+    { id: '31-16', english: 'after', arabic: 'بعد' },
+    { id: '31-17', english: 'some', arabic: 'بعض' },
+    { id: '31-18', english: 'last', arabic: 'الماضي' }
   ]
 },
   '201': {
