@@ -377,7 +377,6 @@ window.lessonsData = {
       {"id": "112-16", "english": "Productive", "arabic": "مثمر/مفيد"}
     ]
   },
-  {
     "id": "113",
     "title": "A Phone Call",
     "content": "Lina's phone rings loudly on the table. It is her friend Mona. Lina answers the call. 'Hello Mona, how are you?' she says. Mona wants to invite Lina to a party. They talk about the time and place. The party is on Friday evening. Lina needs to check her calendar. She is free that day. They discuss what to wear. Mona suggests a purple dress. Lina agrees. They also talk about a gift for their friend. Maybe a box of chocolates or a new scarf. The connection is a bit weak, so they speak clearly. After ten minutes, they say goodbye. Lina hangs up the phone. She is very excited about the weekend. She writes a reminder on a small piece of paper.",
@@ -399,76 +398,7 @@ window.lessonsData = {
       {"id": "113-15", "english": "Hangs up", "arabic": "يغلق الخط"},
       {"id": "113-16", "english": "Reminder", "arabic": "تذكير"}
     ]
-  },
-      {
-  "111": {
-    "title": "A Busy Morning",
-    "content": "Today is a very busy morning for Adam. He has many things to do before school starts. First, he makes his bed quickly. Then, he packs his lunchbox with a fresh sandwich and a green pear. He looks for his keys on the wooden shelf. He finds them under a heavy magazine. Adam needs to feed his cat before he leaves. The cat is hungry and meows loudly near the door. After that, he checks his timetable. He has a math test today. He feels a bit nervous but ready. He puts on his yellow jacket because it is chilly outside. Finally, he locks the door and runs to the bus stop. He sees his friend Ali waiting there. They greet each other and get on the bus together.",
-    "terms": [
-      {"id": "111-1", "english": "Busy", "arabic": "مشغول"},
-      {"id": "111-2", "english": "Lunchbox", "arabic": "صندوق غداء"},
-      {"id": "111-3", "english": "Pear", "arabic": "كمثرى"},
-      {"id": "111-4", "english": "Keys", "arabic": "مفاتيح"},
-      {"id": "111-5", "english": "Shelf", "arabic": "رف"},
-      {"id": "111-6", "english": "Magazine", "arabic": "مجلة"},
-      {"id": "111-7", "english": "Feed", "arabic": "يطعم"},
-      {"id": "111-8", "english": "Hungry", "arabic": "جائع"},
-      {"id": "111-9", "english": "Meows", "arabic": "يموء"},
-      {"id": "111-10", "english": "Timetable", "arabic": "جدول مواعيد"},
-      {"id": "111-11", "english": "Math", "arabic": "رياضيات"},
-      {"id": "111-12", "english": "Test", "arabic": "اختبار"},
-      {"id": "111-13", "english": "Nervous", "arabic": "متوتر"},
-      {"id": "111-14", "english": "Jacket", "arabic": "سترة"},
-      {"id": "111-15", "english": "Chilly", "arabic": "بارد قليلاً"},
-      {"id": "111-16", "english": "Locks", "arabic": "يقفل"},
-      {"id": "111-17", "english": "Greet", "arabic": "يحيي"}
-    ]
-  },
-  "112": {
-    "title": "At the Library",
-    "content": "Adam and Sara go to the city library today. The building is very large and full of many books. Inside, people must be silent. They walk past many tall bookcases to find a seat. Sara wants a book about history. Adam looks for a science fiction novel. They find a comfortable sofa in the corner. Adam starts to read quietly. He finds a map inside his book. The map shows a hidden island in the ocean. It is very exciting for him. Sara finds a thick encyclopedia about ancient kings. They stay there for two hours. Later, they go to the desk to borrow the books. The librarian is a kind woman. She scans the barcodes and smiles at them. They put the books in their backpacks and leave together.",
-    "terms": [
-      {"id": "112-1", "english": "Silent", "arabic": "صامت"},
-      {"id": "112-2", "english": "Bookcases", "arabic": "خزائن كتب"},
-      {"id": "112-3", "english": "History", "arabic": "تاريخ"},
-      {"id": "112-4", "english": "Science fiction", "arabic": "خيال علمي"},
-      {"id": "112-5", "english": "Novel", "arabic": "رواية"},
-      {"id": "112-6", "english": "Sofa", "arabic": "أريكة"},
-      {"id": "112-7", "english": "Corner", "arabic": "زاوية"},
-      {"id": "112-8", "english": "Quietly", "arabic": "بهدوء"},
-      {"id": "112-9", "english": "Map", "arabic": "خريطة"},
-      {"id": "112-10", "english": "Hidden", "arabic": "مخفي"},
-      {"id": "112-11", "english": "Island", "arabic": "جزيرة"},
-      {"id": "112-12", "english": "Ocean", "arabic": "محيط"},
-      {"id": "112-13", "english": "Encyclopedia", "arabic": "موسوعة"},
-      {"id": "112-14", "english": "Ancient", "arabic": "قديم"},
-      {"id": "112-15", "english": "Borrow", "arabic": "يستعير"},
-      {"id": "112-16", "english": "Librarian", "arabic": "أمين مكتبة"},
-      {"id": "112-17", "english": "Backpacks", "arabic": "حقائب ظهر"}
-    ]
-  },
-  "113": {
-    "title": "A Phone Call",
-    "content": "Lina's phone rings loudly on the wooden table. It is her friend Mona calling. Lina answers the call immediately. 'Hello Mona, how are you?' she says with a smile. Mona wants to invite Lina to a surprise party. They talk about the time and the place. The party is on Friday evening. Lina needs to check her pink calendar. She is free that day. They discuss what to wear for the event. Mona suggests a purple dress. Lina agrees. They also talk about a gift for their friend. Maybe a box of sweet chocolates or a new wool scarf. The connection is a bit weak, so they speak clearly. After ten minutes, they say goodbye. Lina hangs up the phone. She is very excited. She writes a reminder on a small paper.",
-    "terms": [
-      {"id": "113-1", "english": "Rings", "arabic": "يرن"},
-      {"id": "113-2", "english": "Immediately", "arabic": "فوراً"},
-      {"id": "113-3", "english": "Invite", "arabic": "يدعو"},
-      {"id": "113-4", "english": "Surprise", "arabic": "مفاجأة"},
-      {"id": "113-5", "english": "Friday", "arabic": "الجمعة"},
-      {"id": "113-6", "english": "Calendar", "arabic": "تقويم"},
-      {"id": "113-7", "english": "Free", "arabic": "متفرغ"},
-      {"id": "113-8", "english": "Discuss", "arabic": "يناقش"},
-      {"id": "113-9", "english": "Purple", "arabic": "أرجواني"},
-      {"id": "113-10", "english": "Dress", "arabic": "فستان"},
-      {"id": "113-11", "english": "Scarf", "arabic": "وشاح"},
-      {"id": "113-12", "english": "Connection", "arabic": "اتصال"},
-      {"id": "113-13", "english": "Weak", "arabic": "ضعيف"},
-      {"id": "113-14", "english": "Clearly", "arabic": "بوضوح"},
-      {"id": "113-15", "english": "Hangs up", "arabic": "يغلق الخط"},
-      {"id": "113-16", "english": "Reminder", "arabic": "تذكير"}
-    ]
-  },
+  },  
   "114": {
     "title": "At the Doctor",
     "content": "Adam feels sick today. He has a bad headache and a sore throat. His father, Ali, takes him to the clinic. They wait in a small waiting room. A nurse calls Adam's name. She checks his weight and height. Then, they enter the doctor's office. The doctor is a friendly man. He uses a stethoscope to listen to Adam's heart. He also looks at Adam's ears and eyes. 'You have a small cold,' the doctor says. He tells Adam to drink lots of water and rest in bed. He writes a prescription for some medicine. Adam's father buys the medicine from the pharmacy nearby. Adam goes home to sleep. He hopes to feel better soon. The clinic is very clean and the people are helpful. He feels safe there.",
