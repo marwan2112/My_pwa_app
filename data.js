@@ -108,7 +108,6 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-const lessons = {
     "id": "101",
     "title": "Adam’s Introduction",
     "content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
@@ -156,7 +155,6 @@ const lessons = {
       {"id": "102-18", "english": "Important", "arabic": "مهم"}
     ]
   },
-  
     "id": "103",
     "title": "Adam’s Morning Routine",
     "content": "Every morning, Adam follows a routine. He gets out of bed at seven o'clock. First, he goes to the bathroom to wash his face. He uses cold water and soap. Then, he brushes his teeth with a small toothbrush. Adam goes to the kitchen. He sees his mother, Sara. She makes tea in a large pot. Adam helps her. He puts plates and spoons on the table. They sit down to eat. He likes eggs and cheese. After food, he puts on his shoes. He grabs his heavy bag. He says goodbye to his dog. The dog wags its tail. Adam is ready for a new day. He feels very energetic and strong now.",
