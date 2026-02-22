@@ -264,6 +264,244 @@ window.lessonsData = {
     { id: '110-14', english: 'from', arabic: 'من' }
   ]
 },
+  '111': {
+  title: "A Busy Morning",
+  content: "Adam wakes up late one morning. He feels worried because he has a test at school. He eats breakfast quickly and runs to the bus stop. The bus is full, but he finds a seat. When he arrives at school, the class has already started.",
+  terms: [
+    { id: '111-1', english: 'late', arabic: 'متأخر' },
+    { id: '111-2', english: 'morning', arabic: 'صباح' },
+    { id: '111-3', english: 'feel', arabic: 'يشعر' },
+    { id: '111-4', english: 'worried', arabic: 'قلق' },
+    { id: '111-5', english: 'test', arabic: 'اختبار' },
+    { id: '111-6', english: 'quickly', arabic: 'بسرعة' },
+    { id: '111-7', english: 'run', arabic: 'يركض' },
+    { id: '111-8', english: 'bus', arabic: 'حافلة' },
+    { id: '111-9', english: 'full', arabic: 'ممتلئ' },
+    { id: '111-10', english: 'seat', arabic: 'مقعد' },
+    { id: '111-11', english: 'arrive', arabic: 'يصل' },
+    { id: '111-12', english: 'class', arabic: 'صف' },
+    { id: '111-13', english: 'already', arabic: 'بالفعل' },
+    { id: '111-14', english: 'start', arabic: 'يبدأ' },
+    { id: '111-15', english: 'find', arabic: 'يجد' },
+    { id: '111-16', english: 'because', arabic: 'لأن' }
+  ]
+},
+
+'112': {
+  title: "At the Library",
+  content: "After school, Adam goes to the library. It is quiet and clean. He sits at a table and opens a book. He reads about history and writes notes in his notebook. The librarian smiles and helps him find another book.",
+  terms: [
+    { id: '112-1', english: 'library', arabic: 'مكتبة' },
+    { id: '112-2', english: 'quiet', arabic: 'هادئ' },
+    { id: '112-3', english: 'clean', arabic: 'نظيف' },
+    { id: '112-4', english: 'table', arabic: 'طاولة' },
+    { id: '112-5', english: 'open', arabic: 'يفتح' },
+    { id: '112-6', english: 'book', arabic: 'كتاب' },
+    { id: '112-7', english: 'read', arabic: 'يقرأ' },
+    { id: '112-8', english: 'history', arabic: 'تاريخ' },
+    { id: '112-9', english: 'write', arabic: 'يكتب' },
+    { id: '112-10', english: 'notes', arabic: 'ملاحظات' },
+    { id: '112-11', english: 'librarian', arabic: 'أمين مكتبة' },
+    { id: '112-12', english: 'smile', arabic: 'يبتسم' },
+    { id: '112-13', english: 'help', arabic: 'يساعد' },
+    { id: '112-14', english: 'find', arabic: 'يجد' },
+    { id: '112-15', english: 'another', arabic: 'آخر' },
+    { id: '112-16', english: 'after school', arabic: 'بعد المدرسة' }
+  ]
+},
+
+'113': {
+  title: "A Phone Call",
+  content: "In the afternoon, Adam gets a phone call from Tom. Tom asks him to meet at the café. Adam agrees and leaves his house. They sit together and talk about their plans for the weekend.",
+  terms: [
+    { id: '113-1', english: 'afternoon', arabic: 'بعد الظهر' },
+    { id: '113-2', english: 'phone call', arabic: 'مكالمة هاتفية' },
+    { id: '113-3', english: 'get', arabic: 'يتلقى' },
+    { id: '113-4', english: 'ask', arabic: 'يسأل' },
+    { id: '113-5', english: 'meet', arabic: 'يلتقي' },
+    { id: '113-6', english: 'agree', arabic: 'يوافق' },
+    { id: '113-7', english: 'leave', arabic: 'يغادر' },
+    { id: '113-8', english: 'together', arabic: 'معًا' },
+    { id: '113-9', english: 'talk', arabic: 'يتحدث' },
+    { id: '113-10', english: 'plan', arabic: 'خطة' },
+    { id: '113-11', english: 'weekend', arabic: 'عطلة نهاية الأسبوع' },
+    { id: '113-12', english: 'café', arabic: 'مقهى' },
+    { id: '113-13', english: 'from', arabic: 'من' },
+    { id: '113-14', english: 'for', arabic: 'لـ' },
+    { id: '113-15', english: 'sit', arabic: 'يجلس' },
+    { id: '113-16', english: 'call', arabic: 'يتصل' }
+  ]
+},
+
+'114': {
+  title: "At the Doctor",
+  content: "One day, Adam feels sick and goes to the doctor. The doctor checks his temperature and gives him medicine. Adam listens carefully and promises to rest at home.",
+  terms: [
+    { id: '114-1', english: 'doctor', arabic: 'طبيب' },
+    { id: '114-2', english: 'sick', arabic: 'مريض' },
+    { id: '114-3', english: 'check', arabic: 'يفحص' },
+    { id: '114-4', english: 'temperature', arabic: 'حرارة' },
+    { id: '114-5', english: 'medicine', arabic: 'دواء' },
+    { id: '114-6', english: 'listen', arabic: 'يستمع' },
+    { id: '114-7', english: 'carefully', arabic: 'بعناية' },
+    { id: '114-8', english: 'promise', arabic: 'يعد' },
+    { id: '114-9', english: 'rest', arabic: 'يستريح' },
+    { id: '114-10', english: 'home', arabic: 'بيت' },
+    { id: '114-11', english: 'one day', arabic: 'ذات يوم' },
+    { id: '114-12', english: 'feel', arabic: 'يشعر' },
+    { id: '114-13', english: 'give', arabic: 'يعطي' },
+    { id: '114-14', english: 'go', arabic: 'يذهب' },
+    { id: '114-15', english: 'sick', arabic: 'مريض' },
+    { id: '114-16', english: 'because', arabic: 'لأن' }
+  ]
+},
+
+'115': {
+  title: "A Small Trip",
+  content: "On Friday, Adam and his family go on a small trip. They travel by car to a nearby village. The weather is nice, and they take many photos. In the evening, they return home and feel tired but happy.",
+  terms: [
+    { id: '115-1', english: 'Friday', arabic: 'الجمعة' },
+    { id: '115-2', english: 'family', arabic: 'عائلة' },
+    { id: '115-3', english: 'trip', arabic: 'رحلة' },
+    { id: '115-4', english: 'travel', arabic: 'يسافر' },
+    { id: '115-5', english: 'car', arabic: 'سيارة' },
+    { id: '115-6', english: 'nearby', arabic: 'قريب' },
+    { id: '115-7', english: 'village', arabic: 'قرية' },
+    { id: '115-8', english: 'weather', arabic: 'طقس' },
+    { id: '115-9', english: 'nice', arabic: 'جميل' },
+    { id: '115-10', english: 'take', arabic: 'يأخذ' },
+    { id: '115-11', english: 'photos', arabic: 'صور' },
+    { id: '115-12', english: 'return', arabic: 'يعود' },
+    { id: '115-13', english: 'tired', arabic: 'متعب' },
+    { id: '115-14', english: 'happy', arabic: 'سعيد' },
+    { id: '115-15', english: 'by car', arabic: 'بالسيارة' },
+    { id: '115-16', english: 'on', arabic: 'على' }
+  ]
+},
+  '116': {
+  title: "A New Classmate",
+  content: "One morning, a new student comes to Adam’s class. His name is Leo, and he is from another city. The teacher asks Adam to help Leo find his seat. Adam talks to Leo and shows him the school. They become friends quickly.",
+  terms: [
+    { id: '116-1', english: 'new', arabic: 'جديد' },
+    { id: '116-2', english: 'student', arabic: 'طالب' },
+    { id: '116-3', english: 'class', arabic: 'صف' },
+    { id: '116-4', english: 'from', arabic: 'من' },
+    { id: '116-5', english: 'city', arabic: 'مدينة' },
+    { id: '116-6', english: 'teacher', arabic: 'معلم' },
+    { id: '116-7', english: 'ask', arabic: 'يسأل' },
+    { id: '116-8', english: 'help', arabic: 'يساعد' },
+    { id: '116-9', english: 'find', arabic: 'يجد' },
+    { id: '116-10', english: 'seat', arabic: 'مقعد' },
+    { id: '116-11', english: 'talk', arabic: 'يتحدث' },
+    { id: '116-12', english: 'show', arabic: 'يري' },
+    { id: '116-13', english: 'school', arabic: 'مدرسة' },
+    { id: '116-14', english: 'become', arabic: 'يصبح' },
+    { id: '116-15', english: 'friends', arabic: 'أصدقاء' },
+    { id: '116-16', english: 'quickly', arabic: 'بسرعة' },
+    { id: '116-17', english: 'morning', arabic: 'صباح' },
+    { id: '116-18', english: 'another', arabic: 'آخر' }
+  ]
+},
+
+'117': {
+  title: "A School Project",
+  content: "The teacher gives the class a small project. Adam and Leo work together on the project. They read books and search for information. After two days, they finish their work and feel proud of it.",
+  terms: [
+    { id: '117-1', english: 'project', arabic: 'مشروع' },
+    { id: '117-2', english: 'give', arabic: 'يعطي' },
+    { id: '117-3', english: 'class', arabic: 'صف' },
+    { id: '117-4', english: 'work', arabic: 'يعمل' },
+    { id: '117-5', english: 'together', arabic: 'معًا' },
+    { id: '117-6', english: 'read', arabic: 'يقرأ' },
+    { id: '117-7', english: 'books', arabic: 'كتب' },
+    { id: '117-8', english: 'search', arabic: 'يبحث' },
+    { id: '117-9', english: 'information', arabic: 'معلومات' },
+    { id: '117-10', english: 'after', arabic: 'بعد' },
+    { id: '117-11', english: 'days', arabic: 'أيام' },
+    { id: '117-12', english: 'finish', arabic: 'ينهي' },
+    { id: '117-13', english: 'feel', arabic: 'يشعر' },
+    { id: '117-14', english: 'proud', arabic: 'فخور' },
+    { id: '117-15', english: 'small', arabic: 'صغير' },
+    { id: '117-16', english: 'two', arabic: 'اثنان' },
+    { id: '117-17', english: 'their', arabic: 'خاصتهم' },
+    { id: '117-18', english: 'it', arabic: 'ذلك' }
+  ]
+},
+
+'118': {
+  title: "A Visit to the Park",
+  content: "On Sunday, Adam, Tom, and Leo go to the park. They walk under the trees and sit on a bench. Children play near them, and birds fly in the sky. The friends talk and enjoy the fresh air.",
+  terms: [
+    { id: '118-1', english: 'Sunday', arabic: 'الأحد' },
+    { id: '118-2', english: 'park', arabic: 'حديقة' },
+    { id: '118-3', english: 'walk', arabic: 'يمشي' },
+    { id: '118-4', english: 'trees', arabic: 'أشجار' },
+    { id: '118-5', english: 'sit', arabic: 'يجلس' },
+    { id: '118-6', english: 'bench', arabic: 'مقعد' },
+    { id: '118-7', english: 'children', arabic: 'أطفال' },
+    { id: '118-8', english: 'play', arabic: 'يلعب' },
+    { id: '118-9', english: 'near', arabic: 'قريب' },
+    { id: '118-10', english: 'birds', arabic: 'طيور' },
+    { id: '118-11', english: 'fly', arabic: 'يطير' },
+    { id: '118-12', english: 'sky', arabic: 'سماء' },
+    { id: '118-13', english: 'friends', arabic: 'أصدقاء' },
+    { id: '118-14', english: 'talk', arabic: 'يتحدث' },
+    { id: '118-15', english: 'enjoy', arabic: 'يستمتع' },
+    { id: '118-16', english: 'fresh', arabic: 'منعش' },
+    { id: '118-17', english: 'air', arabic: 'هواء' },
+    { id: '118-18', english: 'under', arabic: 'تحت' }
+  ]
+},
+
+'119': {
+  title: "A Problem at Home",
+  content: "One evening, Adam’s computer stops working. He feels upset because he needs it for his homework. His brother looks at the computer and fixes the problem. Adam thanks him and continues his work.",
+  terms: [
+    { id: '119-1', english: 'computer', arabic: 'حاسوب' },
+    { id: '119-2', english: 'stop', arabic: 'يتوقف' },
+    { id: '119-3', english: 'working', arabic: 'يعمل' },
+    { id: '119-4', english: 'upset', arabic: 'منزعج' },
+    { id: '119-5', english: 'need', arabic: 'يحتاج' },
+    { id: '119-6', english: 'homework', arabic: 'واجب' },
+    { id: '119-7', english: 'brother', arabic: 'أخ' },
+    { id: '119-8', english: 'look', arabic: 'ينظر' },
+    { id: '119-9', english: 'fix', arabic: 'يصلح' },
+    { id: '119-10', english: 'problem', arabic: 'مشكلة' },
+    { id: '119-11', english: 'thanks', arabic: 'يشكر' },
+    { id: '119-12', english: 'continue', arabic: 'يكمل' },
+    { id: '119-13', english: 'work', arabic: 'عمل' },
+    { id: '119-14', english: 'evening', arabic: 'مساء' },
+    { id: '119-15', english: 'because', arabic: 'لأن' },
+    { id: '119-16', english: 'his', arabic: 'خاصته' },
+    { id: '119-17', english: 'one', arabic: 'واحد' },
+    { id: '119-18', english: 'at home', arabic: 'في البيت' }
+  ]
+},
+
+'120': {
+  title: "Looking to the Future",
+  content: "Adam thinks about his future every night. He wants to finish school and find a good job. He believes that learning English will help him reach his dreams. He studies every day and does not give up.",
+  terms: [
+    { id: '120-1', english: 'think', arabic: 'يفكر' },
+    { id: '120-2', english: 'future', arabic: 'مستقبل' },
+    { id: '120-3', english: 'every night', arabic: 'كل ليلة' },
+    { id: '120-4', english: 'finish', arabic: 'ينهي' },
+    { id: '120-5', english: 'school', arabic: 'مدرسة' },
+    { id: '120-6', english: 'find', arabic: 'يجد' },
+    { id: '120-7', english: 'job', arabic: 'وظيفة' },
+    { id: '120-8', english: 'believe', arabic: 'يؤمن' },
+    { id: '120-9', english: 'learning', arabic: 'تعلّم' },
+    { id: '120-10', english: 'English', arabic: 'الإنجليزية' },
+    { id: '120-11', english: 'help', arabic: 'يساعد' },
+    { id: '120-12', english: 'reach', arabic: 'يصل إلى' },
+    { id: '120-13', english: 'dreams', arabic: 'أحلام' },
+    { id: '120-14', english: 'study', arabic: 'يدرس' },
+    { id: '120-15', english: 'every day', arabic: 'كل يوم' },
+    { id: '120-16', english: 'not', arabic: 'لا' },
+    { id: '120-17', english: 'give up', arabic: 'يستسلم' },
+    { id: '120-18', english: 'about', arabic: 'عن' }
+  ]
+},
   '201': {
     title: "International Sovereignty",
     content: "Sovereignty is the supreme authority within a territory.",
