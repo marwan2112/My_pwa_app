@@ -332,7 +332,7 @@ window.lessonsData = {
       {"id": "110-16", "english": "Proud", "arabic": "فخور"}
     ]
   },
-    "id": "111",
+    "id": "111",{
     "title": "A Busy Morning",
     "content": "Today is a very busy morning for Adam. He has many things to do before school. First, he makes his bed. Then, he packs his lunchbox with a sandwich and an apple. He looks for his keys on the shelf. He finds them under a magazine. Adam needs to feed his cat before he leaves. The cat is hungry and meows loudly. After that, he checks his timetable. He has a math test today. He feels a bit nervous but ready. He puts on his yellow jacket because it is chilly outside. Finally, he locks the door and runs to the bus stop. He sees his friend Ali waiting there. They greet each other and get on the bus together.",
     "terms": [
@@ -354,8 +354,7 @@ window.lessonsData = {
       {"id": "111-16", "english": "Greet", "arabic": "يحيي"}
     ]
   },
-  {
-    "id": "112",
+    "id": "112",{
     "title": "At the Library",
     "content": "Adam and Sara go to the city library. The building is very large and full of books. Inside, people must be silent. They walk past many tall bookcases. Sara wants a book about history. Adam looks for a science fiction novel. They find a comfortable sofa in the corner. Adam starts to read quietly. He finds a map inside his book. The map shows a hidden island. It is very exciting. Sara finds a thick encyclopedia about ancient kings. They stay there for two hours. Later, they go to the desk to borrow the books. The librarian is a kind woman. She scans the barcodes and smiles. They put the books in their backpacks and leave. It was a productive visit.",
     "terms": [
@@ -377,7 +376,7 @@ window.lessonsData = {
       {"id": "112-16", "english": "Productive", "arabic": "مثمر/مفيد"}
     ]
   },
-    "id": "113",
+    "id": "113",{
     "title": "A Phone Call",
     "content": "Lina's phone rings loudly on the table. It is her friend Mona. Lina answers the call. 'Hello Mona, how are you?' she says. Mona wants to invite Lina to a party. They talk about the time and place. The party is on Friday evening. Lina needs to check her calendar. She is free that day. They discuss what to wear. Mona suggests a purple dress. Lina agrees. They also talk about a gift for their friend. Maybe a box of chocolates or a new scarf. The connection is a bit weak, so they speak clearly. After ten minutes, they say goodbye. Lina hangs up the phone. She is very excited about the weekend. She writes a reminder on a small piece of paper.",
     "terms": [
@@ -1139,6 +1138,7 @@ window.lessonsData = {
       { id: '301-59', english: 'Migration', arabic: 'هجرة' },
       { id: '301-60', english: 'Treaty', arabic: 'معاهدة' }
     ]
+        }
   },
 
 '302': {
