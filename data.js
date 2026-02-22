@@ -130,6 +130,30 @@ window.lessonsData = {
       {"id": "101-16", "english": "Sunny", "arabic": "مشمس"}
     ]
   },
+    "102": {
+    "title": "Adam and His Friend",
+    "content": "Adam has a best friend. His name is Omar. Omar is a tall boy. He wears a blue shirt and black pants. They meet in the park every afternoon. The park has green grass and many trees. Adam and Omar sit on a wooden bench. They talk about football and films. Omar has a bicycle. It is fast and new. Sometimes, they eat an apple or an orange. Omar is very kind. He helps Adam with his homework. They laugh a lot together. Friendship is important. A bird sings on a branch. The air is fresh. They feel lucky to be friends. It is a beautiful afternoon for both of them in the city.",
+    "terms": [
+      {"id": "102-1", "english": "Friend", "arabic": "صديق"},
+      {"id": "102-2", "english": "Tall", "arabic": "طويل"},
+      {"id": "102-3", "english": "Shirt", "arabic": "قميص"},
+      {"id": "102-4", "english": "Pants", "arabic": "بنطال"},
+      {"id": "102-5", "english": "Park", "arabic": "منتزه"},
+      {"id": "102-6", "english": "Afternoon", "arabic": "بعد الظهيرة"},
+      {"id": "102-7", "english": "Grass", "arabic": "عشب"},
+      {"id": "102-8", "english": "Trees", "arabic": "أشجار"},
+      {"id": "102-9", "english": "Wooden", "arabic": "خشبي"},
+      {"id": "102-10", "english": "Bench", "arabic": "مقعد"},
+      {"id": "102-11", "english": "Bicycle", "arabic": "دراجة"},
+      {"id": "102-12", "english": "Fast", "arabic": "سريع"},
+      {"id": "102-13", "english": "Apple", "arabic": "تفاحة"},
+      {"id": "102-14", "english": "Orange", "arabic": "برتقالة"},
+      {"id": "102-15", "english": "Kind", "arabic": "لطيف"},
+      {"id": "102-16", "english": "Homework", "arabic": "واجب"},
+      {"id": "102-17", "english": "Together", "arabic": "معاً"},
+      {"id": "102-18", "english": "Important", "arabic": "مهم"}
+    ]
+  },
        '301': {
     title: "Cooperative Sovereignty in a Globalized Era",
     content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory, resources, and population without external interference. However, the emergence of transnational challenges such as climate change, cyber-organized crime, and global pandemics has starkly revealed the limits of this concept. States are no longer capable of confronting these challenges individually, which has compelled them to negotiate and cede portions of their authority to global governance bodies. This shift propels a model known as "cooperative sovereignty" or "sovereignty as responsibility." Proponents argue that in an interconnected world, the ultimate exercise of sovereignty is the ability to participate effectively in international systems, shape global norms, and protect one's citizens from threats that originate beyond borders. This requires a pragmatic surrender of absolute autonomy in exchange for influence and collective security. For example, a country adhering to World Trade Organization rules accepts constraints on its domestic trade policies but gains access to a dispute resolution mechanism and a vast global market. Critics, however, view this evolution with suspicion, interpreting it as a dilution of statehood and a potential infringement on national self-determination. They warn that powerful states or unaccountable bureaucracies in international organizations can dominate the rule-setting process, effectively imposing their will on smaller nations under the guise of global cooperation. The tension between the imperative for international collaboration and the desire to preserve national autonomy and identity forms the core of contemporary geopolitical discourse, influencing debates on issues ranging from migration and environmental treaties to data privacy regulations and military alliances.`,
