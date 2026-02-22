@@ -6,14 +6,14 @@ window.levels = [
 
 window.lessonsList = {
   'beginner': [
-    { id: '101', title: '1: Adam's Introduction' },
-    { id: '102', title: '2: Adam and His Friend'},
-    { id: '103', title: '3. Adam's Morning Routine' },
-    { id: '104', title: '4. Adam at School' },
-    { id: '105', title: '5.Adam at the Café' }
+    { id: '101', title: "1: Adam's Introduction" },
+    { id: '102', title: "2: Adam and His Friend"},
+    { id: '103', title: "3. Adam's Morning Routine" },
+    { id: '104', title: "4. Adam at School" },
+    { id: '105', title: "5.Adam at the Café" }
   ],
   'intermediate': [
-    { id: '201', title: 'السيادة الدولية', description: 'تحليل نص سياسي معمق' }
+    { id: '201', title: 'marwan', description: 'تحليل نص سياسي معمق' }
   ],
   'advanced': [
     { id: '301', title: 'Cooperative Sovereignty in a Globalized Era' },
