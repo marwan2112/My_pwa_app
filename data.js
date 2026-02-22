@@ -6,11 +6,11 @@ window.levels = [
 
 window.lessonsList = {
   'beginner': [
-    { id: '101', title: '1: A Day in the Classroom' },
-    { id: '102', title: '2: Ali and His City', description: 'الأفعال اليومية الحركية' },
-    { id: '103', title: '3. الروابط العائلية', description: 'وصف الشخصيات والقرابة' },
-    { id: '104', title: '4. لغة الطعام', description: 'التعبير عن الأذواق والطلبات' },
-    { id: '105', title: '5. المكان والبيئة', description: 'وصف المحيط بدقة' }
+    { id: '101', title: '1: Adam's Introduction' },
+    { id: '102', title: '2: Adam and His Friend'},
+    { id: '103', title: '3. Adam's Morning Routine' },
+    { id: '104', title: '4. Adam at School' },
+    { id: '105', title: '5.Adam at the Café' }
   ],
   'intermediate': [
     { id: '201', title: 'السيادة الدولية', description: 'تحليل نص سياسي معمق' }
@@ -38,81 +38,111 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-  '101': {
-    title: "A Day in the Classroom",
-    content: "One day, Adam went to the classroom. It was a big classroom with a chair, a Door, and a Clock on the wall. He said, “I go (to) the Lab to learn the alphabet and how to write a letter. ”Adam opened his Book and saw an example on the Page. The example had a capital letter and a small circle. He took a Pen and a pencil from his notebook and wrote a picture of a circle and a number. His teacher said, “Open your Book and look (at) the picture, please. ”Adam listened (to) the teacher and wrote the letter carefully. The teacher asked, “What is your Name? ”Adam said, “My Name is Adam. ”The teacher showed the numbers. One, Four, Five, Nine, eight, eleven, fourteen, fifteen, eighteen, and nineteen. She said, “It is easy. It’s fun to learn numbers and letters. ”Then the teacher said, “Close your Book now. ”Adam smiled and said, “Okay, Good-bye.”",
-    terms: [
-   { id: '101-1', english: 'A', arabic: 'أداة تنكير' },
-{ id: '101-2', english: 'alphabet', arabic: 'الأبجدية' },
-{ id: '101-3', english: 'Be', arabic: 'يكون / كان' },
-{ id: '101-4', english: 'Book', arabic: 'كتاب' },
-{ id: '101-5', english: 'capital letter', arabic: 'حرف كبير' },
-{ id: '101-6', english: 'chair', arabic: 'كرسي' },
-{ id: '101-7', english: 'circle', arabic: 'دائرة' },
-{ id: '101-8', english: 'classroom', arabic: 'قاعة الدروس' },
-{ id: '101-9', english: 'Clock', arabic: 'ساعة' },
-{ id: '101-10', english: 'Close', arabic: 'يغلق' },
-{ id: '101-11', english: 'Door', arabic: 'باب' },
-{ id: '101-12', english: 'eight', arabic: 'ثمانية' },
-{ id: '101-13', english: 'eighteen', arabic: 'ثمانية عشر' },
-{ id: '101-14', english: 'eleven', arabic: 'أحد عشر' },
-{ id: '101-15', english: 'example', arabic: 'مثال' },
-{ id: '101-16', english: 'fifteen', arabic: 'خمسة عشر' },
-{ id: '101-17', english: 'Fine, thanks.', arabic: 'بخير، شكراً.' },
-{ id: '101-18', english: 'Five', arabic: 'خمسة' },
-{ id: '101-19', english: 'Four', arabic: 'أربعة' },
-{ id: '101-20', english: 'fourteen', arabic: 'أربعة عشر' },
-{ id: '101-21', english: 'go (to)', arabic: 'يذهب (إلى)' },
-{ id: '101-22', english: 'Good morning/afternoon.', arabic: 'صباح الخير / مساء الخير' },
-{ id: '101-23', english: 'Hello', arabic: 'مرحباً' },
-{ id: '101-24', english: 'How are you?', arabic: 'كيف حالك؟' },
-{ id: '101-25', english: 'is/was', arabic: 'يكون / كان' },
-{ id: '101-26', english: 'It', arabic: 'هو / هي' },
-{ id: '101-27', english: "it's", arabic: 'إنه / إنها تكون' },
-{ id: '101-28', english: 'Lab', arabic: 'مختبر' },
-{ id: '101-29', english: 'letter', arabic: 'حرف' },
-{ id: '101-30', english: 'listen (to)', arabic: 'يستمع (إلى)' },
-{ id: '101-31', english: 'look (at)', arabic: 'ينظر (إلى)' },
-{ id: '101-32', english: 'My', arabic: 'لي / ضمير الملكية' },
-{ id: '101-33', english: 'My name is…', arabic: 'اسمي ...' },
-{ id: '101-34', english: 'Name', arabic: 'اسم' },
-{ id: '101-35', english: 'Nine', arabic: 'تسعة' },
-{ id: '101-36', english: 'nineteen', arabic: 'تسعة عشر' },
-{ id: '101-37', english: 'notebook', arabic: 'دفتر ملاحظات' },
-{ id: '101-38', english: 'number', arabic: 'عدد / رقم' },
-{ id: '101-39', english: 'Okay, Good-bye.', arabic: 'حسناً، مع السلامة.' },
-{ id: '101-40', english: 'One', arabic: 'واحد' },
-{ id: '101-41', english: 'Open', arabic: 'يفتح' },
-{ id: '101-42', english: 'Page', arabic: 'صفحة' },
-{ id: '101-43', english: 'Pen', arabic: 'قلم حبر' },
-{ id: '101-44', english: 'pencil', arabic: 'قلم رصاص' },
-{ id: '101-45', english: 'picture', arabic: 'صورة' },
-{ id: '101-46', english: 'please', arabic: 'من فضلك / رجاءً' }
-    ]
-  },
-  '102': {
-    title: "Ali and His City",
-    content: "Ali lives in a small city in Jordan. The city is not very big, but it is busy. Many people work in shops and offices. Ali works in a small shop near his home. Every morning, he walks to work. He sees many people in the street. People in the city know each other. They help each other when they can.",
-    terms: [
-      { id: '102-1', english: 'small', arabic: 'صغير' },
-      { id: '102-2', english: 'big', arabic: 'كبير' }
-    ]
-  },
-  '103': {
-    title: "Family Dynamics",
-    content: "Family is the core of society. My family members have distinct personalities.",
-    terms: [{ id: '103-1', english: 'Core', arabic: 'جوهر' }]
-  },
-  '104': {
-    title: "Culinary Preferences",
-    content: "Food is a universal language. I enjoy exploring various cuisines.",
-    terms: [{ id: '104-1', english: 'Cuisine', arabic: 'مطبخ / أسلوب طهي' }]
-  },
-  '105': {
-    title: "Environment and Space",
-    content: "My neighborhood is peaceful and well-maintained.",
-    terms: [{ id: '105-1', english: 'Neighborhood', arabic: 'حي' }]
-  },
+
+'101': {
+  title: "Adam's Introduction",
+  content: "My name is Adam. I am 20 years old. I live in a small town. I am a student. I study English every day. I like coffee and music. In the morning, I go to class. In the evening, I study at home. I want to speak English well.",
+  terms: [
+    { id: '101-1', english: 'name', arabic: 'اسم' },
+    { id: '101-2', english: 'live', arabic: 'يعيش' },
+    { id: '101-3', english: 'town', arabic: 'بلدة' },
+    { id: '101-4', english: 'student', arabic: 'طالب' },
+    { id: '101-5', english: 'study', arabic: 'يدرس' },
+    { id: '101-6', english: 'every day', arabic: 'كل يوم' },
+    { id: '101-7', english: 'like', arabic: 'يحب' },
+    { id: '101-8', english: 'morning', arabic: 'صباح' },
+    { id: '101-9', english: 'evening', arabic: 'مساء' },
+    { id: '101-10', english: 'class', arabic: 'صف' },
+    { id: '101-11', english: 'home', arabic: 'بيت' },
+    { id: '101-12', english: 'want', arabic: 'يريد' },
+    { id: '101-13', english: 'speak', arabic: 'يتكلم' },
+    { id: '101-14', english: 'well', arabic: 'جيدًا' }
+  ]
+},
+
+'102': {
+  title: "Adam and His Friend",
+  content: "Adam has a friend. His name is Tom. Tom works in a shop. He sells food and drinks. He works in the morning. In the afternoon, he rests. In the evening, Adam and Tom meet. They drink coffee and talk about life and work.",
+  terms: [
+    { id: '102-1', english: 'friend', arabic: 'صديق' },
+    { id: '102-2', english: 'work', arabic: 'يعمل' },
+    { id: '102-3', english: 'shop', arabic: 'متجر' },
+    { id: '102-4', english: 'sell', arabic: 'يبيع' },
+    { id: '102-5', english: 'food', arabic: 'طعام' },
+    { id: '102-6', english: 'drink', arabic: 'يشرب' },
+    { id: '102-7', english: 'afternoon', arabic: 'بعد الظهر' },
+    { id: '102-8', english: 'rest', arabic: 'يستريح' },
+    { id: '102-9', english: 'meet', arabic: 'يلتقي' },
+    { id: '102-10', english: 'talk', arabic: 'يتحدث' },
+    { id: '102-11', english: 'life', arabic: 'حياة' },
+    { id: '102-12', english: 'about', arabic: 'عن' },
+    { id: '102-13', english: 'and', arabic: 'و' },
+    { id: '102-14', english: 'they', arabic: 'هم' }
+  ]
+},
+
+'103': {
+  title: "Adam's Morning Routine",
+  content: "Adam wakes up early every day. He washes his face and eats breakfast. He leaves his house at seven o’clock. He walks to the bus stop and waits for the bus. On the bus, he looks out of the window and listens to music. He arrives at school at eight o’clock.",
+  terms: [
+    { id: '103-1', english: 'wake up', arabic: 'يستيقظ' },
+    { id: '103-2', english: 'early', arabic: 'مبكرًا' },
+    { id: '103-3', english: 'breakfast', arabic: 'فطور' },
+    { id: '103-4', english: 'leave', arabic: 'يغادر' },
+    { id: '103-5', english: 'walk', arabic: 'يمشي' },
+    { id: '103-6', english: 'bus stop', arabic: 'موقف الحافلة' },
+    { id: '103-7', english: 'wait', arabic: 'ينتظر' },
+    { id: '103-8', english: 'window', arabic: 'نافذة' },
+    { id: '103-9', english: 'listen', arabic: 'يستمع' },
+    { id: '103-10', english: 'music', arabic: 'موسيقى' },
+    { id: '103-11', english: 'arrive', arabic: 'يصل' },
+    { id: '103-12', english: 'school', arabic: 'مدرسة' },
+    { id: '103-13', english: 'at', arabic: 'في' },
+    { id: '103-14', english: 'every', arabic: 'كل' }
+  ]
+},
+
+'104': {
+  title: "Adam at School",
+  content: "At school, Adam studies English and math. He sits near the window and listens to the teacher. Sometimes he asks questions and writes in his notebook. He likes English because he wants to travel and talk to new people. After class, he goes home and rests.",
+  terms: [
+    { id: '104-1', english: 'school', arabic: 'مدرسة' },
+    { id: '104-2', english: 'study', arabic: 'يدرس' },
+    { id: '104-3', english: 'math', arabic: 'رياضيات' },
+    { id: '104-4', english: 'sit', arabic: 'يجلس' },
+    { id: '104-5', english: 'teacher', arabic: 'معلم' },
+    { id: '104-6', english: 'sometimes', arabic: 'أحيانًا' },
+    { id: '104-7', english: 'ask', arabic: 'يسأل' },
+    { id: '104-8', english: 'question', arabic: 'سؤال' },
+    { id: '104-9', english: 'write', arabic: 'يكتب' },
+    { id: '104-10', english: 'notebook', arabic: 'دفتر' },
+    { id: '104-11', english: 'travel', arabic: 'يسافر' },
+    { id: '104-12', english: 'people', arabic: 'ناس' },
+    { id: '104-13', english: 'after', arabic: 'بعد' },
+    { id: '104-14', english: 'rest', arabic: 'يستريح' }
+  ]
+},
+
+'105': {
+  title: "Adam at the Café",
+  content: "In the evening, Adam goes to a small café. He sits with Tom and drinks coffee. They talk about their day and their plans. Tom wants to open a big shop. Adam wants to speak English very well and work in another country. They feel happy and hopeful.",
+  terms: [
+    { id: '105-1', english: 'evening', arabic: 'مساء' },
+    { id: '105-2', english: 'café', arabic: 'مقهى' },
+    { id: '105-3', english: 'sit', arabic: 'يجلس' },
+    { id: '105-4', english: 'day', arabic: 'يوم' },
+    { id: '105-5', english: 'plan', arabic: 'خطة' },
+    { id: '105-6', english: 'open', arabic: 'يفتح' },
+    { id: '105-7', english: 'big', arabic: 'كبير' },
+    { id: '105-8', english: 'another', arabic: 'آخر' },
+    { id: '105-9', english: 'country', arabic: 'بلد' },
+    { id: '105-10', english: 'feel', arabic: 'يشعر' },
+    { id: '105-11', english: 'happy', arabic: 'سعيد' },
+    { id: '105-12', english: 'hopeful', arabic: 'متفائل' },
+    { id: '105-13', english: 'very', arabic: 'جيدًا' },
+    { id: '105-14', english: 'with', arabic: 'مع' }
+  ]
+},
   '201': {
     title: "International Sovereignty",
     content: "Sovereignty is the supreme authority within a territory.",
