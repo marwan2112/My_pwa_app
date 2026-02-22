@@ -21,7 +21,7 @@ window.lessonsList = {
     { id: '113', title: "13. A Phone Call" },
     { id: '114', title: "14. At the Doctor" },
     { id: '115', title: "15. A Small Trip"},
-    { id: '1016', title: "16. A New Classmate" },
+    { id: '116', title: "16. A New Classmate" },
     { id: '117', title: "17. A School Project" },
     { id: '118', title: "18. A Visit to the Park" },
     { id: '119', title: "19. A Problem at Home"},
