@@ -108,8 +108,230 @@ window.lessonsList = {
 };
 
 window.lessonsData = {
-    [
-  {
+  '101': {
+    "title": "Adam’s Introduction",
+    "content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
+    "terms": [
+      {"id": "101-1", "english": "Student", "arabic": "طالب"},
+      {"id": "101-2", "english": "House", "arabic": "منزل"},
+      {"id": "101-3", "english": "City", "arabic": "مدينة"},
+      {"id": "101-4", "english": "Early", "arabic": "باكراً"},
+      {"id": "101-5", "english": "Sun", "arabic": "شمس"},
+      {"id": "101-6", "english": "Sky", "arabic": "سماء"},
+      {"id": "101-7", "english": "White", "arabic": "أبيض"},
+      {"id": "101-8", "english": "Cute", "arabic": "لطيف"},
+      {"id": "101-9", "english": "Coffee", "arabic": "قهوة"},
+      {"id": "101-10", "english": "Bread", "arabic": "خبز"},
+      {"id": "101-11", "english": "Breakfast", "arabic": "فطور"},
+      {"id": "101-12", "english": "Simple", "arabic": "بسيط"},
+      {"id": "101-13", "english": "Teacher", "arabic": "معلم"},
+      {"id": "101-14", "english": "Near", "arabic": "قريب"},
+      {"id": "101-15", "english": "Classroom", "arabic": "فصل"},
+      {"id": "101-16", "english": "Sunny", "arabic": "مشمس"}
+    ]
+  },
+  "102": {
+    "title": "Adam and His Friend",
+    "content": "Adam has a best friend. His name is Omar. Omar is a tall boy. He wears a blue shirt and black pants. They meet in the park every afternoon. The park has green grass and many trees. Adam and Omar sit on a wooden bench. They talk about football and films. Omar has a bicycle. It is fast and new. Sometimes, they eat an apple or an orange. Omar is very kind. He helps Adam with his homework. They laugh a lot together. Friendship is important. A bird sings on a branch. The air is fresh. They feel lucky to be friends. It is a beautiful afternoon for both of them in the city.",
+    "terms": [
+      {"id": "102-1", "english": "Friend", "arabic": "صديق"},
+      {"id": "102-2", "english": "Tall", "arabic": "طويل"},
+      {"id": "102-3", "english": "Shirt", "arabic": "قميص"},
+      {"id": "102-4", "english": "Pants", "arabic": "بنطال"},
+      {"id": "102-5", "english": "Park", "arabic": "منتزه"},
+      {"id": "102-6", "english": "Afternoon", "arabic": "بعد الظهيرة"},
+      {"id": "102-7", "english": "Grass", "arabic": "عشب"},
+      {"id": "102-8", "english": "Trees", "arabic": "أشجار"},
+      {"id": "102-9", "english": "Wooden", "arabic": "خشبي"},
+      {"id": "102-10", "english": "Bench", "arabic": "مقعد"},
+      {"id": "102-11", "english": "Bicycle", "arabic": "دراجة"},
+      {"id": "102-12", "english": "Fast", "arabic": "سريع"},
+      {"id": "102-13", "english": "Apple", "arabic": "تفاحة"},
+      {"id": "102-14", "english": "Orange", "arabic": "برتقالة"},
+      {"id": "102-15", "english": "Kind", "arabic": "لطيف"},
+      {"id": "102-16", "english": "Homework", "arabic": "واجب"},
+      {"id": "102-17", "english": "Together", "arabic": "معاً"},
+      {"id": "102-18", "english": "Important", "arabic": "مهم"}
+    ]
+  },
+  "103": {
+    "title": "Adam’s Morning Routine",
+    "content": "Every morning, Adam follows a routine. He gets out of bed at seven o'clock. First, he goes to the bathroom to wash his face. He uses cold water and soap. Then, he brushes his teeth with a small toothbrush. Adam goes to the kitchen. He sees his mother, Sara. She makes tea in a large pot. Adam helps her. He puts plates and spoons on the table. They sit down to eat. He likes eggs and cheese. After food, he puts on his shoes. He grabs his heavy bag. He says goodbye to his dog. The dog wags its tail. Adam is ready for a new day. He feels very energetic and strong now because he sleeps well.",
+    "terms": [
+      {"id": "103-1", "english": "Routine", "arabic": "روتين"},
+      {"id": "103-2", "english": "Bed", "arabic": "سرير"},
+      {"id": "103-3", "english": "Bathroom", "arabic": "حمام"},
+      {"id": "103-4", "english": "Face", "arabic": "وجه"},
+      {"id": "103-5", "english": "Cold", "arabic": "بارد"},
+      {"id": "103-6", "english": "Soap", "arabic": "صابون"},
+      {"id": "103-7", "english": "Teeth", "arabic": "أسنان"},
+      {"id": "103-8", "english": "Toothbrush", "arabic": "فرشاة أسنان"},
+      {"id": "103-9", "english": "Kitchen", "arabic": "مطبخ"},
+      {"id": "103-10", "english": "Tea", "arabic": "شاي"},
+      {"id": "103-11", "english": "Pot", "arabic": "إبريق"},
+      {"id": "103-12", "english": "Plates", "arabic": "أطباق"},
+      {"id": "103-13", "english": "Spoons", "arabic": "ملاعق"},
+      {"id": "103-14", "english": "Table", "arabic": "طاولة"},
+      {"id": "103-15", "english": "Cheese", "arabic": "جبنة"},
+      {"id": "103-16", "english": "Shoes", "arabic": "حذاء"},
+      {"id": "103-17", "english": "Heavy", "arabic": "ثقيل"},
+      {"id": "103-18", "english": "Energetic", "arabic": "نشيط"}
+    ]
+  },
+  "104": {
+    "title": "Adam at School",
+    "content": "Adam arrives at school at eight. He enters the building and finds his desk. The classroom is big. There is a wide blackboard on the wall. The teacher writes English words with white chalk. Adam has a red pen and a yellow pencil. He uses an eraser to fix mistakes. Today, they learn about animals. A lion is strong. An elephant is huge. Adam takes notes in his notebook. He listens to the lesson carefully. During the break, he talks to Lina. Lina is a new girl. She is smart and friendly. They share a sandwich and water. The school bell rings loudly. It is time for the next class. Adam loves his school very much.",
+    "terms": [
+      {"id": "104-1", "english": "Building", "arabic": "مبنى"},
+      {"id": "104-2", "english": "Desk", "arabic": "مكتب"},
+      {"id": "104-3", "english": "Blackboard", "arabic": "سبورة"},
+      {"id": "104-4", "english": "Wall", "arabic": "جدار"},
+      {"id": "104-5", "english": "Chalk", "arabic": "طبشور"},
+      {"id": "104-6", "english": "Pen", "arabic": "قلم حبر"},
+      {"id": "104-7", "english": "Pencil", "arabic": "قلم رصاص"},
+      {"id": "104-8", "english": "Eraser", "arabic": "ممحاة"},
+      {"id": "104-9", "english": "Lion", "arabic": "أسد"},
+      {"id": "104-10", "english": "Elephant", "arabic": "فيل"},
+      {"id": "104-11", "english": "Notebook", "arabic": "دفتر"},
+      {"id": "104-12", "english": "Lesson", "arabic": "درس"},
+      {"id": "104-13", "english": "Carefully", "arabic": "بعناية"},
+      {"id": "104-14", "english": "Break", "arabic": "استراحة"},
+      {"id": "104-15", "english": "Smart", "arabic": "ذكي"},
+      {"id": "104-16", "english": "Bell", "arabic": "جرس"}
+    ]
+  },
+  "105": {
+    "title": "Adam at the Café",
+    "content": "Adam goes to a small café near the library. The café is quiet and warm. He sits near the window. A waiter comes to the table. The waiter says, 'Hello, what do you want today?' Adam looks at the menu. He wants a glass of juice and a piece of chocolate cake. The cake is delicious. Adam watches the cars and people on the street. He sees a man with a big umbrella. He also sees a woman with a small bag. Adam opens his laptop to finish some work. He types slowly. The café smells like roasted beans. He feels relaxed. It is a good place to think. He pays the money and leaves a small tip. He walks home slowly and happily.",
+    "terms": [
+      {"id": "105-1", "english": "Library", "arabic": "مكتبة"},
+      {"id": "105-2", "english": "Quiet", "arabic": "هادئ"},
+      {"id": "105-3", "english": "Window", "arabic": "نافذة"},
+      {"id": "105-4", "english": "Waiter", "arabic": "نادل"},
+      {"id": "105-5", "english": "Menu", "arabic": "قائمة طعام"},
+      {"id": "105-6", "english": "Glass", "arabic": "كوب"},
+      {"id": "105-7", "english": "Juice", "arabic": "عصير"},
+      {"id": "105-8", "english": "Delicious", "arabic": "لذيذ"},
+      {"id": "105-9", "english": "Street", "arabic": "شارع"},
+      {"id": "105-10", "english": "Umbrella", "arabic": "مظلة"},
+      {"id": "105-11", "english": "Laptop", "arabic": "حاسوب محمول"},
+      {"id": "105-12", "english": "Roasted", "arabic": "محمص"},
+      {"id": "105-13", "english": "Beans", "arabic": "حبوب"},
+      {"id": "105-14", "english": "Relaxed", "arabic": "مسترخ"},
+      {"id": "105-15", "english": "Money", "arabic": "نقود"},
+      {"id": "105-16", "english": "Tip", "arabic": "بقشيش"}
+    ]
+  },
+  "106": {
+    "title": "Adam’s Family",
+    "content": "Adam lives with a wonderful family. His father, Ali, is a doctor. He works at a hospital. His mother, Sara, is a cook in a famous restaurant. Adam has a sister. Her name is Lina. Lina is younger than Adam. She has long brown hair and big eyes. They have a baby brother named Ahmed. Ahmed is only one year old. He sleeps in a small cradle. In the evening, the family sits in the living room. They watch a funny movie on the television. Sometimes, they play a board game together. Adam loves his parents very much. His grandfather and grandmother visit them every Sunday. They bring gifts and sweets. The house is full of love and joy and peace.",
+    "terms": [
+      {"id": "106-1", "english": "Father", "arabic": "أب"},
+      {"id": "106-2", "english": "Doctor", "arabic": "طبيب"},
+      {"id": "106-3", "english": "Hospital", "arabic": "مستشفى"},
+      {"id": "106-4", "english": "Sister", "arabic": "أخت"},
+      {"id": "106-5", "english": "Hair", "arabic": "شعر"},
+      {"id": "106-6", "english": "Eyes", "arabic": "عيون"},
+      {"id": "106-7", "english": "Baby", "arabic": "رضيع"},
+      {"id": "106-8", "english": "Cradle", "arabic": "مهد"},
+      {"id": "106-9", "english": "Evening", "arabic": "مساء"},
+      {"id": "106-10", "english": "Living room", "arabic": "غرفة معيشة"},
+      {"id": "106-11", "english": "Movie", "arabic": "فيلم"},
+      {"id": "106-12", "english": "Television", "arabic": "تلفاز"},
+      {"id": "106-13", "english": "Grandfather", "arabic": "جد"},
+      {"id": "106-14", "english": "Grandmother", "arabic": "جدة"},
+      {"id": "106-15", "english": "Sweets", "arabic": "حلويات"},
+      {"id": "106-16", "english": "Joy", "arabic": "فرح"}
+    ]
+  },
+  "107": {
+    "title": "Shopping Day",
+    "content": "Today is Saturday. Adam and his mother go to the supermarket. The supermarket is very crowded. Adam pushes a metal cart. His mother has a long shopping list. First, they go to the fruit section. They buy bananas and grapes. Then, they look for vegetables. They pick tomatoes, potatoes, and onions. Adam wants some milk and yogurt from the fridge. They find a box of eggs too. His mother buys flour and sugar to bake a cake. Adam sees a jar of honey. He puts it in the cart. At the end, they go to the cashier. The man counts the items and puts them in plastic bags. Adam carries the bags to the car. It is a busy day.",
+    "terms": [
+      {"id": "107-1", "english": "Supermarket", "arabic": "متجر"},
+      {"id": "107-2", "english": "Crowded", "arabic": "مزدحم"},
+      {"id": "107-3", "english": "Cart", "arabic": "عربة"},
+      {"id": "107-4", "english": "List", "arabic": "قائمة"},
+      {"id": "107-5", "english": "Bananas", "arabic": "موز"},
+      {"id": "107-6", "english": "Grapes", "arabic": "عنب"},
+      {"id": "107-7", "english": "Tomatoes", "arabic": "طماطم"},
+      {"id": "107-8", "english": "Potatoes", "arabic": "بطاطس"},
+      {"id": "107-9", "english": "Onions", "arabic": "بصل"},
+      {"id": "107-10", "english": "Yogurt", "arabic": "زبادي"},
+      {"id": "107-11", "english": "Fridge", "arabic": "ثلاجة"},
+      {"id": "107-12", "english": "Flour", "arabic": "دقيق"},
+      {"id": "107-13", "english": "Sugar", "arabic": "سكر"},
+      {"id": "107-14", "english": "Jar", "arabic": "مرطبان"},
+      {"id": "107-15", "english": "Honey", "arabic": "عسل"},
+      {"id": "107-16", "english": "Cashier", "arabic": "محاسب"}
+    ]
+  },
+  "108": {
+    "title": "Adam’s Hobby",
+    "content": "Adam has an interesting hobby. He loves photography. He has a professional camera. On weekends, he goes to the forest or the beach. He takes pictures of nature. He likes to photograph small insects and colorful flowers. Sometimes, he takes photos of his friends, Omar and Ali. They pose and smile. Adam uses a tripod to keep the camera steady. He learns how to change the light and focus. At home, he prints the photos and puts them in a large album. His hobby makes him see the world differently. He wants to be a famous photographer one day. He shows his work to his teacher. The teacher says the photos are artistic. Adam is very proud of his talent and work.",
+    "terms": [
+      {"id": "108-1", "english": "Hobby", "arabic": "هواية"},
+      {"id": "108-2", "english": "Photography", "arabic": "تصوير"},
+      {"id": "108-3", "english": "Camera", "arabic": "كاميرا"},
+      {"id": "108-4", "english": "Forest", "arabic": "غابة"},
+      {"id": "108-5", "english": "Beach", "arabic": "شاطئ"},
+      {"id": "108-6", "english": "Nature", "arabic": "طبيعة"},
+      {"id": "108-7", "english": "Insects", "arabic": "حشرات"},
+      {"id": "108-8", "english": "Flowers", "arabic": "زهور"},
+      {"id": "108-9", "english": "Pose", "arabic": "وضعية"},
+      {"id": "108-10", "english": "Tripod", "arabic": "حامل"},
+      {"id": "108-11", "english": "Steady", "arabic": "ثابت"},
+      {"id": "108-12", "english": "Light", "arabic": "ضوء"},
+      {"id": "108-13", "english": "Focus", "arabic": "تركيز"},
+      {"id": "108-14", "english": "Album", "arabic": "ألبوم"},
+      {"id": "108-15", "english": "Artistic", "arabic": "فني"},
+      {"id": "108-16", "english": "Talent", "arabic": "موهبة"}
+    ]
+  },
+  "109": {
+    "title": "A Rainy Day",
+    "content": "Today, the weather is not sunny. It is a rainy day. Dark clouds cover the sky. Adam stays inside his house. He hears the rain on the roof. He wears a thick sweater and warm socks. He looks through the window. The garden is very wet. There are puddles of water on the ground. Adam decides to read a storybook. He sits on a soft chair near the fireplace. The fire is bright and hot. He drinks hot chocolate from a mug. It feels very cozy. His cat sits on his lap and purrs. Adam likes the sound of the rain. It is a peaceful day. He does not go to the park today. He enjoys the quiet time at home with his books.",
+    "terms": [
+      {"id": "109-1", "english": "Weather", "arabic": "طقس"},
+      {"id": "109-2", "english": "Rainy", "arabic": "ممطر"},
+      {"id": "109-3", "english": "Roof", "arabic": "سقف"},
+      {"id": "109-4", "english": "Thick", "arabic": "سميك"},
+      {"id": "109-5", "english": "Sweater", "arabic": "سترة"},
+      {"id": "109-6", "english": "Socks", "arabic": "جوارب"},
+      {"id": "109-7", "english": "Garden", "arabic": "حديقة"},
+      {"id": "109-8", "english": "Puddles", "arabic": "برك مائية"},
+      {"id": "109-9", "english": "Ground", "arabic": "أرض"},
+      {"id": "109-10", "english": "Soft", "arabic": "ناعم"},
+      {"id": "109-11", "english": "Fireplace", "arabic": "مدفأة"},
+      {"id": "109-12", "english": "Bright", "arabic": "ساطع"},
+      {"id": "109-13", "english": "Mug", "arabic": "كوب"},
+      {"id": "109-14", "english": "Cozy", "arabic": "دافئ"},
+      {"id": "109-15", "english": "Lap", "arabic": "حجر"},
+      {"id": "109-16", "english": "Peaceful", "arabic": "هادئ"}
+    ]
+  },
+  "110": {
+    "title": "Helping a Neighbor",
+    "content": "Adam has an old neighbor named Mr. Ahmed. Mr. Ahmed lives alone in a small cottage. He is very kind but he is tired today. Adam decides to help him. First, Adam cleans the leaves from the front yard. He uses a rake. Then, he paints the wooden fence. The fence is now white and clean. Mr. Ahmed is very happy. He gives Adam a cold glass of lemonade. They sit on the porch and talk. Adam carries the heavy trash bags to the bin. He also waters the plants in the garden. Helping others is a good thing. Adam feels proud and helpful. Mr. Ahmed smiles and says, 'Thank you, Adam. You are a good boy.' Adam goes home with a happy heart today.",
+    "terms": [
+      {"id": "110-1", "english": "Neighbor", "arabic": "جار"},
+      {"id": "110-2", "english": "Alone", "arabic": "وحيد"},
+      {"id": "110-3", "english": "Cottage", "arabic": "كوخ"},
+      {"id": "110-4", "english": "Tired", "arabic": "متعب"},
+      {"id": "110-5", "english": "Leaves", "arabic": "أوراق"},
+      {"id": "110-6", "english": "Yard", "arabic": "ساحة"},
+      {"id": "110-7", "english": "Rake", "arabic": "مجرفة"},
+      {"id": "110-8", "english": "Paints", "arabic": "يدهن"},
+      {"id": "110-9", "english": "Fence", "arabic": "سياج"},
+      {"id": "110-10", "english": "Lemonade", "arabic": "ليموناضة"},
+      {"id": "110-11", "english": "Porch", "arabic": "شرفة"},
+      {"id": "110-12", "english": "Trash", "arabic": "قمامة"},
+      {"id": "110-13", "english": "Bin", "arabic": "سلة"},
+      {"id": "110-14", "english": "Waters", "arabic": "يسقي"},
+      {"id": "110-15", "english": "Helpful", "arabic": "مساعد"},
+      {"id": "110-16", "english": "Proud", "arabic": "فخور"}
+    ]
+  },
     "id": "111",
     "title": "A Busy Morning",
     "content": "Today is a very busy morning for Adam. He has many things to do before school. First, he makes his bed. Then, he packs his lunchbox with a sandwich and an apple. He looks for his keys on the shelf. He finds them under a magazine. Adam needs to feed his cat before he leaves. The cat is hungry and meows loudly. After that, he checks his timetable. He has a math test today. He feels a bit nervous but ready. He puts on his yellow jacket because it is chilly outside. Finally, he locks the door and runs to the bus stop. He sees his friend Ali waiting there. They greet each other and get on the bus together.",
@@ -402,7 +624,6 @@ window.lessonsData = {
       {"id": "120-17", "english": "Imagines", "arabic": "يتخيل"}
     ]
   },
-{
   "121": {
     "title": "A Weekend at the Beach",
     "content": "Last weekend, Adam and his family decided to visit the coastal city for a short holiday. The weather was much warmer than they expected. When they arrived at the beach, the golden sand was glowing under the bright sun. Adam quickly changed into his swimming trunks and jumped into the salty water. It felt refreshing and cool. While Adam was swimming, his sister Lina was busy building a giant sandcastle near the shore. She used a small plastic bucket and a shovel to create high towers. Their parents sat under a large striped umbrella, reading magazines and eating fresh watermelon slices. Later in the evening, they walked along the wooden pier to watch the sunset. The sky turned into beautiful shades of pink and orange. They felt extremely relaxed after a long week of work and study. It was a memorable trip because everyone enjoyed the sea breeze and the peaceful atmosphere together.",
