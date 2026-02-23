@@ -427,4 +427,41 @@ this.placementHistory = [];    // لمنع تكرار نفس السؤال
         }
     }
 }
+// 1. دالة اختيار سؤال عشوائي ذكي
+getAdaptiveQuestion() {
+    const levelQuestions = window.placementBank[this.currentDifficulty];
+    // نختار فقط الأسئلة التي لم تظهر سابقاً في هذا الاختبار
+    const available = levelQuestions.filter(q => !this.placementHistory.includes(q.q));
+    const list = available.length > 0 ? available : levelQuestions;
+    const selected = list[Math.floor(Math.random() * list.length)];
+    this.placementHistory.push(selected.q);
+    return selected;
+}
+
+// 2. دالة معالجة الإجابة (النظام التكيفي)
+handlePlacement(selected, correct) {
+    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+    let idx = levels.indexOf(this.currentDifficulty);
+
+    if (selected === correct) {
+        // إذا أجاب صح، نرفع الصعوبة للمستوى التالي
+        if (idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
+    } else {
+        // إذا أخطأ، ننزل للمستوى الأقل للتأكد من مستواه
+        if (idx > 0) this.currentDifficulty = levels[idx - 1];
+    }
+
+    this.placementStep++;
+    this.render(); // إعادة رسم الصفحة لإظهار السؤال الجديد
+}
+
+// 3. دالة تحويل النتيجة لدرجات IELTS
+getIeltsEquivalent(level) {
+    const map = {
+        'A1': '2.0 - 3.0', 'A2': '3.0 - 4.0', 'B1': '4.0 - 5.0',
+        'B2': '5.5 - 6.5', 'C1': '7.0 - 8.0', 'C2': '8.5 - 9.0'
+    };
+    return map[level];
+}
+
 const appInstance = new App();
