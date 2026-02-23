@@ -1,4 +1,4 @@
-/* 1. الإعدادات العامة والخطوط */
+ /* 1. الإعدادات العامة والخطوط */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
 * { 
@@ -7,6 +7,10 @@
     box-sizing: border-box; 
     font-family: 'Cairo', sans-serif; 
     -webkit-tap-highlight-color: transparent; /* يمنع الوميض عند اللمس في سفاري */
+}
+
+html {
+    scroll-behavior: smooth; /* لسلاسة العودة لموقع الدرس */
 }
 
 body { 
@@ -186,7 +190,15 @@ body {
     border-color: #1e40af;
 }
 
-.feature-card h3 { color: #1e40af; font-size: 1.3rem; }
+/* حل مشكلة ظهور الترقيم على اليسار للدروس الإنجليزية */
+.feature-card h3 { 
+    color: #1e40af; 
+    font-size: 1.3rem; 
+    direction: ltr; /* يضمن ظهور "1. " على اليسار */
+    unicode-bidi: plaintext; /* يحافظ على اتجاه الأرقام مع النصوص المختلطة */
+    display: block;
+    width: 100%;
+}
 
 /* 7. الأزرار العامة */
 .hero-btn { 
