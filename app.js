@@ -162,6 +162,16 @@ this.placementHistory = [];    // لمنع تكرار نفس السؤال
     }
 
     setupGlobalEvents() {
+        case 'setPage':
+    if (param === 'placement_test') {
+        this.placementStep = 0;
+        this.currentDifficulty = 'A2'; // نبدأ دائماً من مستوى متوسط
+        this.placementHistory = [];
+    }
+    this.currentPage = param;
+    this.render();
+    break;
+
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
             if (!btn) return;
@@ -265,14 +275,46 @@ this.placementHistory = [];    // لمنع تكرار نفس السؤال
     }
 
     getView(lesson, allTerms) {
-        if (this.currentPage === 'placement_test') {
-    const questions = [
-        { q: "Apple", a: "تفاحة", level: "Beginner" },
-        { q: "Believe", a: "يعتقد", level: "Intermediate" },
-        { q: "Enormous", a: "ضخم", level: "Intermediate" },
-        { q: "Hypothesis", a: "فرضية", level: "Expert" }
-        // يمكنك إضافة المزيد هنا
-    ];
+       if (this.currentPage === 'placement_test') {
+    // الحالة الأولى: إذا أكمل المستخدم 25 سؤالاً، نعرض النتيجة النهائية
+    if (this.placementStep >= 25) {
+        const finalLevel = this.currentDifficulty;
+        return `
+            <div class="reading-card" style="text-align:center; padding:40px 20px;">
+                <h2 style="color:#6366f1;">🎊 اكتمل الاختبار بنجاح</h2>
+                <div style="margin:25px auto; width:120px; height:120px; border:5px solid #6366f1; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                    <span style="font-size:3rem; font-weight:bold; color:#4f46e5;">${finalLevel}</span>
+                </div>
+                <p style="font-size:1.1rem; color:#4b5563;">مستواك الحالي هو: <b>${finalLevel}</b></p>
+                <p style="background:#f3f4f6; padding:10px; border-radius:8px;">يعادل في اختبار IELTS درجة: <b style="color:#10b981;">${this.getIeltsEquivalent(finalLevel)}</b></p>
+                <button class="hero-btn" data-action="goHome" style="width:100%; margin-top:20px; background:#6366f1;">العودة للرئيسية</button>
+            </div>`;
+    }
+
+    // الحالة الثانية: عرض السؤال الحالي (نظام الفراغات)
+    const qData = this.getAdaptiveQuestion();
+    return `
+        <div class="reading-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:0.8rem; color:#6b7280;">
+                <span>السؤال: ${this.placementStep + 1} / 25</span>
+                <span>المستوى: <b style="color:#6366f1;">${this.currentDifficulty}</b></span>
+            </div>
+            <div style="width:100%; height:6px; background:#e5e7eb; border-radius:10px; margin-bottom:25px;">
+                <div style="width:${(this.placementStep/25)*100}%; height:100%; background:#6366f1; border-radius:10px; transition:0.3s;"></div>
+            </div>
+            <h3 style="direction:ltr; text-align:left; line-height:1.6; margin-bottom:30px; font-size:1.3rem;">
+                ${qData.q.replace('___', '<span style="color:#6366f1; text-decoration:underline;">_______</span>')}
+            </h3>
+            <div style="display:grid; gap:12px; direction:ltr;">
+                ${qData.options.map(opt => `
+                    <button class="quiz-opt-btn" onclick="appInstance.handlePlacement('${opt}', '${qData.correct}')">
+                        ${opt}
+                    </button>
+                `).join('')}
+            </div>
+        </div>`;
+}
+
 
     if (this.placementStep >= questions.length) {
         let recommendation = this.placementScore <= 1 ? "Beginner" : (this.placementScore <= 3 ? "Intermediate" : "Expert");
