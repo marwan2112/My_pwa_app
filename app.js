@@ -5,6 +5,11 @@
 
 class App {
     constructor() {
+        // داخل الـ constructor
+this.placementStep = 0;       // عداد الأسئلة (حتى نصل لـ 25)
+this.currentDifficulty = 'A2'; // المستوى الذي سيبدأ منه الفحص
+this.placementHistory = [];    // لمنع تكرار نفس السؤال
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
