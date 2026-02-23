@@ -2247,11 +2247,12 @@ The most immediate challenge, however, is the difficulty of policy normalization
 However, the ethical and legal quandaries surrounding LAWS are substantial. The core debate revolves around the concept of “meaningful human control”. Critics argue that delegating the decision to take a human life to a machine violates fundamental principles of human dignity and accountability. Under International Humanitarian Law (IHL), decisions regarding proportionality and the distinction between combatants and civilians require complex contextual judgments that are currently beyond the capacity of even the most sophisticated algorithms. If a LAWS commits a war crime, the question of accountability—whether it rests with the programmer, the commander, or the machine itself—becomes a legal and moral quagmire.
 Strategically, the introduction of LAWS could lower the threshold for conflict. By removing human casualties from the equation, political leaders may be more inclined to initiate military action, a phenomenon known as “dehumanized warfare.” Furthermore, the speed and efficiency of autonomous systems could lead to rapid, uncontrolled escalation, as the decision-making cycle is compressed to milliseconds, potentially bypassing diplomatic off-ramps. The international community, primarily through the Convention on Certain Conventional Weapons (CCW), is grappling with whether to impose a preemptive ban on LAWS or to regulate their use through a binding protocol. The outcome of this debate will not only shape the future of warfare but also redefine the moral boundaries of technological progress in the security domain.
 `,
-    terms: [{ id: '318-1', english: 'Governance', arabic:}]
-  }
-      '// أضف هذا في نهاية ملف data.js
+    terms: [{ id: '318-1', english: 'Governance', arabic:'مروان '}]
+  };
+  
 window.placementBank = {
-  "A1": [  {"q": "She ___ a doctor.", "options": ["am", "is", "are"], "correct": "is"},
+  "A1": [  
+    {"q": "She ___ a doctor.", "options": ["am", "is", "are"], "correct": "is"},
     {"q": "They ___ from Spain.", "options": ["is", "am", "are"], "correct": "are"},
     {"q": "I ___ a student.", "options": ["am", "is", "are"], "correct": "am"},
     {"q": "He ___ to school every day.", "options": ["go", "goes", "going"], "correct": "goes"},
@@ -2285,8 +2286,10 @@ window.placementBank = {
     {"q": "She ___ like apples.", "options": ["don't", "doesn't", "not"], "correct": "doesn't"},
     {"q": "The bag is ___ the chair.", "options": ["on", "under", "behind"], "correct": "under"},
     {"q": "___ colour is your car?", "options": ["What", "Which", "Who"], "correct": "What"},
-    {"q": "It ___ a big house.", "options": ["is", "am", "are"], "correct": "is"} ],
-  "A2": [  {"q": "Yesterday, I ___ to the cinema.", "options": ["go", "went", "gone"], "correct": "went"},
+    {"q": "It ___ a big house.", "options": ["is", "am", "are"], "correct": "is"}
+  ],
+   "A2": [  
+    {"q": "Yesterday, I ___ to the cinema.", "options": ["go", "went", "gone"], "correct": "went"},
     {"q": "She didn't ___ the answer.", "options": ["know", "knew", "known"], "correct": "know"},
     {"q": "We have ___ finished our homework.", "options": ["yet", "already", "still"], "correct": "already"},
     {"q": "He is ___ than his brother.", "options": ["taller", "tall", "more tall"], "correct": "taller"},
@@ -2320,8 +2323,10 @@ window.placementBank = {
     {"q": "I promise I ___ you.", "options": ["won't tell", "don't tell", "not tell"], "correct": "won't tell"},
     {"q": "If I were you, I ___ a doctor.", "options": ["will see", "would see", "saw"], "correct": "would see"},
     {"q": "They ___ to the beach every summer.", "options": ["go", "went", "have gone"], "correct": "go"},
-    {"q": "He's ___ to buy a new car.", "options": ["going", "will", "go"], "correct": "going"} ],
-  "B1": [  {"q": "If I ___ you, I would apologize.", "options": ["was", "were", "am"], "correct": "were"},
+    {"q": "He's ___ to buy a new car.", "options": ["going", "will", "go"], "correct": "going"}
+     ],
+  "B1": [  
+    {"q": "If I ___ you, I would apologize.", "options": ["was", "were", "am"], "correct": "were"},
     {"q": "She ___ play the piano when she was five.", "options": ["can", "could", "may"], "correct": "could"},
     {"q": "They ___ finished the project by tomorrow.", "options": ["will have", "have", "had"], "correct": "will have"},
     {"q": "He asked where ___ from.", "options": ["I come", "do I come", "I came"], "correct": "I came"},
@@ -2355,8 +2360,10 @@ window.placementBank = {
     {"q": "That's the girl ___ brother is a doctor.", "options": ["who", "which", "whose"], "correct": "whose"},
     {"q": "I have three brothers, all of ___ are older.", "options": ["who", "whom", "which"], "correct": "whom"},
     {"q": "She ___ to the gym three times a week.", "options": ["go", "goes", "is going"], "correct": "goes"},
-    {"q": "I'd rather you ___ quiet.", "options": ["keep", "to keep", "kept"], "correct": "kept"} ],
-  "B2": [  {"q": "The match was called ___ due to heavy rain.", "options": ["off", "out", "away"], "correct": "off"},
+    {"q": "I'd rather you ___ quiet.", "options": ["keep", "to keep", "kept"], "correct": "kept"}
+   ],
+  "B2": [  
+    {"q": "The match was called ___ due to heavy rain.", "options": ["off", "out", "away"], "correct": "off"},
     {"q": "She ___ to be an expert in her field.", "options": ["is considered", "considers", "has considered"], "correct": "is considered"},
     {"q": "I wish I ___ harder for the exam.", "options": ["studied", "had studied", "would study"], "correct": "had studied"},
     {"q": "By next year, he ___ his degree.", "options": ["completes", "will have completed", "is completing"], "correct": "will have completed"},
@@ -2390,8 +2397,10 @@ window.placementBank = {
     {"q": "He drives ___ fast that it's scary.", "options": ["so", "such", "too"], "correct": "so"},
     {"q": "I'd rather you ___ smoke in here.", "options": ["don't", "didn't", "not"], "correct": "didn't"},
     {"q": "It's high time we ___ something about it.", "options": ["do", "did", "have done"], "correct": "did"},
-    {"q": "She demanded ___ speak to the manager.", "options": ["to", "that she", "for"], "correct": "to"} ],
-  "C1": [  {"q": "Had I known about the delay, I ___ left earlier.", "options": ["would have", "would", "will have"], "correct": "would have"},
+    {"q": "She demanded ___ speak to the manager.", "options": ["to", "that she", "for"], "correct": "to"}
+   ],
+  "C1": [
+    {"q": "Had I known about the delay, I ___ left earlier.", "options": ["would have", "would", "will have"], "correct": "would have"},
     {"q": "Not until the project was finished ___ the significance of teamwork.", "options": ["did they realize", "they realized", "had they realized"], "correct": "did they realize"},
     {"q": "The company's decision to expand overseas ___ a great deal of controversy.", "options": ["gave rise to", "resulted from", "brought up"], "correct": "gave rise to"},
     {"q": "She is ___ to win the award, given her exceptional performance.", "options": ["bound", "due", "likely"], "correct": "bound"},
@@ -2425,8 +2434,10 @@ window.placementBank = {
     {"q": "He is ___ to making snap judgments without considering all the facts.", "options": ["prone", "liable", "subject"], "correct": "prone"},
     {"q": "The concert was called off at the eleventh ___ due to the lead singer's illness.", "options": ["hour", "minute", "moment"], "correct": "hour"},
     {"q": "I couldn't ___ what he was saying because of the noise.", "options": ["make out", "make up", "make off"], "correct": "make out"},
-    {"q": "She is a woman of ___ integrity; everyone trusts her.", "options": ["unwavering", "uncompromising", "unshakeable"], "correct": "unwavering"}  ],
-  "C2": [     {"q": "The chairman's resignation was ___ by a series of financial scandals.", "options": ["precipitated", "precluded", "presaged"], "correct": "precipitated"},
+    {"q": "She is a woman of ___ integrity; everyone trusts her.", "options": ["unwavering", "uncompromising", "unshakeable"], "correct": "unwavering"} 
+  ],
+  "C2": [ 
+    {"q": "The chairman's resignation was ___ by a series of financial scandals.", "options": ["precipitated", "precluded", "presaged"], "correct": "precipitated"},
     {"q": "Her ___ remarks during the interview left a lasting impression on the panel.", "options": ["incisive", "invasive", "divisive"], "correct": "incisive"},
     {"q": "The artist's work defies easy ___; it blends elements of surrealism and abstract expressionism.", "options": ["categorization", "classification", "characterization"], "correct": "categorization"},
     {"q": "The treaty was seen as a ___ to lasting peace in the region.", "options": ["harbinger", "forerunner", "precursor"], "correct": "precursor"},
@@ -2450,6 +2461,7 @@ window.placementBank = {
     {"q": "He has a(n) ___ belief in the power of education to transform lives.", "options": ["unshakeable", "unshakable", "unshaken"], "correct": "unshakeable"},
     {"q": "The book provides a ___ analysis of the political landscape.", "options": ["penetrating", "penetrative", "penitent"], "correct": "penetrating"},
     {"q": "Her argument was ___ and left no room for counterargument.", "options": ["irrefutable", "irreconcilable", "irreducible"], "correct": "irrefutable"},
-    {"q": "The artist's style is ___; it cannot be easily categorized.", "options": ["idiosyncratic", "idiomatic", "idiotic"], "correct": "idiosyncratic"} ]
+    {"q": "The artist's style is ___; it cannot be easily categorized.", "options": ["idiosyncratic", "idiomatic", "idiotic"], "correct": "idiosyncratic"} 
+  ]
 };
 
