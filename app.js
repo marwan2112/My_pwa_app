@@ -1,7 +1,7 @@
 /**
  * BOOSTER APP - PRO MAX EDITION (ANIMATED VERSION)
  * المبرمج: مروان
- * حالة الكود: جاهز للتشغيل 100% مع مؤثرات بصرية
+ * حالة الكود: جاهز للتشغيل 100% مع مؤثرات بصرية مطورة
  */
 
 class App {
@@ -219,49 +219,61 @@ class App {
                     break;
                 case 'masterWord': 
                     const cardM = document.querySelector('.flashcard-container');
-                    if(cardM) cardM.classList.add('master-anim');
-                    setTimeout(() => {
-                        if(!this.masteredWords.includes(String(param))) this.masteredWords.push(String(param)); 
-                        this.saveData(); this.render();
-                    }, 550);
-                    break;
+                    if(cardM) {
+                        cardM.classList.add('master-anim');
+                        setTimeout(() => {
+                            if(!this.masteredWords.includes(String(param))) this.masteredWords.push(String(param)); 
+                            this.saveData(); this.render();
+                        }, 550);
+                    }
+                    return; // نمنع الـ render التلقائي تحت ليتم بعد الأنيميشن
                 case 'deleteWord': 
                     if(confirm('حذف نهائي من البطاقات؟')) { 
                         const cardD = document.querySelector('.flashcard-container');
-                        if(cardD) cardD.classList.add('delete-anim');
-                        setTimeout(() => {
-                            this.hiddenFromCards.push(String(param)); 
-                            this.saveData(); this.render(); 
-                        }, 550);
+                        if(cardD) {
+                            cardD.classList.add('delete-anim');
+                            setTimeout(() => {
+                                this.hiddenFromCards.push(String(param)); 
+                                this.saveData(); this.render(); 
+                            }, 550);
+                        }
                     } 
-                    break;
+                    return;
                 case 'speak': 
                     this.speak(param); 
                     break;
                 case 'nextC': 
                     const cardNext = document.querySelector('.flashcard-container');
-                    if(cardNext) cardNext.classList.add('slide-next');
-                    setTimeout(() => {
-                        if (this.currentCardIndex < (parseInt(total) - 1)) this.currentCardIndex++; 
-                        this.render();
-                    }, 300);
-                    break;
+                    if(cardNext) {
+                        cardNext.classList.add('slide-next');
+                        setTimeout(() => {
+                            if (this.currentCardIndex < (parseInt(total) - 1)) this.currentCardIndex++; 
+                            this.render();
+                        }, 400);
+                    }
+                    return;
                 case 'prevC': 
                     const cardPrev = document.querySelector('.flashcard-container');
-                    if(cardPrev) cardPrev.classList.add('slide-prev');
-                    setTimeout(() => {
-                        if (this.currentCardIndex > 0) this.currentCardIndex--; 
-                        this.render();
-                    }, 300);
-                    break;
-                case 'restartCards': 
-                    if(param === 'all') {
-                        const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t => String(t.id));
-                        this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
+                    if(cardPrev) {
+                        cardPrev.classList.add('slide-prev');
+                        setTimeout(() => {
+                            if (this.currentCardIndex > 0) this.currentCardIndex--; 
+                            this.render();
+                        }, 400);
                     }
-                    this.currentCardIndex = 0;
-                    this.saveData(); this.render();
-                    break;
+                    return;
+                case 'restartCards': 
+                    const cardShuffle = document.querySelector('.flashcard-container');
+                    if(cardShuffle) cardShuffle.classList.add('shuffle-anim-card');
+                    setTimeout(() => {
+                        if(param === 'all') {
+                            const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t => String(t.id));
+                            this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
+                        }
+                        this.currentCardIndex = 0;
+                        this.saveData(); this.render();
+                    }, 600);
+                    return;
                 case 'addNewWord':
                     this.handleNewWord();
                     break;
@@ -494,10 +506,10 @@ class App {
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
             if (active.length === 0) {
-                return `<div class="reading-card shuffle-anim" style="text-align:center;">
+                return `<div class="reading-card" style="text-align:center;">
                     <div style="font-size:3rem; margin-bottom:10px;">🧠</div>
                     <h3>🎉 اكتملت المراجعة!</h3>
-                    <button class="hero-btn" data-action="restartCards" data-param="all">إعادة تكرار الكل 🔁</button>
+                    <button class="hero-btn" data-action="restartCards" data-param="all" style="background:#f59e0b;">إعادة تكرار الكل 🔁</button>
                 </div>`;
             }
             const t = active[this.currentCardIndex];
@@ -515,7 +527,7 @@ class App {
                     <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅ حفظ</button>
                     <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️ حذف</button>
                 </div>
-                <button class="hero-btn shuffle-anim" data-action="restartCards" data-param="remaining" style="width:100%; margin: 15px 0; background:#f59e0b;">🔁 تكرار المتبقي</button>
+                <button class="hero-btn" data-action="restartCards" data-param="remaining" style="width:100%; margin: 15px 0; background:#f59e0b;">🔁 تكرار المتبقي</button>
                 <div class="card-nav-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <button class="hero-btn" data-action="prevC" style="background:#64748b;">السابق</button>
                     <button class="hero-btn" data-action="nextC" data-total="${active.length}" style="background:#64748b;">التالي</button>
