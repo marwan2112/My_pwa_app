@@ -2247,7 +2247,9 @@ The most immediate challenge, however, is the difficulty of policy normalization
 However, the ethical and legal quandaries surrounding LAWS are substantial. The core debate revolves around the concept of “meaningful human control”. Critics argue that delegating the decision to take a human life to a machine violates fundamental principles of human dignity and accountability. Under International Humanitarian Law (IHL), decisions regarding proportionality and the distinction between combatants and civilians require complex contextual judgments that are currently beyond the capacity of even the most sophisticated algorithms. If a LAWS commits a war crime, the question of accountability—whether it rests with the programmer, the commander, or the machine itself—becomes a legal and moral quagmire.
 Strategically, the introduction of LAWS could lower the threshold for conflict. By removing human casualties from the equation, political leaders may be more inclined to initiate military action, a phenomenon known as “dehumanized warfare.” Furthermore, the speed and efficiency of autonomous systems could lead to rapid, uncontrolled escalation, as the decision-making cycle is compressed to milliseconds, potentially bypassing diplomatic off-ramps. The international community, primarily through the Convention on Certain Conventional Weapons (CCW), is grappling with whether to impose a preemptive ban on LAWS or to regulate their use through a binding protocol. The outcome of this debate will not only shape the future of warfare but also redefine the moral boundaries of technological progress in the security domain.
 `,
-    terms: [{ id: '318-1', english: 'Governance', arabic: '// أضف هذا في نهاية ملف data.js
+    terms: [{ id: '318-1', english: 'Governance', arabic:}]
+  }
+      '// أضف هذا في نهاية ملف data.js
 window.placementBank = {
   "A1": [  {"q": "She ___ a doctor.", "options": ["am", "is", "are"], "correct": "is"},
     {"q": "They ___ from Spain.", "options": ["is", "am", "are"], "correct": "are"},
