@@ -9,7 +9,7 @@ window.lessonsList = {
     { id: '1', title: "1. Greetings and Introductions" },
     { id: '2', title: "2. Numbers 1-10"},
     { id: '3', title: "3. Colors" },
-    { id: '4', title: "4. Family Members },
+    { id: '4', title: "4. Family Members" },
     { id: '5', title: "5. Things at Home" },
     { id: '6', title: "6. Days and Months" },
     { id: '7', title: "7. Feelings"},
