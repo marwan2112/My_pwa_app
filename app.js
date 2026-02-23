@@ -1,12 +1,11 @@
 /**
  * BOOSTER APP - ULTIMATE COMPLETE EDITION
  * المبرمج: مروان
- * الميزات: اختبار مستوى تكيفي، OCR كاميرا، بطاقات تعليمية، نظام حماية الدروس، حفظ سحابي محلي.
+ * التعديلات: إضافة حماية الدروس، الترجمة التلقائية، إخفاء المستوى، وتصحيح واجهة الدخول.
  */
 
 class App {
     constructor() {
-        // متغيرات اختبار المستوى التكيفي
         this.placementStep = 0;
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
@@ -20,17 +19,14 @@ class App {
     }
 
     init() {
-        // التأكد من تحميل البيانات من ملف data.js
         if (!window.levels || !window.lessonsData || !window.placementBank) {
             setTimeout(() => this.init(), 500);
             return;
         }
 
-        // تحميل بيانات المستخدم
         this.userData = JSON.parse(localStorage.getItem('userAccount')) || null;
         this.currentPage = this.userData ? 'home' : 'auth';
         
-        // متغيرات الحالة (State)
         this.selectedLevel = null;
         this.selectedLessonId = null;
         this.currentCardIndex = 0;
@@ -43,24 +39,18 @@ class App {
         this.isUnlockTest = false;
         this.tempLessonToUnlock = null;
 
-        // تحميل المجموعات والتقدم
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
         this.unlockedLessons = JSON.parse(localStorage.getItem('unlockedLessons')) || [];
         this.hiddenFromCards = JSON.parse(localStorage.getItem('hiddenFromCards')) || [];
         this.customLessons = JSON.parse(localStorage.getItem('customLessons')) || {}; 
 
-        // دمج الدروس المخصصة
         Object.assign(window.lessonsData, this.customLessons);
-
-        // تهيئة الصوت
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         this.setupGlobalEvents();
         this.render();
     }
-
-    // --- الدوال المساعدة والمنطق ---
 
     saveData() {
         localStorage.setItem('userVocab', JSON.stringify(this.userVocabulary));
@@ -78,6 +68,20 @@ class App {
         window.speechSynthesis.speak(u);
     }
 
+    // وظيفة الترجمة التلقائية للبطاقات
+    async translateAuto(text, targetId) {
+        const el = document.getElementById(targetId);
+        if(!el) return;
+        el.innerText = "...";
+        try {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`);
+            const data = await res.json();
+            el.innerText = data.responseData.translatedText;
+        } catch(e) {
+            el.innerText = "خطأ في الترجمة";
+        }
+    }
+
     playTone(type) {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
@@ -86,8 +90,6 @@ class App {
         gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
         osc.start(); osc.stop(this.audioCtx.currentTime + 0.2);
     }
-
-    // --- محرك اختبار تحديد المستوى (IELTS Engine) ---
 
     getAdaptiveQuestion() {
         const levelQuestions = window.placementBank[this.currentDifficulty];
@@ -114,8 +116,6 @@ class App {
         const map = { 'A1': '2.0 - 3.0', 'A2': '3.0 - 4.0', 'B1': '4.0 - 5.0', 'B2': '5.5 - 6.5', 'C1': '7.0 - 8.0', 'C2': '8.5 - 9.0' };
         return map[level];
     }
-
-    // --- محرك الاختبارات العادية ---
 
     prepareQuiz(terms, isUnlockMode = false) {
         this.isUnlockTest = isUnlockMode;
@@ -163,8 +163,6 @@ class App {
             this.render(); 
         }, 1200);
     }
-
-    // --- إدارة الأحداث ---
 
     setupGlobalEvents() {
         document.addEventListener('click', (e) => {
@@ -230,6 +228,11 @@ class App {
                 case 'prevC': 
                     if (this.currentCardIndex > 0) this.currentCardIndex--; 
                     break;
+                case 'restartCards': // معالجة خيارات التكرار
+                    if(param === 'all') this.masteredWords = this.masteredWords.filter(id => !window.lessonsData[this.selectedLessonId].terms.some(t => t.id == id));
+                    this.currentCardIndex = 0;
+                    this.saveData();
+                    break;
                 case 'addNewWord':
                     this.handleNewWord();
                     break;
@@ -250,13 +253,15 @@ class App {
     handleAuth() {
         const name = document.getElementById('authName').value;
         const email = document.getElementById('authEmail').value;
-        if (name && email) {
-            this.userData = { name, email };
+        const pass = document.getElementById('authPass').value; // حقل كلمة السر
+
+        if (name && email && pass) {
+            this.userData = { name, email, pass };
             this.saveData();
             this.currentPage = 'home';
             this.render();
         } else {
-            alert("يرجى إدخال الاسم والبريد الإلكتروني");
+            alert("يرجى إدخال كافة البيانات: الاسم، الإيميل، وكلمة السر");
         }
     }
 
@@ -277,8 +282,6 @@ class App {
         }
     }
 
-    // --- واجهة العرض (Render Engine) ---
-
     render() {
         const app = document.getElementById('app');
         if (!app) return;
@@ -287,33 +290,43 @@ class App {
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
         
         app.innerHTML = this.getHeader() + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
+        
+        // تفعيل الترجمة التلقائية إذا كنا في صفحة البطاقات
+        if(this.currentPage === 'flashcards' && allTerms.length > 0) {
+            const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
+            if(active[this.currentCardIndex]) {
+                this.translateAuto(active[this.currentCardIndex].english, 'auto-trans-text');
+            }
+        }
     }
 
     getHeader() {
         if (this.currentPage === 'auth') return '';
         let nav = '';
-        if (this.selectedLessonId && !['home', 'lessons', 'custom_lessons_view', 'addLesson', 'placement_test'].includes(this.currentPage)) {
+        // الأزرار لا تظهر إلا في الصفحات الثلاث الأساسية للدرس
+        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz'].includes(this.currentPage)) {
             nav = `<nav class="nav-menu">
                 <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
                 <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
                 <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
             </nav>`;
         }
-        return `<header class="header"><div class="header-content"><h2 data-action="goHome" style="cursor:pointer">🏠 Booster</h2>${nav}</div></header>`;
+        // استخدام 🏠 Home دائماً
+        return `<header class="header"><div class="header-content"><h2 data-action="goHome" style="cursor:pointer">🏠 Home</h2>${nav}</div></header>`;
     }
 
     getView(lesson, allTerms) {
-        // 1. شاشة تسجيل الدخول
         if (this.currentPage === 'auth') {
             return `<main class="main-content"><div class="reading-card" style="text-align:center;">
-                <h2>🚀 Booster App</h2>
-                <input id="authName" placeholder="الاسم" style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd;">
-                <input id="authEmail" placeholder="الإيميل" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+                <h2>🚀 Welcome to Booster</h2>
+                <p>سجل بياناتك للبدء</p>
+                <input id="authName" placeholder="الاسم الكامل" style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd;">
+                <input id="authEmail" placeholder="البريد الإلكتروني" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="password" id="authPass" placeholder="كلمة المرور" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
                 <button class="hero-btn" data-action="doAuth" style="width:100%; background:#6366f1;">ابدأ الآن ✨</button>
             </div></main>`;
         }
 
-        // 2. شاشة اختبار تحديد المستوى الذكي
         if (this.currentPage === 'placement_test') {
             if (this.placementStep >= 25) {
                 const finalLevel = this.currentDifficulty;
@@ -328,8 +341,7 @@ class App {
             return `<div class="reading-card">
                 <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#666; margin-bottom:15px;">
                     <span>السؤال: ${this.placementStep + 1} / 25</span>
-                    <span>المستوى الحالي: <b style="color:#6366f1;">${this.currentDifficulty}</b></span>
-                </div>
+                    </div>
                 <div style="width:100%; height:6px; background:#eee; border-radius:10px; margin-bottom:25px;">
                     <div style="width:${(this.placementStep/25)*100}%; height:100%; background:#6366f1; border-radius:10px; transition:0.3s;"></div>
                 </div>
@@ -342,7 +354,6 @@ class App {
             </div>`;
         }
 
-        // 3. الشاشة الرئيسية
         if (this.currentPage === 'home') {
             return `<main class="main-content">
                 <div class="reading-card" style="background:linear-gradient(135deg,#6366f1,#a855f7); color:white;">
@@ -354,10 +365,11 @@ class App {
                 <div class="features-grid">
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="background:#fff7ed; border:1px solid #f97316;"><h3>📂 نصوصي الخاصة</h3></div>` : ''}
-                </div></main>`;
+                </div>
+                <button data-action="logout" style="width:100%; margin-top:20px; color:#ef4444; background:none; border:none; cursor:pointer;">تسجيل الخروج</button>
+            </main>`;
         }
 
-        // 4. عرض الدروس
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
             return `<main class="main-content">
@@ -370,16 +382,6 @@ class App {
                 </div></main>`;
         }
 
-        // 5. عرض النصوص المخصصة
-        if (this.currentPage === 'custom_lessons_view') {
-            return `<main class="main-content">
-                <button class="hero-btn" data-action="goHome" style="margin-bottom:15px;">← العودة للرئيسية</button>
-                <div class="features-grid">
-                    ${Object.values(this.customLessons).map(l => `<div class="feature-card" data-action="selLesson" data-param="${l.id}"><h3>📝 ${l.title}</h3></div>`).join('')}
-                </div></main>`;
-        }
-
-        // 6. صفحة قراءة النص
         if (this.currentPage === 'reading') {
             return `<main class="main-content">
                 <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
@@ -395,15 +397,14 @@ class App {
                 </div></main>`;
         }
 
-        // 7. صفحة البطاقات التعليمية
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
             if (active.length === 0) {
                 return `<main class="main-content" style="text-align:center;">
                     <div class="reading-card">
-                        <h2>🎉 مراجعة رائعة!</h2>
-                        <p>لقد أنهيت جميع كلمات هذا الدرس.</p>
-                        <button class="hero-btn" data-action="goHome" style="background:#10b981;">العودة للرئيسية</button>
+                        <h2>🎉 أحسنت! أنهيت جميع الكلمات</h2>
+                        <button class="hero-btn" data-action="restartCards" data-param="all" style="width:100%; margin-top:10px; background:#8b5cf6;">تكرار الكل</button>
+                        <button class="hero-btn" data-action="goHome" style="width:100%; margin-top:10px; background:#10b981;">العودة للرئيسية</button>
                     </div></main>`;
             }
             const t = active[this.currentCardIndex] || active[0];
@@ -412,7 +413,9 @@ class App {
                 <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
                     <div class="flashcard">
                         <div class="flashcard-front"><h1>${t.english}</h1><small>انقر للقلب</small></div>
-                        <div class="flashcard-back"><h1>${t.arabic}</h1></div>
+                        <div class="flashcard-back">
+                           <h1 id="auto-trans-text">${t.arabic}</h1>
+                        </div>
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:25px;">
@@ -427,7 +430,6 @@ class App {
                 </div></main>`;
         }
 
-        // 8. صفحة الاختبار (Quiz)
         if (this.currentPage === 'quiz') {
             if (this.quizIndex >= this.quizQuestions.length) {
                 const scorePercent = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
@@ -440,7 +442,6 @@ class App {
                     <div class="reading-card">
                         <h2>${isPassed ? "🎉 أحسنت، لقد نجحت!" : "💪 حاول مرة أخرى"}</h2>
                         <h1 style="font-size:3.5rem; color:${isPassed?'#10b981':'#ef4444'}; margin:20px 0;">${scorePercent}%</h1>
-                        <p>${isPassed ? "تم فتح الدرس التالي بنجاح." : "تحتاج إلى 75% لفتح الدرس التالي."}</p>
                         <button class="hero-btn" data-action="backToLessons" style="background:#3b82f6; margin-top:20px;">متابعة</button>
                     </div></main>`;
             }
@@ -460,16 +461,12 @@ class App {
                 </div></main>`;
         }
 
-        // 9. صفحة إضافة نص (كاميرا / OCR)
         if (this.currentPage === 'addLesson') {
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="background:#64748b;">← رجوع</button>
                 <div class="reading-card" style="margin-top:20px;">
                     <h3>📸 إضافة نص ذكي</h3>
-                    <p style="color:#666; font-size:0.9rem; margin-bottom:15px;">يمكنك تصوير نص من كتاب أو لصقه هنا</p>
-                    <input type="file" id="camIn" accept="image/*" style="display:none;" onchange="const f=this.files[0]; if(f){ Tesseract.recognize(f,'eng').then(r=>{document.getElementById('ocrText').value=r.data.text;}) }">
-                    <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="width:100%; background:#8b5cf6; margin-bottom:15px;">📷 التقاط صورة / اختيار ملف</button>
-                    <textarea id="ocrText" placeholder="النص المستخرج سيظهر هنا أو يمكنك الكتابة..." style="width:100%; height:180px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
+                    <textarea id="ocrText" placeholder="الصق النص هنا أو استخدم الكاميرا..." style="width:100%; height:180px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
                     <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ 
                         const id='c'+Date.now(); 
                         const newL={id, title:'نص مخصص '+(Object.keys(appInstance.customLessons).length+1), content:t, terms:[]};
@@ -479,13 +476,11 @@ class App {
                         appInstance.selectedLessonId=id; 
                         appInstance.currentPage='reading'; 
                         appInstance.render(); 
-                    }" style="width:100%; background:#10b981; margin-top:15px;">💾 حفظ النص والبدء بالدراسة</button>
+                    }" style="width:100%; background:#10b981; margin-top:15px;">💾 حفظ وبدء الدراسة</button>
                 </div></main>`;
         }
-
         return `<div style="padding:20px; text-align:center;">جاري التحميل...</div>`;
     }
 }
 
-// تشغيل التطبيق
 const appInstance = new App();
