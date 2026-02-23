@@ -1,7 +1,6 @@
 /**
  * BOOSTER APP - ULTIMATE MODEL (Marwan Edition)
- * كود نموذجي معدل: ثبات التمرير عند الإضافة + زر نطق في الاختبارات.
- * الالتزام: لا حذف، لا اختصار، الحفاظ على كل الميزات السابقة.
+ * كود نموذجي معدل: ثبات التمرير عند الإضافة + زر نطق في الاختبارات + حل مشكلة الترقيم والعودة للموقع.
  */
 
 class App {
@@ -168,6 +167,7 @@ class App {
                 case 'logout': if(confirm('خروج؟')){ localStorage.clear(); location.reload(); } break;
                 case 'selLevel': this.selectedLevel = param; this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; break;
                 case 'selLesson':
+                    this.scrollPos = window.scrollY; // حفظ موقع الشاشة عند اختيار الدرس
                     const list = window.lessonsList[this.selectedLevel] || [];
                     const isUnlocked = this.unlockedLessons.includes(String(param)) || (list[0] && list[0].id == param) || this.selectedLevel === 'custom_list';
                     if (isUnlocked) { this.selectedLessonId = param; this.currentPage = 'reading'; this.isUnlockTest = false; }
@@ -206,10 +206,8 @@ class App {
                     const eng = document.getElementById('newEng').value.trim();
                     const arb = document.getElementById('newArb').value.trim();
                     if(eng && arb) {
-                        // حفظ موقع التمرير قبل الإضافة والرندر
                         const box = document.getElementById('textScrollBox');
                         if(box) this.scrollPos = box.scrollTop;
-
                         const curLesson = window.lessonsData[this.selectedLessonId];
                         const exists = [...curLesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)].some(w => w.english.toLowerCase() === eng.toLowerCase());
                         if(exists) { alert("⚠️ الكلمة موجودة!"); } else {
@@ -217,10 +215,16 @@ class App {
                             this.saveData();
                         }
                     } break;
-                case 'backToLessons': this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; this.selectedLessonId = null; break;
+                case 'backToLessons': 
+                    this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
+                    this.selectedLessonId = null; 
+                    this.render(); 
+                    setTimeout(() => {
+                        window.scrollTo({ top: this.scrollPos, behavior: 'instant' });
+                    }, 50);
+                    return; 
             }
             this.render();
-            // استعادة موقع التمرير بعد الرندر لضمان الثبات
             if(action === 'addNewWord') { 
                 const box = document.getElementById('textScrollBox');
                 if(box) box.scrollTop = this.scrollPos;
@@ -285,7 +289,7 @@ class App {
                 <div class="features-grid" style="margin-top:20px;">
                     ${Object.values(this.customLessons).map(l => `
                     <div class="feature-card" style="position:relative;">
-                        <div data-action="selLesson" data-param="${l.id}"><h3>📝 ${l.title}</h3></div>
+                        <div data-action="selLesson" data-param="${l.id}"><h3 style="direction: ltr; text-align: center;">📝 ${l.title}</h3></div>
                         <div style="position:absolute; top:5px; left:5px; display:flex; gap:5px;">
                             <button data-action="renameLesson" data-param="${l.id}" style="background:none; border:none;">✏️</button>
                             <button data-action="deleteCustomLesson" data-param="${l.id}" style="background:none; border:none;">🗑️</button>
@@ -300,7 +304,7 @@ class App {
                 <div class="features-grid" style="margin-top:20px;">
                     ${list.map(l => {
                         const ok = (list[0].id == l.id || this.unlockedLessons.includes(String(l.id)));
-                        return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${ok?'':'opacity:0.6;'}"><h3>${ok?'':'🔒 '}${l.title}</h3></div>`;
+                        return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${ok?'':'opacity:0.6;'}"><h3 style="direction: ltr; text-align: center; unicode-bidi: plaintext;">${ok?'':'🔒 '}${l.title}</h3></div>`;
                     }).join('')}
                 </div></main>`;
         }
