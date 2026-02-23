@@ -78,7 +78,8 @@ body {
     width: 100%; 
     height: 350px; 
     margin: 20px 0; 
-    transition: all 0.55s cubic-bezier(0.4, 0, 0.2, 1); /* مضاف لدعم الأنيميشن */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    position: relative;
 }
 
 .flashcard { 
@@ -269,43 +270,47 @@ body {
     border: 2px solid #e2e8f0;
 }
 
-/* 11. مؤثرات الأنيميشن الجديدة (Flashcards Micro-interactions) */
+/* 11. مؤثرات الأنيميشن الجديدة (تم تصحيحها) */
 
-/* أنيميشن الحفظ - الطيران للدماغ مع اللون الأخضر */
+/* أنيميشن الحفظ - الطيران للأعلى */
 .master-anim {
-    transform: translateY(-600px) scale(0) rotate(20deg) !important;
-    opacity: 0;
-    filter: brightness(1.2);
-    background: #10b981 !important;
+    animation: masterFly 0.6s forwards cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+@keyframes masterFly {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-500px) scale(0) rotate(20deg); opacity: 0; background: #10b981; }
 }
 
-/* أنيميشن الحذف - السقوط في السلة مع اللون الأحمر */
+/* أنيميشن الحذف - السقوط للأسفل */
 .delete-anim {
-    transform: translateY(600px) scale(0) rotate(-20deg) !important;
-    opacity: 0;
-    background: #ef4444 !important;
+    animation: deleteDrop 0.6s forwards ease-in;
+    pointer-events: none;
+}
+@keyframes deleteDrop {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(500px) scale(0) rotate(-20deg); opacity: 0; background: #ef4444; }
 }
 
-/* انزلاق لليمين (التالي) */
-.slide-next {
-    transform: translateX(120%) rotate(10deg);
-    opacity: 0;
+/* انزلاق التالي والسابق */
+.slide-next { animation: slideNext 0.4s forwards; }
+.slide-prev { animation: slidePrev 0.4s forwards; }
+
+@keyframes slideNext {
+    100% { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slidePrev {
+    100% { transform: translateX(-100%); opacity: 0; }
 }
 
-/* انزلاق لليسار (السابق) */
-.slide-prev {
-    transform: translateX(-120%) rotate(-10deg);
-    opacity: 0;
-}
-
-/* تأثير تكرار المتبقي - ترتيب الورق */
-.shuffle-anim {
+/* تأثير تكرار المتبقي - يطبق على "البطاقة" عند إعادة الترتيب */
+.shuffle-anim-card {
     animation: shuffle 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 @keyframes shuffle {
     0% { transform: scale(1); }
-    25% { transform: scale(0.95) rotate(-5deg); }
-    75% { transform: scale(1.05) rotate(5deg); }
+    25% { transform: scale(0.9) rotate(-5deg); }
+    75% { transform: scale(1.1) rotate(5deg); }
     100% { transform: scale(1); }
 }
