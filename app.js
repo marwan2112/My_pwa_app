@@ -266,6 +266,43 @@ class App {
     }
 
     handleNewWord() {
+        // دالة معالجة الصورة وتحويلها لنص (OCR)
+async processOCR(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const textArea = document.getElementById('ocrText');
+    textArea.value = "⏳ جاري استخراج النص، انتظر قليلاً...";
+    
+    try {
+        const worker = await Tesseract.createWorker('eng');
+        const ret = await worker.recognize(file);
+        textArea.value = ret.data.text;
+        await worker.terminate();
+    } catch (e) {
+        textArea.value = "❌ فشل استخراج النص. تأكد من جودة الصورة.";
+    }
+}
+
+// دالة حفظ النص المخصص
+saveNewCustomLesson() {
+    const title = document.getElementById('newLessonTitle').value.trim() || "نص مخصص جديد";
+    const content = document.getElementById('ocrText').value.trim();
+    
+    if (content) {
+        const id = 'c' + Date.now();
+        const newL = { id, title, content, terms: [] };
+        this.customLessons[id] = newL;
+        window.lessonsData[id] = newL; // ربط فوري
+        this.saveData();
+        this.selectedLessonId = id;
+        this.currentPage = 'reading';
+        this.render();
+    } else {
+        alert("يرجى كتابة أو تصوير نص أولاً");
+    }
+}
+
         const eng = document.getElementById('newEng').value.trim();
         const arb = document.getElementById('newArb').value.trim();
         if(eng && arb) {
@@ -383,18 +420,38 @@ class App {
         }
 
         if (this.currentPage === 'reading') {
-            return `<main class="main-content">
-                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
-                <h2 style="margin-bottom:15px;">${lesson.title}</h2>
-                <div class="reading-card" style="direction:ltr; text-align:left; max-height:350px; overflow-y:auto; font-size:1.15rem; line-height:1.7; border:2px solid #eef;">
-                    ${lesson.content}
+    // نتحقق إذا كان النص مخصصاً (يبدأ بـ c) لإظهار أزرار التعديل والحذف
+    const isCustom = String(this.selectedLessonId).startsWith('c');
+
+    return `<main class="main-content">
+        <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 id="lesson-title-display">${lesson.title}</h2>
+            ${isCustom ? `
+                <div style="display:flex; gap:5px;">
+                    <button class="hero-btn" onclick="appInstance.editLessonTitle('${this.selectedLessonId}')" style="background:#f59e0b; padding:5px 10px; font-size:0.8rem;">✏️ عنوان</button>
+                    <button class="hero-btn" onclick="appInstance.deleteCustomLesson('${this.selectedLessonId}')" style="background:#ef4444; padding:5px 10px; font-size:0.8rem;">🗑️ حذف</button>
                 </div>
-                <div class="reading-card" style="margin-top:20px; background:#f9fafb; border:1px dashed #6366f1;">
-                    <h4 style="margin-bottom:10px;">إضافة كلمة جديدة لهذا الدرس:</h4>
-                    <input id="newEng" placeholder="الكلمة بالإنجليزية" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:5px;">
-                    <input id="newArb" placeholder="الترجمة بالعربية" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
-                    <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">حفظ الكلمة</button>
-                </div></main>`;
+            ` : ''}
+        </div>
+
+        <div class="reading-card" style="direction:ltr; text-align:left; max-height:350px; overflow-y:auto; font-size:1.15rem; line-height:1.7; border:2px solid #eef; position:relative;">
+            <div id="lesson-content-display">${lesson.content}</div>
+            ${isCustom ? `
+                <button onclick="appInstance.editLessonContent('${this.selectedLessonId}')" style="position:absolute; top:10px; right:10px; background:rgba(99,102,241,0.1); border:none; border-radius:5px; cursor:pointer; padding:5px;">📝 تعديل النص</button>
+            ` : ''}
+        </div>
+
+        <div class="reading-card" style="margin-top:20px; background:#f9fafb; border:1px dashed #6366f1;">
+            <h4 style="margin-bottom:10px;">إضافة كلمة جديدة لهذا الدرس:</h4>
+            <input id="newEng" placeholder="الكلمة بالإنجليزية" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:5px;">
+            <input id="newArb" placeholder="الترجمة بالعربية" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+            <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">حفظ الكلمة</button>
+        </div>
+    </main>`;
+}
+
         }
 
         if (this.currentPage === 'flashcards') {
@@ -462,24 +519,61 @@ class App {
         }
 
         if (this.currentPage === 'addLesson') {
-            return `<main class="main-content">
-                <button class="hero-btn" data-action="goHome" style="background:#64748b;">← رجوع</button>
-                <div class="reading-card" style="margin-top:20px;">
-                    <h3>📸 إضافة نص ذكي</h3>
-                    <textarea id="ocrText" placeholder="الصق النص هنا أو استخدم الكاميرا..." style="width:100%; height:180px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
-                    <button class="hero-btn" onclick="const t=document.getElementById('ocrText').value; if(t){ 
-                        const id='c'+Date.now(); 
-                        const newL={id, title:'نص مخصص '+(Object.keys(appInstance.customLessons).length+1), content:t, terms:[]};
-                        appInstance.customLessons[id]=newL; 
-                        window.lessonsData[id]=newL; 
-                        appInstance.saveData(); 
-                        appInstance.selectedLessonId=id; 
-                        appInstance.currentPage='reading'; 
-                        appInstance.render(); 
-                    }" style="width:100%; background:#10b981; margin-top:15px;">💾 حفظ وبدء الدراسة</button>
-                </div></main>`;
+            // هذا يوضع داخل getView في قسم addLesson
+return `<main class="main-content">
+    <button class="hero-btn" data-action="goHome" style="background:#64748b; margin-bottom:15px;">← رجوع</button>
+    <div class="reading-card">
+        <h3>📸 إضافة نص ذكي</h3>
+        <p style="color:#666; font-size:0.85rem; margin-bottom:15px;">التقط صورة لنص أو اخترها من الاستوديو</p>
+        
+        <input type="file" id="camIn" accept="image/*" capture="environment" style="display:none;" onchange="appInstance.processOCR(this)">
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+            <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="background:#8b5cf6;">📷 كاميرا / استوديو</button>
+            <button class="hero-btn" onclick="document.getElementById('ocrText').value=''" style="background:#64748b;">🧹 مسح</button>
+        </div>
+
+        <input id="newLessonTitle" placeholder="اسم النص (مثلاً: درس القراءة 1)" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+        <textarea id="ocrText" placeholder="النص سيظهر هنا بعد التصوير..." style="width:100%; height:180px; padding:12px; border:1px solid #ddd; border-radius:8px; font-family:sans-serif;"></textarea>
+        
+        <button class="hero-btn" onclick="appInstance.saveNewCustomLesson()" style="width:100%; background:#10b981; margin-top:15px;">💾 حفظ النص النهائي</button>
+    </div>
+</main>`;
+;
         }
         return `<div style="padding:20px; text-align:center;">جاري التحميل...</div>`;
+    }
+}
+// 1. دالة حذف النص المخصص
+deleteCustomLesson(id) {
+    if (confirm('هل أنت متأكد من حذف هذا النص وجميع كلماته نهائياً؟')) {
+        delete this.customLessons[id];
+        delete window.lessonsData[id];
+        this.saveData();
+        this.currentPage = 'home'; // العودة للرئيسية بعد الحذف
+        this.render();
+    }
+}
+
+// 2. دالة تعديل عنوان الدرس
+editLessonTitle(id) {
+    const lesson = this.customLessons[id];
+    const newTitle = prompt("أدخل العنوان الجديد للدرس:", lesson.title);
+    if (newTitle && newTitle.trim() !== "") {
+        lesson.title = newTitle;
+        this.saveData();
+        this.render();
+    }
+}
+
+// 3. دالة تعديل محتوى النص
+editLessonContent(id) {
+    const lesson = this.customLessons[id];
+    const newContent = prompt("قم بتعديل النص بالأسفل:", lesson.content);
+    if (newContent && newContent.trim() !== "") {
+        lesson.content = newContent;
+        this.saveData();
+        this.render();
     }
 }
 
