@@ -425,7 +425,7 @@ class App {
             </div>`;
         }
 
-        if (this.currentPage === 'lessons') {
+                if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
@@ -435,6 +435,35 @@ class App {
                         return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${isOk?'':'opacity:0.6;'}"><h3>${isOk?'':'🔒 '}${l.title}</h3></div>`; 
                     }).join('')}
                 </div></main>`;
+        }
+
+        // --- هذا هو الجزء الجديد المضاف ---
+        if (this.currentPage === 'custom_lessons_view') {
+            const lessons = Object.values(this.customLessons);
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← العودة للرئيسية</button>
+                <h2 style="margin-bottom: 20px; text-align:center;">📂 نصوصي الخاصة</h2>
+                
+                ${lessons.length === 0 ? '<div class="reading-card" style="text-align:center; padding:30px; color:#666;">لا توجد نصوص محفوظة. صوّر نصك الأول الآن!</div>' : ''}
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    ${lessons.map(l => `
+                        <div class="reading-card" style="border-right: 5px solid #6366f1; text-align: right; direction: rtl;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin:0; color:#4f46e5; cursor:pointer;" data-action="selLesson" data-param="${l.id}">${l.title}</h3>
+                                <div style="display: flex; gap: 15px;">
+                                    <button onclick="appInstance.editLessonTitle('${l.id}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">✏️</button>
+                                    <button onclick="appInstance.deleteCustomLesson('${l.id}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🗑️</button>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #555; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; direction: ltr; text-align: left;">
+                                ${l.content}
+                            </p>
+                            <button class="hero-btn" data-action="selLesson" data-param="${l.id}" style="width:100%; padding: 12px; font-size: 1rem; background: #6366f1;">📖 فتح النص للدراسة</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </main>`;
         }
 
                         if (this.currentPage === 'reading') {
@@ -521,18 +550,30 @@ class App {
             </div>`;
         }
 
-        if (this.currentPage === 'addLesson') {
-            return `<main class="main-content"><div class="reading-card">
-                <h3>📸 إضافة نص ذكي</h3>
-                <p>صوّر نصاً أو اختر صورة/ملف من هاتفك</p>
-                <input type="file" id="fileInput" accept="image/*, application/pdf" onchange="appInstance.processOCR(this)" style="margin:15px 0;">
-                <input id="newLessonTitle" placeholder="عنوان النص" class="auth-input">
-                <textarea id="ocrText" placeholder="النص سيظهر هنا..." class="auth-input" style="height:150px;"></textarea>
-                <button class="hero-btn" onclick="appInstance.saveNewCustomLesson()" style="width:100%; background:#10b981;">💾 حفظ</button>
-            </div></main>`;
+                if (this.currentPage === 'addLesson') {
+            return `<main class="main-content" style="height: 90vh; display: flex; flex-direction: column; gap: 10px;">
+                <button class="hero-btn" data-action="goHome" style="background:#64748b; flex-shrink: 0;">← رجوع للرئيسية</button>
+                
+                <div class="reading-card" style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+                    <h3 style="flex-shrink: 0;">📸 إضافة نص ذكي</h3>
+                    
+                    <div style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #6366f1; flex-shrink: 0;">
+                        <p style="font-size: 0.8rem; margin-bottom: 5px; color: #666;">صوّر نصاً أو اختر صورة من هاتفك:</p>
+                        <input type="file" id="fileInput" accept="image/*" onchange="appInstance.processOCR(this)" style="width: 100%;">
+                    </div>
+
+                    <input id="newLessonTitle" placeholder="عنوان النص (مثلاً: قصة قصيرة)" 
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; flex-shrink: 0;">
+                    
+                    <textarea id="ocrText" placeholder="النص سيظهر هنا بعد التصوير، ويمكنك تعديله يدوياً..." 
+                              style="width: 100%; flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; line-height: 1.5; resize: none;"></textarea>
+                    
+                    <button class="hero-btn" onclick="appInstance.saveNewCustomLesson()" 
+                            style="width: 100%; background:#10b981; padding: 15px; font-size: 1.1rem; flex-shrink: 0;">💾 حفظ النص في "نصوصي"</button>
+                </div>
+            </main>`;
         }
-        return `<div>Loading...</div>`;
-    }
-}
+        return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
+
 
 const appInstance = new App();
