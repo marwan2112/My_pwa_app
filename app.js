@@ -30,6 +30,9 @@ class App {
         this.quizOptions = [];
         this.isWaiting = false;
         this.scrollPos = 0; 
+        this.placementScore = 0;
+        this.placementStep = 0;
+
 
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -257,6 +260,38 @@ class App {
     }
 
     getView(lesson, allTerms) {
+        if (this.currentPage === 'placement_test') {
+    const questions = [
+        { q: "Apple", a: "تفاحة", level: "Beginner" },
+        { q: "Believe", a: "يعتقد", level: "Intermediate" },
+        { q: "Enormous", a: "ضخم", level: "Intermediate" },
+        { q: "Hypothesis", a: "فرضية", level: "Expert" }
+        // يمكنك إضافة المزيد هنا
+    ];
+
+    if (this.placementStep >= questions.length) {
+        let recommendation = this.placementScore <= 1 ? "Beginner" : (this.placementScore <= 3 ? "Intermediate" : "Expert");
+        return `
+            <div class="reading-card" style="text-align:center;">
+                <h2>🏁 نتيجة الفحص</h2>
+                <h1 style="font-size:3rem; color:#6366f1;">${((this.placementScore/questions.length)*100).toFixed(0)}%</h1>
+                <p>مستواك الحالي هو: <b>${recommendation}</b></p>
+                <button class="hero-btn" data-action="selLevel" data-param="${recommendation.toLowerCase()}">ابدأ الدراسة الآن 🚀</button>
+            </div>`;
+    }
+
+    const currentQ = questions[this.placementStep];
+    return `
+        <div class="reading-card" style="text-align:center;">
+            <h3>اختبار تحديد المستوى</h3>
+            <p>ما معنى هذه الكلمة؟</p>
+            <h1 style="margin:20px 0;">${currentQ.q}</h1>
+            <div style="display:grid; gap:10px;">
+                <button class="quiz-opt-btn" onclick="appInstance.handlePlacement('${currentQ.a}', '${currentQ.a}')">${currentQ.a}</button>
+                <button class="quiz-opt-btn" onclick="appInstance.handlePlacement('خطأ', '${currentQ.a}')">خيار خاطئ</button>
+            </div>
+        </div>`;
+}
         if (this.currentPage === 'auth') {
             return `<main class="main-content"><div class="reading-card" style="text-align:center;">
                 <h2>🚀 Booster App</h2>
@@ -278,6 +313,8 @@ class App {
                     <div style="width:100%; height:8px; background:rgba(255,255,255,0.3); border-radius:4px; margin-top:10px;"><div style="width:${progress}%; height:100%; background:white; border-radius:4px;"></div></div>
                 </div>
                 <button class="hero-btn" data-action="setPage" data-param="addLesson" style="width:100%; background:#8b5cf6; margin:20px 0;">📸 إضافة نص من الكاميرا</button>
+                <button class="hero-btn" data-action="setPage" data-param="placement_test" style="width:100%; background:#ec4899; margin-bottom:20px;">🧠 اختبر مستواي الآن</button>
+
                 <div class="features-grid">
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="background:#fff7ed; border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
