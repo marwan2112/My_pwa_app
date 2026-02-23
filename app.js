@@ -318,16 +318,20 @@ class App {
         }
     }
 
-    saveNewCustomLesson() {
-        const title = document.getElementById('newLessonTitle').value.trim() || "نص مخصص";
-        const content = document.getElementById('ocrText').value.trim();
+        saveNewCustomLesson() {
+        const titleInput = document.getElementById('newLessonTitle');
+        const contentInput = document.getElementById('ocrText');
+        const title = titleInput.value.trim() || "نص مخصص " + new Date().toLocaleDateString();
+        const content = contentInput.value.trim();
         if (content) {
             const id = 'c' + Date.now();
             const newL = { id, title, content, terms: [] };
             this.customLessons[id] = newL;
             window.lessonsData[id] = newL;
             this.saveData();
-            this.selectedLessonId = id; this.currentPage = 'reading'; this.render();
+            titleInput.value = ''; contentInput.value = '';
+            this.currentPage = 'custom_lessons_view';
+            this.render();
         }
     }
 
@@ -335,19 +339,20 @@ class App {
         if (confirm('حذف النص نهائياً؟')) {
             delete this.customLessons[id];
             delete window.lessonsData[id];
-            this.saveData(); this.currentPage = 'home'; this.render();
+            this.userVocabulary = this.userVocabulary.filter(v => v.lessonId !== String(id));
+            this.saveData(); this.render();
         }
     }
 
     editLessonTitle(id) {
-        const newT = prompt("العنوان الجديد:", this.customLessons[id].title);
-        if (newT) { this.customLessons[id].title = newT; this.saveData(); this.render(); }
+        const newTitle = prompt("العنوان الجديد:", this.customLessons[id].title);
+        if (newTitle && newTitle.trim()) {
+            this.customLessons[id].title = newTitle.trim();
+            if(window.lessonsData[id]) window.lessonsData[id].title = newTitle.trim();
+            this.saveData(); this.render();
+        }
     }
 
-    editLessonContent(id) {
-        const newC = prompt("تعديل النص:", this.customLessons[id].content);
-        if (newC) { this.customLessons[id].content = newC; this.saveData(); this.render(); }
-    }
 
     render() {
         const app = document.getElementById('app');
