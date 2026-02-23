@@ -442,36 +442,49 @@ class App {
         }
 
         if (this.currentPage === 'flashcards') {
-            const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
-            if (active.length === 0) {
-                return `<div class="reading-card empty-card">
-                    <h3>🎉 اكتملت الكلمات!</h3>
-                    <button class="hero-btn" data-action="restartCards" data-param="all">تكرار الكل 🔁</button>
-                </div>`;
-            }
-            const t = active[this.currentCardIndex];
-            return `<main class="main-content">
-                <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
-                    <div class="flashcard">
-                        <div class="flashcard-front">
-                            <button class="speak-btn-abs" data-action="speak" data-param="${t.english}" onclick="event.stopPropagation()">🔊</button>
-                            <h1>${t.english}</h1>
-                        </div>
-                        <div class="flashcard-back"><h1 id="auto-trans-text">${t.arabic}</h1></div>
-                    </div>
+    const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
+    if (active.length === 0) {
+        return `<div class="reading-card" style="text-align:center;">
+            <h3>🎉 انتهت الكلمات!</h3>
+            <button class="hero-btn btn-save" data-action="restartCards" data-param="all">إعادة تكرار الكل 🔁</button>
+        </div>`;
+    }
+    const t = active[this.currentCardIndex];
+    return `
+    <main class="main-content">
+        <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+            <div class="flashcard">
+                <div class="flashcard-front">
+                    <button class="speak-btn-abs" data-action="speak" data-param="${t.english}" onclick="event.stopPropagation()">🔊</button>
+                    <h1>${t.english}</h1>
                 </div>
-                <div class="flashcard-actions">
-                    <button class="hero-btn" data-action="speak" data-param="${t.english}" style="background:#6366f1;">🔊 نطق</button>
-                    <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅ حفظ</button>
-                    <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️ حذف</button>
-                </div>
-                <div class="flashcard-nav">
-                    <button class="nav-btn-alt" data-action="prevC" ${this.currentCardIndex===0?'disabled':''}>السابق</button>
-                    <button class="hero-btn" data-action="restartCards" data-param="remaining" style="background:#f59e0b;">🔁 تكرار المتبقي</button>
-                    <button class="nav-btn-alt" data-action="nextC" data-total="${active.length}">التالي</button>
-                </div>
-            </main>`;
-        }
+                <div class="flashcard-back"><h1>${t.arabic}</h1></div>
+            </div>
+        </div>
+
+        <div class="card-controls-container">
+            <div class="main-actions-row">
+                <button class="ctrl-btn btn-speak" data-action="speak" data-param="${t.english}">نطق 🔊</button>
+                <button class="ctrl-btn btn-save" data-action="masterWord" data-param="${t.id}">حفظ ✅</button>
+                <button class="ctrl-btn btn-delete" data-action="deleteWord" data-param="${t.id}">حذف 🗑️</button>
+            </div>
+
+            <div class="secondary-actions-row">
+                <button class="hero-btn btn-retry" data-action="restartCards" data-param="remaining">🔁 تكرار المتبقي</button>
+            </div>
+
+            <div class="nav-actions-row">
+                <button class="nav-btn-alt btn-nav" data-action="prevC" ${this.currentCardIndex === 0 ? 'disabled' : ''}>السابق</button>
+                <button class="nav-btn-alt btn-nav" data-action="nextC" data-total="${active.length}">التالي</button>
+            </div>
+            
+            <div style="text-align:center; color:#64748b; font-size:0.9rem; margin-top:5px;">
+                ${this.currentCardIndex + 1} / ${active.length}
+            </div>
+        </div>
+    </main>`;
+}
+
 
         if (this.currentPage === 'quiz') {
             if (this.quizIndex >= this.quizQuestions.length) {
