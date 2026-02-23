@@ -1,12 +1,11 @@
 /**
- * BOOSTER APP - PRO EDITION 2026
+ * BOOSTER APP - ULTIMATE COMPLETE EDITION
  * المبرمج: مروان
- * كود كامل وشامل لجميع المتطلبات
+ * التعديلات: إصلاح الأخطاء البرمجية، دمج دوال التعديل والحذف، وتنظيم منطق الكاميرا.
  */
 
 class App {
     constructor() {
-        // متغيرات اختبار المستوى التكيفي
         this.placementStep = 0;
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
@@ -25,8 +24,21 @@ class App {
             return;
         }
 
-        // تحميل البيانات من LocalStorage
         this.userData = JSON.parse(localStorage.getItem('userAccount')) || null;
+        this.currentPage = this.userData ? 'home' : 'auth';
+        
+        this.selectedLevel = null;
+        this.selectedLessonId = null;
+        this.currentCardIndex = 0;
+        this.quizIndex = 0;
+        this.quizScore = 0;
+        this.quizQuestions = [];
+        this.quizOptions = [];
+        this.isWaiting = false;
+        this.scrollPos = 0; 
+        this.isUnlockTest = false;
+        this.tempLessonToUnlock = null;
+
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
         this.unlockedLessons = JSON.parse(localStorage.getItem('unlockedLessons')) || [];
@@ -34,14 +46,6 @@ class App {
         this.customLessons = JSON.parse(localStorage.getItem('customLessons')) || {}; 
 
         Object.assign(window.lessonsData, this.customLessons);
-        
-        this.currentPage = this.userData ? 'home' : 'auth';
-        this.selectedLevel = null;
-        this.selectedLessonId = null;
-        this.currentCardIndex = 0;
-        this.quizIndex = 0;
-        this.quizScore = 0;
-        this.isWaiting = false;
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         this.setupGlobalEvents();
@@ -57,7 +61,6 @@ class App {
         if (this.userData) localStorage.setItem('userAccount', JSON.stringify(this.userData));
     }
 
-    // --- محرك الصوت والترجمة ---
     speak(text) {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US'; 
@@ -65,12 +68,17 @@ class App {
         window.speechSynthesis.speak(u);
     }
 
-    async getTranslation(text) {
+    async translateAuto(text, targetId) {
+        const el = document.getElementById(targetId);
+        if(!el) return;
+        el.innerText = "...";
         try {
             const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`);
             const data = await res.json();
-            return data.responseData.translatedText;
-        } catch(e) { return "ترجمة مقترحة..."; }
+            el.innerText = data.responseData.translatedText;
+        } catch(e) {
+            el.innerText = "خطأ في الترجمة";
+        }
     }
 
     playTone(type) {
@@ -82,255 +90,467 @@ class App {
         osc.start(); osc.stop(this.audioCtx.currentTime + 0.2);
     }
 
-    // --- نظام اختبار المستوى ---
-    handlePlacementAnswer(selected, correct) {
-        if (this.isWaiting) return;
-        this.isWaiting = true;
-        const isCorrect = (selected === correct);
-        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-        let idx = levels.indexOf(this.currentDifficulty);
-
-        if (isCorrect) {
-            this.playTone('correct');
-            if (idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
-        } else {
-            this.playTone('error');
-            if (idx > 0) this.currentDifficulty = levels[idx - 1];
-        }
-
-        this.placementStep++;
-        setTimeout(() => { this.isWaiting = false; this.render(); }, 1000);
+    getAdaptiveQuestion() {
+        const levelQuestions = window.placementBank[this.currentDifficulty];
+        const available = levelQuestions.filter(q => !this.placementHistory.includes(q.q));
+        const list = available.length > 0 ? available : levelQuestions;
+        const selected = list[Math.floor(Math.random() * list.length)];
+        this.placementHistory.push(selected.q);
+        return selected;
     }
 
-    // --- نظام الاختبارات وفتح الدروس ---
-    prepareQuiz(lessonId, isUnlockMode = false) {
+    handlePlacement(selected, correct) {
+        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+        let idx = levels.indexOf(this.currentDifficulty);
+        if (selected === correct) {
+            if (idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
+        } else {
+            if (idx > 0) this.currentDifficulty = levels[idx - 1];
+        }
+        this.placementStep++;
+        this.render();
+    }
+
+    getIeltsEquivalent(level) {
+        const map = { 'A1': '2.0 - 3.0', 'A2': '3.0 - 4.0', 'B1': '4.0 - 5.0', 'B2': '5.5 - 6.5', 'C1': '7.0 - 8.0', 'C2': '8.5 - 9.0' };
+        return map[level];
+    }
+
+    prepareQuiz(terms, isUnlockMode = false) {
         this.isUnlockTest = isUnlockMode;
-        const lesson = window.lessonsData[lessonId];
-        const added = this.userVocabulary.filter(v => v.lessonId == lessonId);
-        let pool = [...lesson.terms, ...added].filter(t => !this.hiddenFromCards.includes(String(t.id)));
+        const addedByUser = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
+        const fullPool = [...terms, ...addedByUser].filter(t => !this.hiddenFromCards.includes(String(t.id)));
         
-        // اختبار الفتح يأخذ نصف الكلمات فقط
-        this.quizQuestions = isUnlockMode ? pool.sort(() => 0.5 - Math.random()).slice(0, Math.ceil(pool.length/2)) : pool;
-        this.quizIndex = 0;
+        if (this.isUnlockTest) {
+            this.quizQuestions = fullPool.sort(() => 0.5 - Math.random()).slice(0, Math.max(1, Math.floor(fullPool.length/2)));
+        } else {
+            this.quizQuestions = fullPool;
+        }
+        this.quizIndex = 0; 
         this.quizScore = 0;
         this.generateOptions();
     }
 
     generateOptions() {
+        if (this.quizIndex >= this.quizQuestions.length) return;
         const currentQ = this.quizQuestions[this.quizIndex];
-        const lesson = window.lessonsData[this.selectedLessonId];
+        const lesson = window.lessonsData[this.selectedLessonId] || { terms: [] };
         let allArb = [...lesson.terms, ...this.userVocabulary].map(t => t.arabic);
         let wrongs = [...new Set(allArb.filter(a => a !== currentQ.arabic))].sort(() => 0.5 - Math.random()).slice(0, 3);
+        while(wrongs.length < 3) wrongs.push("Option " + (wrongs.length + 1));
         this.quizOptions = [currentQ.arabic, ...wrongs].sort(() => 0.5 - Math.random());
     }
 
-    // --- الأحداث العامة ---
+    handleAnswer(selected, correct, btnElement) {
+        if (this.isWaiting) return;
+        this.isWaiting = true;
+        const isCorrect = (selected.trim() === correct.trim());
+        
+        if (isCorrect) { 
+            this.quizScore++; 
+            this.playTone('correct'); 
+            btnElement.classList.add('correct-flash');
+        } else { 
+            this.playTone('error'); 
+            btnElement.classList.add('wrong-flash');
+        }
+
+        setTimeout(() => { 
+            this.quizIndex++; 
+            if (this.quizIndex < this.quizQuestions.length) this.generateOptions(); 
+            this.isWaiting = false; 
+            this.render(); 
+        }, 1200);
+    }
+
     setupGlobalEvents() {
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
             if (!btn) return;
-            const { action, param, correct } = btn.dataset;
+            const { action, param, correct, total } = btn.dataset;
+
+            if (action === 'ansQ') { this.handleAnswer(param, correct, btn); return; }
 
             switch(action) {
-                case 'doAuth':
-                    const n = document.getElementById('authName').value;
-                    const em = document.getElementById('authEmail').value;
-                    const ps = document.getElementById('authPass').value;
-                    if(n && em && ps) { this.userData = {name:n, email:em}; this.saveData(); this.currentPage='home'; }
+                case 'goHome': 
+                    this.currentPage = 'home'; 
+                    this.selectedLessonId = null; 
                     break;
-                case 'goHome': this.currentPage = 'home'; this.selectedLessonId = null; break;
-                case 'selLevel': this.selectedLevel = param; this.currentPage = (param==='custom'?'custom_view':'lessons'); break;
+                case 'logout': 
+                    if(confirm('هل تريد تسجيل الخروج وحذف البيانات؟')){ localStorage.clear(); location.reload(); } 
+                    break;
+                case 'selLevel': 
+                    this.selectedLevel = param; 
+                    this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
+                    break;
                 case 'selLesson':
+                    this.scrollPos = window.scrollY;
                     const list = window.lessonsList[this.selectedLevel] || [];
-                    const isFirst = list[0] && list[0].id == param;
-                    if (isFirst || this.unlockedLessons.includes(String(param)) || this.selectedLevel === 'custom') {
-                        this.selectedLessonId = param; this.currentPage = 'reading';
+                    const isUnlocked = this.unlockedLessons.includes(String(param)) || (list[0] && list[0].id == param) || this.selectedLevel === 'custom_list';
+                    if (isUnlocked) { 
+                        this.selectedLessonId = param; 
+                        this.currentPage = 'reading'; 
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
-                        this.tempUnlockId = param;
-                        this.selectedLessonId = list[curIdx-1].id;
-                        this.prepareQuiz(this.selectedLessonId, true);
+                        const prevId = list[curIdx - 1].id;
+                        this.tempLessonToUnlock = param; 
+                        this.selectedLessonId = prevId;
+                        this.prepareQuiz(window.lessonsData[prevId].terms, true);
                         this.currentPage = 'quiz';
                     }
                     break;
-                case 'setPage': this.currentPage = param; if(param==='quiz') this.prepareQuiz(this.selectedLessonId, false); break;
-                case 'speak': this.speak(param); break;
-                case 'nextC': this.currentCardIndex++; break;
-                case 'prevC': this.currentCardIndex--; break;
-                case 'masterWord': this.masteredWords.push(param); this.saveData(); break;
-                case 'deleteWord': if(confirm('حذف؟')){this.hiddenFromCards.push(param); this.saveData();} break;
-                case 'resetCards': 
-                    if(param==='all') {
-                        const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t=>String(t.id));
-                        this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
+                case 'setPage':
+                    if (param === 'placement_test') {
+                        this.placementStep = 0;
+                        this.currentDifficulty = 'A2';
+                        this.placementHistory = [];
                     }
-                    this.currentCardIndex = 0; this.saveData(); break;
+                    if (param === 'quiz' && this.selectedLessonId) {
+                        this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
+                    }
+                    this.currentPage = param; 
+                    this.currentCardIndex = 0; 
+                    break;
+                case 'masterWord': 
+                    if(!this.masteredWords.includes(param)) this.masteredWords.push(param); 
+                    this.saveData(); 
+                    break;
+                case 'deleteWord': 
+                    if(confirm('حذف الكلمة من القائمة؟')) { this.hiddenFromCards.push(String(param)); this.saveData(); } 
+                    break;
+                case 'speak': 
+                    this.speak(param); 
+                    break;
+                case 'nextC': 
+                    if (this.currentCardIndex < (parseInt(total) - 1)) this.currentCardIndex++; 
+                    break;
+                case 'prevC': 
+                    if (this.currentCardIndex > 0) this.currentCardIndex--; 
+                    break;
+                case 'restartCards': 
+                    if(param === 'all') this.masteredWords = this.masteredWords.filter(id => !window.lessonsData[this.selectedLessonId].terms.some(t => t.id == id));
+                    this.currentCardIndex = 0;
+                    this.saveData();
+                    break;
+                case 'addNewWord':
+                    this.handleNewWord();
+                    break;
+                case 'backToLessons': 
+                    this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
+                    this.selectedLessonId = null; 
+                    this.render(); 
+                    setTimeout(() => window.scrollTo(0, this.scrollPos), 50);
+                    return;
+                case 'doAuth': 
+                    this.handleAuth(); 
+                    return;
             }
             this.render();
         });
     }
 
-    // --- الواجهة الرسومية (Render) ---
+    handleAuth() {
+        const name = document.getElementById('authName').value;
+        const email = document.getElementById('authEmail').value;
+        const pass = document.getElementById('authPass').value;
+
+        if (name && email && pass) {
+            this.userData = { name, email, pass };
+            this.saveData();
+            this.currentPage = 'home';
+            this.render();
+        } else {
+            alert("يرجى إدخال كافة البيانات: الاسم، الإيميل، وكلمة السر");
+        }
+    }
+
+    handleNewWord() {
+        const eng = document.getElementById('newEng').value.trim();
+        const arb = document.getElementById('newArb').value.trim();
+        if(eng && arb) {
+            this.userVocabulary.push({ 
+                id: "u"+Date.now(), 
+                lessonId: String(this.selectedLessonId), 
+                english: eng, 
+                arabic: arb 
+            });
+            this.saveData();
+            document.getElementById('newEng').value = '';
+            document.getElementById('newArb').value = '';
+            this.render();
+        }
+    }
+
+    async processOCR(input) {
+        const file = input.files[0];
+        if (!file) return;
+        
+        const textArea = document.getElementById('ocrText');
+        textArea.value = "⏳ جاري استخراج النص، انتظر قليلاً...";
+        
+        try {
+            const worker = await Tesseract.createWorker('eng');
+            const ret = await worker.recognize(file);
+            textArea.value = ret.data.text;
+            await worker.terminate();
+        } catch (e) {
+            textArea.value = "❌ فشل استخراج النص. تأكد من جودة الصورة.";
+        }
+    }
+
+    saveNewCustomLesson() {
+        const title = document.getElementById('newLessonTitle').value.trim() || "نص مخصص جديد";
+        const content = document.getElementById('ocrText').value.trim();
+        
+        if (content) {
+            const id = 'c' + Date.now();
+            const newL = { id, title, content, terms: [] };
+            this.customLessons[id] = newL;
+            window.lessonsData[id] = newL;
+            this.saveData();
+            this.selectedLessonId = id;
+            this.currentPage = 'reading';
+            this.render();
+        } else {
+            alert("يرجى كتابة أو تصوير نص أولاً");
+        }
+    }
+
+    deleteCustomLesson(id) {
+        if (confirm('هل أنت متأكد من حذف هذا النص وجميع كلماته نهائياً؟')) {
+            delete this.customLessons[id];
+            delete window.lessonsData[id];
+            this.saveData();
+            this.currentPage = 'home';
+            this.render();
+        }
+    }
+
+    editLessonTitle(id) {
+        const lesson = this.customLessons[id];
+        const newTitle = prompt("أدخل العنوان الجديد للدرس:", lesson.title);
+        if (newTitle && newTitle.trim() !== "") {
+            lesson.title = newTitle;
+            this.saveData();
+            this.render();
+        }
+    }
+
+    editLessonContent(id) {
+        const lesson = this.customLessons[id];
+        const newContent = prompt("قم بتعديل النص بالأسفل:", lesson.content);
+        if (newContent && newContent.trim() !== "") {
+            lesson.content = newContent;
+            this.saveData();
+            this.render();
+        }
+    }
+
     render() {
         const app = document.getElementById('app');
+        if (!app) return;
         const lesson = window.lessonsData[this.selectedLessonId];
         const added = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
-
-        // الهيدر
-        let header = '';
-        if (this.currentPage !== 'auth') {
-            let nav = '';
-            if (this.selectedLessonId && ['reading','flashcards','quiz'].includes(this.currentPage)) {
-                nav = `<div class="nav-tabs">
-                    <button class="${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
-                    <button class="${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
-                    <button class="${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
-                </div>`;
+        
+        app.innerHTML = this.getHeader() + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
+        
+        if(this.currentPage === 'flashcards' && allTerms.length > 0) {
+            const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
+            if(active[this.currentCardIndex]) {
+                this.translateAuto(active[this.currentCardIndex].english, 'auto-trans-text');
             }
-            header = `<header class="main-header">
-                <div class="header-inner"><h2 data-action="goHome">🏠 Home</h2>${nav}</div>
-            </header>`;
         }
+    }
 
-        app.innerHTML = header + `<div class="content-area">${this.getView(lesson, allTerms)}</div>`;
+    getHeader() {
+        if (this.currentPage === 'auth') return '';
+        let nav = '';
+        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz'].includes(this.currentPage)) {
+            nav = `<nav class="nav-menu">
+                <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
+                <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
+                <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
+            </nav>`;
+        }
+        return `<header class="header"><div class="header-content"><h2 data-action="goHome" style="cursor:pointer">🏠 Home</h2>${nav}</div></header>`;
     }
 
     getView(lesson, allTerms) {
         if (this.currentPage === 'auth') {
-            return `<div class="auth-card">
-                <h2>IELTS Booster 🚀</h2>
-                <input id="authName" placeholder="الاسم الكامل">
-                <input id="authEmail" placeholder="البريد الإلكتروني">
-                <input type="password" id="authPass" placeholder="كلمة المرور">
-                <button class="btn-primary" data-action="doAuth">إنشاء حساب</button>
+            return `<main class="main-content"><div class="reading-card" style="text-align:center;">
+                <h2>🚀 Welcome to Booster</h2>
+                <p>سجل بياناتك للبدء</p>
+                <input id="authName" placeholder="الاسم الكامل" style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd;">
+                <input id="authEmail" placeholder="البريد الإلكتروني" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="password" id="authPass" placeholder="كلمة المرور" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+                <button class="hero-btn" data-action="doAuth" style="width:100%; background:#6366f1;">ابدأ الآن ✨</button>
+            </div></main>`;
+        }
+
+        if (this.currentPage === 'placement_test') {
+            if (this.placementStep >= 25) {
+                const finalLevel = this.currentDifficulty;
+                return `<div class="reading-card" style="text-align:center; padding:40px 20px;">
+                    <h2 style="color:#6366f1;">🎊 النتيجة النهائية</h2>
+                    <div style="font-size:4rem; font-weight:bold; color:#4f46e5; margin:20px 0;">${finalLevel}</div>
+                    <p style="font-size:1.2rem;">مستواك يعادل IELTS: <b style="color:#10b981;">${this.getIeltsEquivalent(finalLevel)}</b></p>
+                    <button class="hero-btn" data-action="goHome" style="width:100%; margin-top:30px; background:#6366f1;">ابدأ الدراسة حسب مستواك</button>
+                </div>`;
+            }
+            const q = this.getAdaptiveQuestion();
+            return `<div class="reading-card">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#666; margin-bottom:15px;">
+                    <span>السؤال: ${this.placementStep + 1} / 25</span>
+                </div>
+                <div style="width:100%; height:6px; background:#eee; border-radius:10px; margin-bottom:25px;">
+                    <div style="width:${(this.placementStep/25)*100}%; height:100%; background:#6366f1; border-radius:10px; transition:0.3s;"></div>
+                </div>
+                <h3 style="direction:ltr; text-align:left; line-height:1.6; margin-bottom:30px; font-size:1.3rem;">
+                    ${q.q.replace('___', '<span style="color:#6366f1; text-decoration:underline;">_______</span>')}
+                </h3>
+                <div style="display:grid; gap:12px; direction:ltr;">
+                    ${q.options.map(o => `<button class="quiz-opt-btn" onclick="appInstance.handlePlacement('${o}', '${q.correct}')">${o}</button>`).join('')}
+                </div>
             </div>`;
         }
 
         if (this.currentPage === 'home') {
-            return `<div class="home-grid">
-                <div class="welcome-banner"><h3>مرحباً، ${this.userData.name}</h3><p>أتقنت ${this.masteredWords.length} كلمة</p></div>
-                <button class="btn-hero" data-action="setPage" data-param="camera">📸 إضافة نص من الكاميرا</button>
-                <button class="btn-hero" data-action="setPage" data-param="placement">🧠 فحص المستوى الذكي</button>
-                <div class="levels-container">
-                    ${window.levels.map(l => `<div class="level-card" data-action="selLevel" data-param="${l.id}">${l.icon} <h4>${l.name}</h4></div>`).join('')}
+            return `<main class="main-content">
+                <div class="reading-card" style="background:linear-gradient(135deg,#6366f1,#a855f7); color:white;">
+                    <h3>مرحباً، ${this.userData.name} 👋</h3>
+                    <p>لقد أتقنت ${this.masteredWords.length} كلمة حتى الآن</p>
                 </div>
-            </div>`;
+                <button class="hero-btn" data-action="setPage" data-param="addLesson" style="width:100%; background:#8b5cf6; margin:15px 0;">📸 إضافة نص من الكاميرا</button>
+                <button class="hero-btn" data-action="setPage" data-param="placement_test" style="width:100%; background:#ec4899; margin-bottom:15px;">🧠 اختبار مستوى IELTS الذكي</button>
+                <div class="features-grid">
+                    ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
+                    ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="background:#fff7ed; border:1px solid #f97316;"><h3>📂 نصوصي الخاصة</h3></div>` : ''}
+                </div>
+                <button data-action="logout" style="width:100%; margin-top:20px; color:#ef4444; background:none; border:none; cursor:pointer;">تسجيل الخروج</button>
+            </main>`;
         }
 
-        if (this.currentPage === 'placement') {
-            if (this.placementStep >= 25) {
-                return `<div class="result-card"><h2>مستواك هو: ${this.currentDifficulty}</h2><button data-action="goHome">ابدأ الآن</button></div>`;
-            }
-            const q = window.placementBank[this.currentDifficulty][this.placementStep % 5];
-            return `<div class="quiz-card">
-                <div class="progress-bar"><div style="width:${(this.placementStep/25)*100}%"></div></div>
-                <p>السؤال ${this.placementStep+1}/25</p>
-                <h3>${q.q}</h3>
-                <div class="options-list">
-                    ${q.options.map(o => `<button class="opt-btn" onclick="appInstance.handlePlacementAnswer('${o}','${q.correct}')">${o}</button>`).join('')}
-                </div>
-            </div>`;
+        if (this.currentPage === 'lessons') {
+            const list = window.lessonsList[this.selectedLevel] || [];
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← العودة للرئيسية</button>
+                <div class="features-grid">
+                    ${list.map(l => { 
+                        const isOk = (list[0].id == l.id || this.unlockedLessons.includes(String(l.id))); 
+                        return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${isOk?'':'opacity:0.6;'}"><h3>${isOk?'':'🔒 '}${l.title}</h3></div>`; 
+                    }).join('')}
+                </div></main>`;
         }
 
         if (this.currentPage === 'reading') {
-            return `<div class="reading-view">
-                <button class="btn-back" data-action="backToLessons">⬅ رجوع</button>
-                <div class="text-container"><h2>${lesson.title}</h2><div class="scrollable-text">${lesson.content}</div></div>
-                <div class="add-word-zone">
-                    <input id="newEng" placeholder="Word" oninput="appInstance.getTranslation(this.value).then(t=>document.getElementById('newArb').value=t)">
-                    <input id="newArb" placeholder="الترجمة">
-                    <button onclick="appInstance.addNewWord()">إضافة كلمة</button>
+            const isCustom = String(this.selectedLessonId).startsWith('c');
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h2 id="lesson-title-display">${lesson.title}</h2>
+                    ${isCustom ? `
+                        <div style="display:flex; gap:5px;">
+                            <button class="hero-btn" onclick="appInstance.editLessonTitle('${this.selectedLessonId}')" style="background:#f59e0b; padding:5px 10px; font-size:0.8rem;">✏️ عنوان</button>
+                            <button class="hero-btn" onclick="appInstance.deleteCustomLesson('${this.selectedLessonId}')" style="background:#ef4444; padding:5px 10px; font-size:0.8rem;">🗑️ حذف</button>
+                        </div>
+                    ` : ''}
                 </div>
-            </div>`;
+                <div class="reading-card" style="direction:ltr; text-align:left; max-height:350px; overflow-y:auto; font-size:1.15rem; line-height:1.7; border:2px solid #eef; position:relative;">
+                    <div id="lesson-content-display">${lesson.content}</div>
+                    ${isCustom ? `
+                        <button onclick="appInstance.editLessonContent('${this.selectedLessonId}')" style="position:absolute; top:10px; right:10px; background:rgba(99,102,241,0.1); border:none; border-radius:5px; cursor:pointer; padding:5px;">📝 تعديل</button>
+                    ` : ''}
+                </div>
+                <div class="reading-card" style="margin-top:20px; background:#f9fafb; border:1px dashed #6366f1;">
+                    <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
+                    <input id="newEng" placeholder="الكلمة بالإنجليزية" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:5px;">
+                    <input id="newArb" placeholder="الترجمة بالعربية" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+                    <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">حفظ الكلمة</button>
+                </div>
+            </main>`;
         }
 
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
-            if (active.length === 0 || this.currentCardIndex >= active.length) {
-                return `<div class="end-screen">
-                    <h3>🎊 انتهت الكلمات!</h3>
-                    <button data-action="resetCards" data-param="all">إعادة تكرار الكل 🔁</button>
-                    <button data-action="goHome">الرئيسية</button>
-                </div>`;
+            if (active.length === 0) {
+                return `<main class="main-content" style="text-align:center;">
+                    <div class="reading-card">
+                        <h2>🎉 أنهيت جميع الكلمات!</h2>
+                        <button class="hero-btn" data-action="restartCards" data-param="all" style="width:100%; margin-top:10px; background:#8b5cf6;">تكرار الكل 🔁</button>
+                        <button class="hero-btn" data-action="goHome" style="width:100%; margin-top:10px; background:#10b981;">العودة للرئيسية</button>
+                    </div></main>`;
             }
-            const t = active[this.currentCardIndex];
-            return `<div class="flashcard-view">
-                <div class="card" onclick="this.classList.toggle('flipped')">
-                    <div class="front"><h1>${t.english}</h1></div>
-                    <div class="back"><h1>${t.arabic}</h1></div>
+            const t = active[this.currentCardIndex] || active[0];
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
+                <div class="flashcard-container" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                    <div class="flashcard">
+                        <div class="flashcard-front"><h1>${t.english}</h1><small>انقر للقلب</small></div>
+                        <div class="flashcard-back"><h1 id="auto-trans-text">${t.arabic}</h1></div>
+                    </div>
                 </div>
-                <div class="controls">
-                    <button data-action="speak" data-param="${t.english}">🔊</button>
-                    <button data-action="masterWord" data-param="${t.id}">✅ حفظ</button>
-                    <button data-action="deleteWord" data-param="${t.id}">🗑️ حذف</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:25px;">
+                    <button class="hero-btn" data-action="speak" data-param="${t.english}" style="background:#6366f1;">🔊</button>
+                    <button class="hero-btn" data-action="masterWord" data-param="${t.id}" style="background:#10b981;">✅</button>
+                    <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️</button>
                 </div>
-                <div class="nav-btns">
-                    <button data-action="prevC" ${this.currentCardIndex===0?'disabled':''}>السابق</button>
-                    <button data-action="resetCards" data-param="remaining" title="إعادة تكرار المتبقي">🔁</button>
-                    <button data-action="nextC">التالي</button>
-                </div>
-            </div>`;
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px;">
+                    <button class="hero-btn" data-action="prevC" style="padding:10px 25px;">السابق</button>
+                    <span>${this.currentCardIndex + 1} / ${active.length}</span>
+                    <button class="hero-btn" data-action="nextC" data-total="${active.length}" style="padding:10px 25px;">التالي</button>
+                </div></main>`;
         }
 
         if (this.currentPage === 'quiz') {
             if (this.quizIndex >= this.quizQuestions.length) {
-                const pass = (this.quizScore/this.quizQuestions.length) >= 0.75;
-                if(pass && this.isUnlockTest) this.unlockedLessons.push(String(this.tempUnlockId));
-                this.saveData();
-                return `<div class="quiz-result"><h2>${pass?'نجحت!':'حاول مجدداً'}</h2><button data-action="goHome">متابعة</button></div>`;
+                const scorePercent = ((this.quizScore/this.quizQuestions.length)*100).toFixed(0);
+                const isPassed = scorePercent >= 75;
+                if (this.isUnlockTest && isPassed) { 
+                    this.unlockedLessons.push(String(this.tempLessonToUnlock)); 
+                    this.saveData(); 
+                }
+                return `<main class="main-content" style="text-align:center;">
+                    <div class="reading-card">
+                        <h2>${isPassed ? "🎉 أحسنت، نجحت!" : "💪 حاول مرة أخرى"}</h2>
+                        <h1 style="font-size:3.5rem; color:${isPassed?'#10b981':'#ef4444'}; margin:20px 0;">${scorePercent}%</h1>
+                        <button class="hero-btn" data-action="backToLessons" style="background:#3b82f6; margin-top:20px;">متابعة</button>
+                    </div></main>`;
             }
             const q = this.quizQuestions[this.quizIndex];
-            return `<div class="quiz-card">
-                <h3>${q.english}</h3>
-                <button class="btn-speak" data-action="speak" data-param="${q.english}">🔊 استمع</button>
-                <div class="options-grid">
-                    ${this.quizOptions.map(o => `<button class="opt-btn" onclick="appInstance.checkAnswer(this,'${o}','${q.arabic}')">${o}</button>`).join('')}
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ خروج</button>
+                <div class="reading-card" style="text-align:center;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; color:#666;">
+                        <span>السؤال ${this.quizIndex+1}/${this.quizQuestions.length}</span>
+                        <span>النتيجة: ${this.quizScore}</span>
+                    </div>
+                    <h2 style="font-size:2rem; margin-bottom:10px;">${q.english}</h2>
+                    <button class="hero-btn" data-action="speak" data-param="${q.english}" style="background:#6366f1; border-radius:50%; width:50px; height:50px; margin-bottom:30px;">🔊</button>
+                    <div style="display:grid; gap:12px;">
+                        ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
+                    </div>
+                </div></main>`;
+        }
+
+        if (this.currentPage === 'addLesson') {
+            return `<main class="main-content">
+                <button class="hero-btn" data-action="goHome" style="background:#64748b; margin-bottom:15px;">← رجوع</button>
+                <div class="reading-card">
+                    <h3>📸 إضافة نص ذكي</h3>
+                    <p style="color:#666; font-size:0.85rem; margin-bottom:15px;">التقط صورة لنص أو اخترها من الاستوديو</p>
+                    <input type="file" id="camIn" accept="image/*" capture="environment" style="display:none;" onchange="appInstance.processOCR(this)">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+                        <button class="hero-btn" onclick="document.getElementById('camIn').click()" style="background:#8b5cf6;">📷 كاميرا / استوديو</button>
+                        <button class="hero-btn" onclick="document.getElementById('ocrText').value=''" style="background:#64748b;">🧹 مسح</button>
+                    </div>
+                    <input id="newLessonTitle" placeholder="اسم النص..." style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+                    <textarea id="ocrText" placeholder="النص سيظهر هنا..." style="width:100%; height:180px; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
+                    <button class="hero-btn" onclick="appInstance.saveNewCustomLesson()" style="width:100%; background:#10b981; margin-top:15px;">💾 حفظ النص</button>
                 </div>
-            </div>`;
+            </main>`;
         }
-
-        if (this.currentPage === 'camera') {
-            return `<div class="camera-view">
-                <input type="file" accept="image/*" capture="environment" onchange="appInstance.doOCR(this)">
-                <textarea id="ocrRes" placeholder="النص المستخرج..."></textarea>
-                <button onclick="appInstance.saveCameraText()">حفظ النص</button>
-            </div>`;
-        }
-    }
-
-    // --- وظائف إضافية مكملة ---
-    checkAnswer(el, selected, correct) {
-        if(this.isWaiting) return; this.isWaiting = true;
-        const isRight = selected === correct;
-        el.style.background = isRight ? '#10b981' : '#ef4444';
-        if(isRight) { this.quizScore++; this.playTone('correct'); } else { this.playTone('error'); }
-        setTimeout(() => { this.quizIndex++; if(this.quizIndex < this.quizQuestions.length) this.generateOptions(); this.isWaiting=false; this.render(); }, 1000);
-    }
-
-    addNewWord() {
-        const eng = document.getElementById('newEng').value;
-        const arb = document.getElementById('newArb').value;
-        if(eng && arb) {
-            this.userVocabulary.push({id: Date.now(), lessonId: this.selectedLessonId, english: eng, arabic: arb});
-            this.saveData(); this.render();
-        }
-    }
-
-    async doOCR(input) {
-        const worker = await Tesseract.createWorker('eng');
-        const { data: { text } } = await worker.recognize(input.files[0]);
-        document.getElementById('ocrRes').value = text;
-        await worker.terminate();
-    }
-
-    saveCameraText() {
-        const txt = document.getElementById('ocrRes').value;
-        if(txt) {
-            const id = 'c'+Date.now();
-            this.customLessons[id] = {id, title: "نص كاميرا", content: txt, terms: []};
-            this.saveData(); this.currentPage='home'; this.render();
-        }
+        return `<div style="padding:20px; text-align:center;">جاري التحميل...</div>`;
     }
 }
 
