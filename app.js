@@ -422,21 +422,29 @@ class App {
                 </div></main>`;
         }
 
-        if (this.currentPage === 'reading') {
+                if (this.currentPage === 'reading') {
             const isCustom = String(this.selectedLessonId).startsWith('c');
             return `<main class="main-content">
-                <div class="lesson-top">
+                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
+                
+                <div class="reading-card">
                     <h2>${lesson.title}</h2>
-                    ${isCustom ? `<button onclick="appInstance.deleteCustomLesson('${this.selectedLessonId}')" class="del-btn">🗑️</button>` : ''}
+                    <div class="scrollable-text" style="direction:ltr; text-align:left; margin-top:10px;">${lesson.content}</div>
                 </div>
-                <div class="reading-card lesson-content-box">
-                    <div class="scrollable-text">${lesson.content}</div>
-                </div>
-                <div class="reading-card add-word-form">
-                    <h4>إضافة كلمة:</h4>
-                    <input id="newEng" placeholder="English">
-                    <input id="newArb" placeholder="العربية">
-                    <button class="hero-btn" data-action="addNewWord" style="background:#10b981; width:100%;">حفظ</button>
+
+                <div class="reading-card" style="margin-top:20px; border:1px dashed #6366f1; background:#f0f7ff;">
+                    <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
+                    
+                    <input id="newEng" 
+                           placeholder="اكتب بالإنجليزية هنا..." 
+                           style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" 
+                           oninput="if(this.value.length > 1) appInstance.suggestTranslation(this.value)"> 
+                    
+                    <input id="newArb" 
+                           placeholder="الترجمة تظهر هنا..." 
+                           style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; background:#fff;">
+                    
+                    <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">إضافة للقائمة ✅</button>
                 </div>
             </main>`;
         }
