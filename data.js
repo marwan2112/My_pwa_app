@@ -2241,15 +2241,17 @@ The most immediate challenge, however, is the difficulty of policy normalization
 `,
     terms: [{ id: '317-1', english: 'Governance', arabic: 'حوكمة' }]
   },
-  '318': {
-    title: "The Autonomy Dilemma: Ethical and Legal Quandaries of Lethal Autonomous Weapon Systems",
-    content: `The development of Lethal Autonomous Weapon Systems (LAWS)—weapons that can select and engage targets without meaningful human intervention—represents a technological leap with profound ethical, legal, and strategic implications. Proponents argue that LAWS offer significant military advantages, including faster reaction times, reduced risk to human personnel, and the potential for greater precision unburdened by human emotion or fatigue. They contend that a machine, programmed with strict rules of engagement, might be less prone to war crimes than a human soldier operating under extreme stress.
-However, the ethical and legal quandaries surrounding LAWS are substantial. The core debate revolves around the concept of “meaningful human control”. Critics argue that delegating the decision to take a human life to a machine violates fundamental principles of human dignity and accountability. Under International Humanitarian Law (IHL), decisions regarding proportionality and the distinction between combatants and civilians require complex contextual judgments that are currently beyond the capacity of even the most sophisticated algorithms. If a LAWS commits a war crime, the question of accountability—whether it rests with the programmer, the commander, or the machine itself—becomes a legal and moral quagmire.
-Strategically, the introduction of LAWS could lower the threshold for conflict. By removing human casualties from the equation, political leaders may be more inclined to initiate military action, a phenomenon known as “dehumanized warfare.” Furthermore, the speed and efficiency of autonomous systems could lead to rapid, uncontrolled escalation, as the decision-making cycle is compressed to milliseconds, potentially bypassing diplomatic off-ramps. The international community, primarily through the Convention on Certain Conventional Weapons (CCW), is grappling with whether to impose a preemptive ban on LAWS or to regulate their use through a binding protocol. The outcome of this debate will not only shape the future of warfare but also redefine the moral boundaries of technological progress in the security domain.
-`,
-    terms: [{ id: '318-1', english: 'Governance', arabic:'مروان '}]
-  };
-  
+    // تأكد أن هذا هو إغلاق الدرس الأخير في window.lessonsData
+    '318': {
+        title: "The Autonomy Dilemma: Ethical and Legal Quandaries of Lethal Autonomous Weapon Systems",
+        content: `The development of Lethal Autonomous Weapon Systems (LAWS)—weapons that can select and engage targets without meaningful human intervention—represents a technological leap with profound ethical, legal, and strategic implications. Proponents argue that LAWS offer significant military advantages, including faster reaction times, reduced risk to human personnel, and the potential for greater precision unburdened by human emotion or fatigue. They contend that a machine, programmed with strict rules of engagement, might be less prone to war crimes than a human soldier operating under extreme stress.
+        However, the ethical and legal quandaries surrounding LAWS are substantial. The core debate revolves around the concept of “meaningful human control”. Critics argue that delegating the decision to take a human life to a machine violates fundamental principles of human dignity and accountability. Under International Humanitarian Law (IHL), decisions regarding proportionality and the distinction between combatants and civilians require complex contextual judgments that are currently beyond the capacity of even the most sophisticated algorithms. If a LAWS commits a war crime, the question of accountability—whether it rests with the programmer, the commander, or the machine itself—becomes a legal and moral quagmire.
+        Strategically, the introduction of LAWS could lower the threshold for conflict. By removing human casualties from the equation, political leaders may be more inclined to initiate military action, a phenomenon known as “dehumanized warfare.” Furthermore, the speed and efficiency of autonomous systems could lead to rapid, uncontrolled escalation, as the decision-making cycle is compressed to milliseconds, potentially bypassing diplomatic off-ramps. The international community, primarily through the Convention on Certain Conventional Weapons (CCW), is grappling with whether to impose a preemptive ban on LAWS or to regulate their use through a binding protocol. The outcome of this debate will not only shape the future of warfare but also redefine the moral boundaries of technological progress in the security domain.`,
+        terms: [
+            { id: '318-1', english: 'Governance', arabic: 'الحوكمة' }
+        ]
+    }
+}; 
 window.placementBank = {
   "A1": [  
     {"q": "She ___ a doctor.", "options": ["am", "is", "are"], "correct": "is"},
@@ -2286,9 +2288,9 @@ window.placementBank = {
     {"q": "She ___ like apples.", "options": ["don't", "doesn't", "not"], "correct": "doesn't"},
     {"q": "The bag is ___ the chair.", "options": ["on", "under", "behind"], "correct": "under"},
     {"q": "___ colour is your car?", "options": ["What", "Which", "Who"], "correct": "What"},
-    {"q": "It ___ a big house.", "options": ["is", "am", "are"], "correct": "is"}
+    {"q": "It ___ a big house.", "options": ["is", "am", "are"], "correct": "is"} 
   ],
-   "A2": [  
+  "A2": [  
     {"q": "Yesterday, I ___ to the cinema.", "options": ["go", "went", "gone"], "correct": "went"},
     {"q": "She didn't ___ the answer.", "options": ["know", "knew", "known"], "correct": "know"},
     {"q": "We have ___ finished our homework.", "options": ["yet", "already", "still"], "correct": "already"},
@@ -2323,8 +2325,8 @@ window.placementBank = {
     {"q": "I promise I ___ you.", "options": ["won't tell", "don't tell", "not tell"], "correct": "won't tell"},
     {"q": "If I were you, I ___ a doctor.", "options": ["will see", "would see", "saw"], "correct": "would see"},
     {"q": "They ___ to the beach every summer.", "options": ["go", "went", "have gone"], "correct": "go"},
-    {"q": "He's ___ to buy a new car.", "options": ["going", "will", "go"], "correct": "going"}
-     ],
+    {"q": "He's ___ to buy a new car.", "options": ["going", "will", "go"], "correct": "going"} 
+  ],
   "B1": [  
     {"q": "If I ___ you, I would apologize.", "options": ["was", "were", "am"], "correct": "were"},
     {"q": "She ___ play the piano when she was five.", "options": ["can", "could", "may"], "correct": "could"},
@@ -2357,11 +2359,11 @@ window.placementBank = {
     {"q": "They succeeded ___ finishing the project.", "options": ["to", "in", "at"], "correct": "in"},
     {"q": "He apologized ___ being late.", "options": ["about", "for", "of"], "correct": "for"},
     {"q": "The hotel ___ we stayed was excellent.", "options": ["where", "which", "that"], "correct": "where"},
-    {"q": "That's the girl ___ brother is a doctor.", "options": ["who", "which", "whose"], "correct": "whose"},
+    {"q": "That's the girl ___ brother is a doctor.", "options": ["who", "which", "whose"], "whose": "whose"},
     {"q": "I have three brothers, all of ___ are older.", "options": ["who", "whom", "which"], "correct": "whom"},
     {"q": "She ___ to the gym three times a week.", "options": ["go", "goes", "is going"], "correct": "goes"},
-    {"q": "I'd rather you ___ quiet.", "options": ["keep", "to keep", "kept"], "correct": "kept"}
-   ],
+    {"q": "I'd rather you ___ quiet.", "options": ["keep", "to keep", "kept"], "correct": "kept"} 
+  ],
   "B2": [  
     {"q": "The match was called ___ due to heavy rain.", "options": ["off", "out", "away"], "correct": "off"},
     {"q": "She ___ to be an expert in her field.", "options": ["is considered", "considers", "has considered"], "correct": "is considered"},
@@ -2397,9 +2399,9 @@ window.placementBank = {
     {"q": "He drives ___ fast that it's scary.", "options": ["so", "such", "too"], "correct": "so"},
     {"q": "I'd rather you ___ smoke in here.", "options": ["don't", "didn't", "not"], "correct": "didn't"},
     {"q": "It's high time we ___ something about it.", "options": ["do", "did", "have done"], "correct": "did"},
-    {"q": "She demanded ___ speak to the manager.", "options": ["to", "that she", "for"], "correct": "to"}
-   ],
-  "C1": [
+    {"q": "She demanded ___ speak to the manager.", "options": ["to", "that she", "for"], "correct": "to"} 
+  ],
+  "C1": [  
     {"q": "Had I known about the delay, I ___ left earlier.", "options": ["would have", "would", "will have"], "correct": "would have"},
     {"q": "Not until the project was finished ___ the significance of teamwork.", "options": ["did they realize", "they realized", "had they realized"], "correct": "did they realize"},
     {"q": "The company's decision to expand overseas ___ a great deal of controversy.", "options": ["gave rise to", "resulted from", "brought up"], "correct": "gave rise to"},
@@ -2434,9 +2436,9 @@ window.placementBank = {
     {"q": "He is ___ to making snap judgments without considering all the facts.", "options": ["prone", "liable", "subject"], "correct": "prone"},
     {"q": "The concert was called off at the eleventh ___ due to the lead singer's illness.", "options": ["hour", "minute", "moment"], "correct": "hour"},
     {"q": "I couldn't ___ what he was saying because of the noise.", "options": ["make out", "make up", "make off"], "correct": "make out"},
-    {"q": "She is a woman of ___ integrity; everyone trusts her.", "options": ["unwavering", "uncompromising", "unshakeable"], "correct": "unwavering"} 
+    {"q": "She is a woman of ___ integrity; everyone trusts her.", "options": ["unwavering", "uncompromising", "unshakeable"], "correct": "unwavering"}  
   ],
-  "C2": [ 
+  "C2": [     
     {"q": "The chairman's resignation was ___ by a series of financial scandals.", "options": ["precipitated", "precluded", "presaged"], "correct": "precipitated"},
     {"q": "Her ___ remarks during the interview left a lasting impression on the panel.", "options": ["incisive", "invasive", "divisive"], "correct": "incisive"},
     {"q": "The artist's work defies easy ___; it blends elements of surrealism and abstract expressionism.", "options": ["categorization", "classification", "characterization"], "correct": "categorization"},
@@ -2449,19 +2451,18 @@ window.placementBank = {
     {"q": "He is a man of ___ principles, never swayed by popular opinion.", "options": ["unassailable", "unapproachable", "unattainable"], "correct": "unassailable"},
     {"q": "The novel's ___ prose captivated readers from the very first page.", "options": ["lyrical", "literal", "lithic"], "correct": "lyrical"},
     {"q": "Her contribution to the field was ___; she laid the groundwork for all future research.", "options": ["seminal", "seminary", "semantic"], "correct": "seminal"},
-    {"q": "The negotiations reached a(n) ___ when both sides refused to budge.", "options": ["impasse", "impasse", "deadlock"], "correct": "impasse"},
+    {"q": "The negotiations reached a(n) ___ when both sides refused to budge.", "options": ["impasse", "stalemate", "deadlock"], "correct": "impasse"},
     {"q": "He has a ___ grasp of the subject, but his presentation skills need work.", "options": ["profound", "prolific", "proactive"], "correct": "profound"},
     {"q": "The film's ending was deliberately ___, leaving the audience to interpret it themselves.", "options": ["ambiguous", "ambivalent", "ambidextrous"], "correct": "ambiguous"},
-    {"q": "Her ___ memory for dates and names made her an invaluable historian.", "options": ["encyclopedic", "encyclical", "encyclopedic"], "correct": "encyclopedic"},
+    {"q": "Her ___ memory for dates and names made her an invaluable historian.", "options": ["encyclopedic", "encyclical", "ephemeral"], "correct": "encyclopedic"},
     {"q": "The CEO's decision to step down was ___ by the board's lack of confidence.", "options": ["precipitated", "precluded", "presaged"], "correct": "precipitated"},
     {"q": "He is known for his ___ wit, which can be both charming and cutting.", "options": ["acerbic", "acidic", "acrid"], "correct": "acerbic"},
     {"q": "The theory is so ___ that only a handful of experts fully understand it.", "options": ["recondite", "reclusive", "redolent"], "correct": "recondite"},
-    {"q": "Her latest work is a ___ of different genres, from mystery to romance.", "options": ["melange", "mélange", "mangle"], "correct": "mélange"},
+    {"q": "Her latest work is a ___ of different genres, from mystery to romance.", "options": ["mélange", "mixture", "mangle"], "correct": "mélange"},
     {"q": "The diplomat's speech was a ___ of diplomacy and veiled threats.", "options": ["masterstroke", "masterpiece", "masterwork"], "correct": "masterstroke"},
-    {"q": "He has a(n) ___ belief in the power of education to transform lives.", "options": ["unshakeable", "unshakable", "unshaken"], "correct": "unshakeable"},
+    {"q": "He has a(n) ___ belief in the power of education to transform lives.", "options": ["unshakeable", "unreliable", "unshaken"], "correct": "unshakeable"},
     {"q": "The book provides a ___ analysis of the political landscape.", "options": ["penetrating", "penetrative", "penitent"], "correct": "penetrating"},
     {"q": "Her argument was ___ and left no room for counterargument.", "options": ["irrefutable", "irreconcilable", "irreducible"], "correct": "irrefutable"},
     {"q": "The artist's style is ___; it cannot be easily categorized.", "options": ["idiosyncratic", "idiomatic", "idiotic"], "correct": "idiosyncratic"} 
   ]
 };
-
