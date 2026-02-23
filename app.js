@@ -588,12 +588,19 @@ class App {
             </main>`;
         }
         } // إغلاق شرط addLesson
-        return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
-    } // إغلاق دالة getView
-} // إغلاق كلاس App
+                return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
+    } // هذا يغلق دالة getView
 
-const appInstance = new App();
+    // أضف هذه الدالة هنا لتعديل محتوى النص مستقبلاً
+    editLessonContent(id) {
+        const newC = prompt("تعديل نص الموضوع:", this.customLessons[id].content);
+        if (newC && newC.trim()) {
+            this.customLessons[id].content = newC.trim();
+            if(window.lessonsData[id]) window.lessonsData[id].content = newC.trim();
+            this.saveData(); this.render();
+        }
+    }
 
+} // هذا يغلق كلاس App بالكامل
 
-
-const appInstance = new App();
+const appInstance = new App(); // هذا يشغل التطبيق
