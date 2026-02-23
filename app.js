@@ -74,17 +74,32 @@ class App {
     }
 
     async translateAuto(text, targetId) {
-        const el = document.getElementById(targetId);
-        if(!el) return;
-        el.innerText = "...";
-        try {
-            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`);
-            const data = await res.json();
-            el.innerText = data.responseData.translatedText;
-        } catch(e) {
-            el.innerText = "خطأ في الترجمة";
-        }
+    const el = document.getElementById(targetId);
+    if (!el) return;
+
+    // 1. إذا قام المستخدم بحذف النص بالكامل، نمسح الترجمة فوراً
+    if (!text.trim()) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = "";
+        else el.innerText = "";
+        return;
     }
+
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`);
+        const data = await res.json();
+        const translatedText = data.responseData.translatedText;
+
+        // 2. التحقق: هل الهدف خانة إدخال (Input) أم عنصر نصي (div/span)؟
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.value = translatedText; // للتعديل المستمر داخل الخانات
+        } else {
+            el.innerText = translatedText; // للبطاقات والنصوص الثابتة
+        }
+    } catch (e) {
+        // في حال الخطأ نترك الخانة كما هي ولا نعطل المستخدم
+    }
+}
+
 
     playTone(type) {
         const osc = this.audioCtx.createOscillator();
@@ -422,7 +437,7 @@ class App {
                 </div></main>`;
         }
 
-                if (this.currentPage === 'reading') {
+                        if (this.currentPage === 'reading') {
             const isCustom = String(this.selectedLessonId).startsWith('c');
             return `<main class="main-content">
                 <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
@@ -438,7 +453,7 @@ class App {
                     <input id="newEng" 
                            placeholder="اكتب بالإنجليزية هنا..." 
                            style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" 
-                           oninput="if(this.value.length > 1) appInstance.suggestTranslation(this.value)"> 
+                           oninput="appInstance.translateAuto(this.value, 'newArb')"> 
                     
                     <input id="newArb" 
                            placeholder="الترجمة تظهر هنا..." 
