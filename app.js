@@ -10,6 +10,7 @@ class App {
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
         this.placementScore = 0;
+       this.theme = localStorage.getItem('theme') || 'light';
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
