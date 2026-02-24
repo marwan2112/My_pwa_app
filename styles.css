@@ -14,7 +14,8 @@
     background-color: #1a1a2e;
     color: #f0f0f0;
 }
-[data-theme="dark"] .reading-card {
+[data-theme="dark"] .reading-card,
+[data-theme="dark"] .feature-card {
     background-color: #16213e;
     color: #eee;
     border-color: #0f3460;
@@ -23,7 +24,15 @@
     background-color: #0f3460;
     color: white;
 }
-
+[data-theme="dark"] .header {
+    background-color: #0f3460;
+}
+[data-theme="dark"] input,
+[data-theme="dark"] textarea {
+    background-color: #1e293b;
+    color: white;
+    border-color: #475569;
+}
 body { 
     background: var(--bg-main); 
     color: var(--text-main); 
