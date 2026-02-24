@@ -119,12 +119,16 @@ class App {
         return selected;
     }
 
-            handlePlacement(selected, correct) {
+                handlePlacement(selected, correct) {
         if (this.isWaiting) return;
         this.isWaiting = true;
         
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        // مقارنة ذكية تتجاهل المسافات وحالة الأحرف
+        const cleanSelected = selected.trim().toLowerCase();
+        const cleanCorrect = correct.trim().toLowerCase();
+        const isCorrect = (cleanSelected === cleanCorrect);
         
+        // 1. تشغيل الصوت المخصص بناءً على النتيجة
         if (isCorrect) {
             this.playTone('correct');
             this.placementScore++;
@@ -132,34 +136,38 @@ class App {
             this.playTone('error');
         }
 
+        // 2. تحديث بنك الأسئلة (المنطق التكيفي)
         const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
         let idx = levels.indexOf(this.currentDifficulty);
 
-        // منطق ترفيع أو تنزيل المستوى بناءً على الإجابة
         if (isCorrect && idx < levels.length - 1) {
+            // تصاعد الصعوبة عند الإجابة الصحيحة
             this.currentDifficulty = levels[idx + 1];
         } else if (!isCorrect && idx > 0) {
+            // نزول الصعوبة عند الخطأ لضمان استمرارية الاختبار
             this.currentDifficulty = levels[idx - 1];
         }
 
         this.placementStep++;
 
-        // حفظ النتيجة النهائية بالتاريخ عند الوصول للسؤال رقم 25
+        // 3. معالجة نهاية الاختبار وحفظ البيانات
         if (this.placementStep >= 25) {
-            const res = {
+            const resultData = {
                 level: this.currentDifficulty,
                 date: new Date().toLocaleString('ar-EG'),
                 score: this.placementScore,
                 ielts: this.getIeltsEquivalent(this.currentDifficulty)
             };
-            this.placementResults.unshift(res);
+            
+            this.placementResults.unshift(resultData);
             localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
         }
 
+        // 4. الانتقال للسؤال التالي مع تأخير بسيط لتجربة مستخدم أفضل
         setTimeout(() => { 
             this.isWaiting = false; 
             this.render(); 
-        }, 600);
+        }, 650);
     }
 
     resetPlacement() {
