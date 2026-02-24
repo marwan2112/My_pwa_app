@@ -9,11 +9,8 @@ class App {
         // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
         this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
-        // سجل مفصل لنتائج اختبارات المستوى (سؤال بسؤال)
         this.placementFullHistory = JSON.parse(localStorage.getItem('placementFullHistory')) || [];
-        // تفاصيل الاختبار الحالي
         this.currentPlacementDetails = [];
-        // لعرض تفاصيل اختبار سابق
         this.viewingPlacementDetails = null;
 
         // متغيرات خاصة بميزة إعادة ترتيب الجمل
@@ -28,6 +25,7 @@ class App {
         this.listeningCurrent = null;
         this.listeningOptions = [];
         this.listeningAnswered = false;
+        this.listeningTimer = null;
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -36,7 +34,6 @@ class App {
         }
     }
 
-    // دالة التحديث (تأكد أنها خارج الـ constructor)
     updateProgress(points) {
         this.userStats.xp += points;
         this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
@@ -47,7 +44,6 @@ class App {
         localStorage.setItem('userStats', JSON.stringify(this.userStats));
     }
 
-    
     init() {
         document.documentElement.setAttribute('data-theme', this.theme);
         
@@ -56,7 +52,6 @@ class App {
             return;
         }
 
-        // استعادة البيانات
         this.userData = JSON.parse(localStorage.getItem('userAccount')) || null;
         this.userVocabulary = JSON.parse(localStorage.getItem('userVocab')) || [];
         this.masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -80,7 +75,6 @@ class App {
         this.tempLessonToUnlock = null;
         
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        // استئناف السياق الصوتي إذا كان معلقاً (بسبب سياسة المتصفحات)
         if (this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
         }
@@ -125,7 +119,6 @@ class App {
     }
 
     playTone(type) {
-        // استئناف السياق إذا كان معلقاً
         if (this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
         }
@@ -136,15 +129,13 @@ class App {
         gain.connect(this.audioCtx.destination);
 
         if (type === 'correct') {
-            // نغمة نجاح: نغمتين متتاليتين صاعدتين
-            osc.frequency.setValueAtTime(523.25, this.audioCtx.currentTime); // C5
-            osc.frequency.exponentialRampToValueAtTime(880, this.audioCtx.currentTime + 0.1); // A5
+            osc.frequency.setValueAtTime(523.25, this.audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, this.audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.3);
         } else {
-            // نغمة خطأ: نغمة غليظة ومنخفضة
-            osc.frequency.setValueAtTime(220, this.audioCtx.currentTime); // A3
-            osc.frequency.linearRampToValueAtTime(110, this.audioCtx.currentTime + 0.2); // A2
+            osc.frequency.setValueAtTime(220, this.audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(110, this.audioCtx.currentTime + 0.2);
             gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.4);
         }
@@ -153,7 +144,6 @@ class App {
         osc.stop(this.audioCtx.currentTime + 0.4);
     }
 
-    // دالة مساعدة لاستخراج الإجابة الصحيحة من السؤال
     getCorrectAnswer(q) {
         return q.correct || q.answer || q.a || q.right || q.rightAnswer || '';
     }
@@ -161,7 +151,6 @@ class App {
     getAdaptiveQuestion() {
         const levelQuestions = window.placementBank[this.currentDifficulty];
         if (!levelQuestions || levelQuestions.length === 0) {
-            // إذا لم توجد أسئلة لهذا المستوى، نبقى على نفس المستوى
             return window.placementBank['A1'][0];
         }
         const available = levelQuestions.filter(q => !this.placementHistory.includes(q.q));
@@ -169,7 +158,6 @@ class App {
         const selected = list[Math.floor(Math.random() * list.length)];
         this.placementHistory.push(selected.q);
         const correctAnswer = this.getCorrectAnswer(selected);
-        // حفظ تفاصيل السؤال للتاريخ
         this.currentPlacementDetails.push({
             level: this.currentDifficulty,
             question: selected.q,
@@ -187,71 +175,62 @@ class App {
 
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
 
-        // تشغيل الصوت المخصص
         this.playTone(isCorrect ? 'correct' : 'error');
         if (isCorrect) this.placementScore++;
 
-        // تمييز الأزرار بالألوان - نستخدم معرفات أو بيانات موثوقة
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
-            btn.disabled = true; // منع النقر المتكرر
+            btn.disabled = true;
             if (btn.dataset.correct === correct) {
-                btn.style.backgroundColor = '#10b981'; // أخضر للإجابة الصحيحة
+                btn.style.backgroundColor = '#10b981';
                 btn.style.color = 'white';
                 btn.style.borderColor = '#059669';
             } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
-                btn.style.backgroundColor = '#ef4444'; // أحمر للإجابة الخاطئة التي اختارها المستخدم
+                btn.style.backgroundColor = '#ef4444';
                 btn.style.color = 'white';
                 btn.style.borderColor = '#b91c1c';
-            } else if (btn.dataset.correct !== correct) {
-                // الخيارات الخاطئة الأخرى تبقى بلون مختلف قليلاً لكننا لا نغيرها
+            } else {
                 btn.style.opacity = '0.7';
             }
         });
 
-        // تسجيل إجابة المستخدم في التفاصيل الحالية
         if (this.currentPlacementDetails.length > 0) {
             const last = this.currentPlacementDetails[this.currentPlacementDetails.length - 1];
             last.selected = selected;
             last.isCorrect = isCorrect;
         }
 
-        // تأخير قبل الانتقال للسؤال التالي (لعرض التغذية البصرية)
         setTimeout(() => {
-            // منطق التتبع الذكي (Adaptive Logic)
             const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
             let idx = levels.indexOf(this.currentDifficulty);
-            if (idx === -1) idx = 0; // إذا كان المستوى غير معروف، نبدأ من A1
+            if (idx === -1) idx = 0;
 
             if (isCorrect && idx < levels.length - 1) {
-                this.currentDifficulty = levels[idx + 1]; // رفع المستوى عند الإجابة الصحيحة
+                this.currentDifficulty = levels[idx + 1];
             } else if (!isCorrect && idx > 0) {
-                this.currentDifficulty = levels[idx - 1]; // خفض المستوى عند الخطأ
+                this.currentDifficulty = levels[idx - 1];
             }
-            // إذا كان A1 وأجاب خطأ، يبقى على A1 (لا ينزل)
 
             this.placementStep++;
 
-            // حفظ النتيجة عند انتهاء الـ 25 سؤال
             if (this.placementStep >= 25) {
                 const res = {
                     level: this.currentDifficulty,
                     date: new Date().toLocaleString('ar-EG'),
                     score: this.placementScore,
                     ielts: this.getIeltsEquivalent(this.currentDifficulty),
-                    details: this.currentPlacementDetails // تفاصيل كاملة عن الأسئلة
+                    details: this.currentPlacementDetails
                 };
                 this.placementResults.unshift(res);
                 this.placementFullHistory.push(res);
                 localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
                 localStorage.setItem('placementFullHistory', JSON.stringify(this.placementFullHistory));
-                // إعادة تعيين التفاصيل الحالية للاختبار القادم
                 this.currentPlacementDetails = [];
             }
 
             this.isWaiting = false;
             this.render();
-        }, 1200); // زيادة التأخير قليلاً لرؤية التلوين
+        }, 1200);
     }
 
     getIeltsEquivalent(level) {
@@ -309,19 +288,15 @@ class App {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
-        // نختار جملة عشوائية من محتوى الدرس (نقسم النص على .!? ثم نختار جملة)
         const sentences = lesson.content.split(/[.!?]+/).filter(s => s.trim().length > 0);
         if (sentences.length === 0) {
-            // إذا لم نجد جملة، ننشئ جملة من أول 3 كلمات في الدرس
             const words = lesson.terms.map(t => t.english).slice(0, 3);
             this.jumbleOriginalSentence = words.join(' ');
         } else {
             this.jumbleOriginalSentence = sentences[Math.floor(Math.random() * sentences.length)].trim();
         }
 
-        // تقسيم الجملة إلى كلمات (مع الحفاظ على علامات الترقيم؟ الأفضل إزالتها مؤقتاً)
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
-        // خلط الكلمات
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
         this.jumbleChecked = false;
@@ -336,8 +311,7 @@ class App {
     }
 
     handleJumbleSelect(word) {
-        if (this.jumbleChecked) return; // بعد التحقق لا يمكن التعديل
-        // ننقل الكلمة من jumbleWords إلى jumbleUserAnswer
+        if (this.jumbleChecked) return;
         const index = this.jumbleWords.indexOf(word);
         if (index !== -1) {
             this.jumbleWords.splice(index, 1);
@@ -347,7 +321,6 @@ class App {
     }
 
     handleJumbleReset() {
-        // إعادة تعيين: نجمع الكلمات مرة أخرى ونخلطها
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
@@ -357,24 +330,28 @@ class App {
     }
 
     handleJumbleCheck() {
-        if (this.jumbleChecked) return; // لا نعيد التحقق
+        if (this.jumbleChecked) return;
         const userSentence = this.jumbleUserAnswer.join(' ');
         const isCorrect = (userSentence.toLowerCase().trim() === this.jumbleOriginalSentence.toLowerCase().trim());
         this.jumbleChecked = true;
         this.jumbleCorrect = isCorrect;
         this.playTone(isCorrect ? 'correct' : 'error');
         if (isCorrect) {
-            this.updateProgress(5); // مكافأة
+            this.updateProgress(5);
         }
         this.render();
     }
 
     // ================== دوال اختبار الاستماع ==================
     prepareListeningQuiz() {
+        if (this.listeningTimer) {
+            clearTimeout(this.listeningTimer);
+            this.listeningTimer = null;
+        }
+
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
-        // نأخذ الكلمات غير المتقنة والمخفية من الدرس
         const allTerms = [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)];
         const available = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
 
@@ -383,23 +360,19 @@ class App {
             return;
         }
 
-        // إذا كانت القائمة الحالية فارغة، أنشئ قائمة جديدة مرتبة عشوائياً
         if (this.listeningRemaining.length === 0) {
             this.listeningRemaining = [...available].sort(() => 0.5 - Math.random());
         }
 
-        // اختر أول كلمة من القائمة
         this.listeningCurrent = this.listeningRemaining[0];
         this.listeningAnswered = false;
 
-        // تحضير الخيارات: الإجابة الصحيحة + 3 كلمات عشوائية أخرى من جميع الكلمات
         const otherTerms = allTerms.filter(t => t.id !== this.listeningCurrent.id);
         const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
         const wrongOptions = shuffled.slice(0, 3).map(t => t.arabic);
         while (wrongOptions.length < 3) wrongOptions.push('???');
         this.listeningOptions = [this.listeningCurrent.arabic, ...wrongOptions].sort(() => 0.5 - Math.random());
 
-        // تشغيل صوت الكلمة
         this.speak(this.listeningCurrent.english);
     }
 
@@ -410,7 +383,6 @@ class App {
         const isCorrect = (selectedArabic === this.listeningCurrent.arabic);
         this.playTone(isCorrect ? 'correct' : 'error');
 
-        // تلوين الأزرار
         const allOptions = document.querySelectorAll('.listening-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
@@ -428,28 +400,26 @@ class App {
         });
 
         if (isCorrect) {
-            // إزالة الكلمة من القائمة المتبقية (لأنها أُجيب عنها بشكل صحيح)
             this.listeningRemaining.shift();
             this.updateProgress(5);
         } else {
-            // إذا كانت خاطئة، ننقل الكلمة إلى نهاية القائمة (لتتكرر لاحقاً)
             if (this.listeningRemaining.length > 1) {
                 const wrongWord = this.listeningRemaining.shift();
                 this.listeningRemaining.push(wrongWord);
             }
         }
 
-        this.render();
-    }
-
-    handleListeningNext() {
-        if (this.listeningRemaining.length === 0) {
-            alert('🎉 تهانينا! أكملت جميع الكلمات.');
-            this.currentPage = 'reading'; // العودة للنص
-        } else {
-            this.prepareListeningQuiz(); // تحضر السؤال التالي
-        }
-        this.render();
+        // الانتقال التلقائي بعد 2.5 ثانية
+        this.listeningTimer = setTimeout(() => {
+            this.listeningTimer = null;
+            if (this.listeningRemaining.length === 0) {
+                alert('🎉 تهانينا! أكملت جميع الكلمات.');
+                this.currentPage = 'reading';
+            } else {
+                this.prepareListeningQuiz();
+            }
+            this.render();
+        }, 2500);
     }
 
     setupGlobalEvents() {
@@ -613,7 +583,6 @@ class App {
                     this.render();
                     break;
 
-                // الأحداث الجديدة
                 case 'jumbleSelect':
                     this.handleJumbleSelect(param);
                     break;
@@ -625,9 +594,6 @@ class App {
                     break;
                 case 'listeningAnswer':
                     this.handleListeningAnswer(param);
-                    break;
-                case 'listeningNext':
-                    this.handleListeningNext();
                     break;
             }
             this.render();
@@ -844,7 +810,7 @@ class App {
                 <div style="display:flex; justify-content:center; margin-bottom:20px;">
                     <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">السؤال رقم ${this.placementStep + 1}</span>
                 </div>
-                <h2 style="margin-bottom:30px; direction:ltr; text-align:left; line-height:1.5; color:#1e293b;">${q.q}</h2>
+                <h2 style="margin-bottom:30px; direction:ltr; text-align:left; line-height:1.5;">${q.q}</h2>
                 <div class="quiz-options">
                     ${opts.map(opt => `
                         <button class="quiz-opt-btn" 
@@ -988,8 +954,9 @@ class App {
 
         // ========== صفحة إعادة ترتيب الجمل ==========
         if (this.currentPage === 'jumble') {
-            if (!this.jumbleWords || this.jumbleWords.length === 0) {
-                return `<div class="reading-card"><p>لا توجد كلمات للترتيب. الرجاء العودة لاحقاً.</p></div>`;
+            // إذا كانت الجملة تتكون من كلمة واحدة وقد تم نقلها
+            if (this.jumbleUserAnswer.length > 0 && this.jumbleWords.length === 0) {
+                // هذا طبيعي، نعرض الجملة المرتبة
             }
             return `<div class="reading-card">
                 <h3>🔤 رتب الكلمات لتكوين جملة صحيحة</h3>
@@ -1026,7 +993,6 @@ class App {
                         <button class="quiz-opt-btn listening-opt-btn" data-action="listeningAnswer" data-param="${opt}">${opt}</button>
                     `).join('')}
                 </div>
-                ${this.listeningAnswered ? `<button class="hero-btn" data-action="listeningNext" style="margin-top:20px; width:100%;">➡️ التالي</button>` : ''}
             </div>`;
         }
 
