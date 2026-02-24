@@ -9,6 +9,10 @@ class App {
         // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
         this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
+        // سجل مفصل لنتائج اختبارات المستوى (سؤال بسؤال)
+        this.placementFullHistory = JSON.parse(localStorage.getItem('placementFullHistory')) || [];
+        // تفاصيل الاختبار الحالي
+        this.currentPlacementDetails = [];
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -132,46 +136,82 @@ class App {
         const list = available.length > 0 ? available : levelQuestions;
         const selected = list[Math.floor(Math.random() * list.length)];
         this.placementHistory.push(selected.q);
+        // حفظ تفاصيل السؤال للتاريخ
+        this.currentPlacementDetails.push({
+            question: selected.q,
+            options: selected.options || [selected.a, selected.b, selected.c, selected.d].filter(o => o !== undefined),
+            correct: selected.a || selected.answer,
+            selected: null,
+            isCorrect: null
+        });
         return selected;
     }
 
-  handlePlacement(selected, correct) {
+    handlePlacement(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
-        
+
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
-        
+
         // تشغيل الصوت المخصص
         this.playTone(isCorrect ? 'correct' : 'error');
+        if (isCorrect) this.placementScore++;
 
-        if (isCorrect) {
-            this.placementScore++;
+        // تمييز الأزرار بالألوان
+        const optionButtons = document.querySelectorAll('.quiz-opt-btn');
+        optionButtons.forEach(btn => {
+            btn.disabled = true; // منع النقر المتكرر
+            if (btn.dataset.correct === correct) {
+                btn.style.backgroundColor = '#10b981'; // أخضر
+                btn.style.color = 'white';
+            } else {
+                btn.style.backgroundColor = '#ef4444'; // أحمر
+                btn.style.color = 'white';
+            }
+        });
+
+        // تسجيل إجابة المستخدم في التفاصيل الحالية
+        if (this.currentPlacementDetails.length > 0) {
+            const last = this.currentPlacementDetails[this.currentPlacementDetails.length - 1];
+            last.selected = selected;
+            last.isCorrect = isCorrect;
         }
 
-        // منطق التتبع الذكي (Adaptive Logic)
-        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-        let idx = levels.indexOf(this.currentDifficulty);
+        // تأخير قبل الانتقال للسؤال التالي (لعرض التغذية البصرية)
+        setTimeout(() => {
+            // منطق التتبع الذكي (Adaptive Logic)
+            const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+            let idx = levels.indexOf(this.currentDifficulty);
 
-        if (isCorrect && idx < levels.length - 1) {
-            this.currentDifficulty = levels[idx + 1]; // رفع المستوى فوراً عند الإجابة الصحيحة
-        } else if (!isCorrect && idx > 0) {
-            this.currentDifficulty = levels[idx - 1]; // خفض المستوى عند الخطأ
-        }
+            if (isCorrect && idx < levels.length - 1) {
+                this.currentDifficulty = levels[idx + 1]; // رفع المستوى عند الإجابة الصحيحة
+            } else if (!isCorrect && idx > 0) {
+                this.currentDifficulty = levels[idx - 1]; // خفض المستوى عند الخطأ
+            }
 
-        this.placementStep++;
+            this.placementStep++;
 
-        // حفظ النتيجة عند انتهاء الـ 25 سؤال
-        if (this.placementStep >= 25) {
-            const res = {
-                level: this.currentDifficulty,
-                date: new Date().toLocaleString('ar-EG'),
-                score: this.placementScore,
-                ielts: this.getIeltsEquivalent(this.currentDifficulty)
-            };
-            this.placementResults.unshift(res);
-            localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
-        }
-  }
+            // حفظ النتيجة عند انتهاء الـ 25 سؤال
+            if (this.placementStep >= 25) {
+                const res = {
+                    level: this.currentDifficulty,
+                    date: new Date().toLocaleString('ar-EG'),
+                    score: this.placementScore,
+                    ielts: this.getIeltsEquivalent(this.currentDifficulty),
+                    details: this.currentPlacementDetails // تفاصيل كاملة عن الأسئلة
+                };
+                this.placementResults.unshift(res);
+                this.placementFullHistory.push(res);
+                localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
+                localStorage.setItem('placementFullHistory', JSON.stringify(this.placementFullHistory));
+                // إعادة تعيين التفاصيل الحالية للاختبار القادم
+                this.currentPlacementDetails = [];
+            }
+
+            this.isWaiting = false;
+            this.render();
+        }, 1100);
+    }
 
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
@@ -348,9 +388,9 @@ class App {
                 case 'doAuth': 
                     this.handleAuth(); 
                     return;
-                // --- هذه الإضافة الجديدة لحل مشكلة اختبار المستوى ---
+                // اختبار المستوى مع التغذية البصرية والصوتية المحسّنة
                 case 'doPlacement':
-                    this.handlePlacement(param, correct);
+                    this.handlePlacement(param, correct, btn);
                     return;
             }
             this.render();
@@ -712,6 +752,7 @@ class App {
         this.placementScore = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
+        this.currentPlacementDetails = [];
         this.render();
     }
 } // القوس يغلق الكلاس هنا بعد دالة ريسيت
