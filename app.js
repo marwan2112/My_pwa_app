@@ -430,23 +430,29 @@ class App {
             </main>`;
         }
 
-        if (this.currentPage === 'placement_test') {
-            if (this.placementStep >= 25) {
-                return `<div class="reading-card result-card">
-                    <h2>المستوى: ${this.currentDifficulty}</h2>
-                    <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-                    <button class="hero-btn" data-action="goHome">تم</button>
-                </div>`;
-            }
-            const q = this.getAdaptiveQuestion();
-            return `<div class="reading-card">
-                <p>السؤال ${this.placementStep+1}/25</p>
-                <h3 style="direction:ltr; text-align:left;">${q.q}</h3>
-                <div class="options-stack">
-                    ${q.options.map(o => `<button class="quiz-opt-btn" onclick="appInstance.handlePlacement('${o}', '${q.correct}')">${o}</button>`).join('')}
-                </div>
-            </div>`;
-        }
+if (this.currentPage === 'placement_test') {
+    if (this.placementStep >= 25) {
+        return `<div class="reading-card result-card">
+            <h2>المستوى: ${this.currentDifficulty}</h2>
+            <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
+            <button class="hero-btn" data-action="goHome">تم</button>
+        </div>`;
+    }
+    const q = this.getAdaptiveQuestion();
+    return `<div class="reading-card">
+        <p>السؤال ${this.placementStep+1}/25</p>
+        <h3 style="direction:ltr; text-align:left;">${q.q}</h3>
+        <div class="options-stack" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+            ${q.options.map(o => `
+                <button class="quiz-opt-btn" 
+                        data-action="doPlacement" 
+                        data-param="${o}" 
+                        data-correct="${q.correct}">${o}</button>
+            `).join('')}
+        </div>
+    </div>`;
+}
+
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
