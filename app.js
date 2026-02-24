@@ -172,26 +172,6 @@ class App {
             localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
         }
 
-        setTimeout(() => { 
-            this.isWaiting = false; 
-            this.render(); 
-        }, 600);
-    }
-
-        // 4. الانتقال للسؤال التالي مع تأخير بسيط لتجربة مستخدم أفضل
-        setTimeout(() => { 
-            this.isWaiting = false; 
-            this.render(); 
-        }, 650);
-    }
-
-    resetPlacement() {
-        this.placementStep = 0;
-        this.placementScore = 0;
-        this.currentDifficulty = 'A2';
-        this.placementHistory = [];
-        this.render();
-    }
 
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
