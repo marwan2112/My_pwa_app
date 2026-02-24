@@ -10,13 +10,18 @@
 }
 
 /* الألوان عند تفعيل الوضع الليلي */
-[data-theme="dark"] {
-    --bg-main: #0f172a;
-    --bg-card: #1e293b;
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --header-bg: #1e3a8a;
+[data-theme="dark"] body {
+    background-color: #1a1a2e;
+    color: #f0f0f0;
+}
+[data-theme="dark"] .reading-card {
+    background-color: #16213e;
+    color: #eee;
+    border-color: #0f3460;
+}
+[data-theme="dark"] .hero-btn {
+    background-color: #0f3460;
+    color: white;
 }
 
 body { 
