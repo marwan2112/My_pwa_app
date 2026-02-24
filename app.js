@@ -1,7 +1,7 @@
 class App {
     constructor() {
         this.placementStep = 0;
-        this.currentDifficulty = 'A2';
+        this.currentDifficulty = 'A1';
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
