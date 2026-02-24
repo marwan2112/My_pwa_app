@@ -611,6 +611,3 @@ if (this.currentPage === 'placement_test') {
 
 const appInstance = new App();
 
-
-
-const appInstance = new App();
