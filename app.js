@@ -130,13 +130,14 @@ this.placementLog = [];
 
 
     getAdaptiveQuestion() {
-        const levelQuestions = window.placementBank[this.currentDifficulty];
-        const available = levelQuestions.filter(q => !this.placementHistory.includes(q.q));
-        const list = available.length > 0 ? available : levelQuestions;
-        const selected = list[Math.floor(Math.random() * list.length)];
-        this.placementHistory.push(selected.q);
-        return selected;
-    }
+    const levelQuestions = window.placementBank[this.currentDifficulty];
+    const unused = levelQuestions.filter(q => 
+        !this.placementLog.some(p => p.q === q.q)
+    );
+    const list = unused.length ? unused : levelQuestions;
+    const selected = list[Math.floor(Math.random() * list.length)];
+    return selected;
+}
 
   handlePlacement(selected, correct) {
     if (this.isWaiting) return;
