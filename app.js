@@ -139,7 +139,7 @@ this.placementLog = [];
     return selected;
 }
 
-  handlePlacement(selected, correct, btn) {
+ handlePlacement(selected, correct, btn) {
     if (this.isWaiting) return;
     this.isWaiting = true;
 
@@ -161,12 +161,12 @@ this.placementLog = [];
     });
 
     if (isCorrect) {
+        this.placementScore++;
         this.levelStats[this.currentDifficulty]++;
     } else {
         this.levelFails[this.currentDifficulty]++;
     }
 
-    // 🧠 منطق التتبع الذكي
     const levels = ["A1","A2","B1","B2","C1","C2"];
     let idx = levels.indexOf(this.currentDifficulty);
 
@@ -180,6 +180,28 @@ this.placementLog = [];
 
     this.placementStep++;
 
+    setTimeout(() => {
+        this.isWaiting = false;
+
+        if (this.placementStep >= 25) {
+            let finalLevel = "A1";
+            for (let lvl of levels) {
+                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
+            }
+
+            const res = {
+                level: finalLevel,
+                date: new Date().toLocaleString("ar-EG"),
+                details: this.placementLog
+            };
+
+            this.placementResults.unshift(res);
+            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
+        }
+
+        this.render();
+    }, 2000);
+}
     setTimeout(() => {
         this.isWaiting = false;
 
