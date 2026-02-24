@@ -140,6 +140,10 @@ class App {
         osc.stop(this.audioCtx.currentTime + 0.4);
     }
 
+    // دالة مساعدة لاستخراج الإجابة الصحيحة من السؤال
+    getCorrectAnswer(q) {
+        return q.correct || q.answer || q.a || q.right || q.rightAnswer || '';
+    }
 
     getAdaptiveQuestion() {
         const levelQuestions = window.placementBank[this.currentDifficulty];
@@ -151,12 +155,13 @@ class App {
         const list = available.length > 0 ? available : levelQuestions;
         const selected = list[Math.floor(Math.random() * list.length)];
         this.placementHistory.push(selected.q);
+        const correctAnswer = this.getCorrectAnswer(selected);
         // حفظ تفاصيل السؤال للتاريخ
         this.currentPlacementDetails.push({
             level: this.currentDifficulty,
             question: selected.q,
             options: selected.options || [selected.a, selected.b, selected.c, selected.d].filter(o => o !== undefined),
-            correct: selected.a || selected.answer,
+            correct: correctAnswer,
             selected: null,
             isCorrect: null
         });
@@ -203,6 +208,7 @@ class App {
             // منطق التتبع الذكي (Adaptive Logic)
             const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
             let idx = levels.indexOf(this.currentDifficulty);
+            if (idx === -1) idx = 0; // إذا كان المستوى غير معروف، نبدأ من A1
 
             if (isCorrect && idx < levels.length - 1) {
                 this.currentDifficulty = levels[idx + 1]; // رفع المستوى عند الإجابة الصحيحة
@@ -650,11 +656,11 @@ class App {
             const q = this.getAdaptiveQuestion();
             const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
             const opts = rawOpts.filter(o => o !== undefined).sort(() => 0.5 - Math.random());
+            const correctAnswer = this.getCorrectAnswer(q);
 
             return `<div class="reading-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div style="display:flex; justify-content:center; margin-bottom:20px;">
                     <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">السؤال رقم ${this.placementStep + 1}</span>
-                    <span style="background:#3b82f6; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">المستوى الحالي: ${this.currentDifficulty}</span>
                 </div>
                 <h2 style="margin-bottom:30px; direction:ltr; text-align:left; line-height:1.5; color:#1e293b;">${q.q}</h2>
                 <div class="quiz-options">
@@ -662,7 +668,7 @@ class App {
                         <button class="quiz-opt-btn" 
                                 data-action="doPlacement" 
                                 data-param="${opt}" 
-                                data-correct="${q.a || q.answer}">
+                                data-correct="${correctAnswer}">
                             ${opt}
                         </button>
                     `).join('')}
@@ -680,9 +686,9 @@ class App {
                     ${details.map((d, i) => `
                         <div style="border-bottom:1px solid #e2e8f0; padding:10px; margin-bottom:5px;">
                             <p><strong>س${i+1}:</strong> ${d.question}</p>
-                            <p>مستوى السؤال: ${d.level}</p>
-                            <p>إجابتك: ${d.selected} - ${d.isCorrect ? '✅' : '❌'}</p>
-                            <p>الإجابة الصحيحة: ${d.correct}</p>
+                            <p>مستوى السؤال: ${d.level || 'غير محدد'}</p>
+                            <p>إجابتك: ${d.selected || 'لم يجب'} - ${d.isCorrect ? '✅' : '❌'}</p>
+                            <p>الإجابة الصحيحة: ${d.correct || 'غير معروفة'}</p>
                         </div>
                     `).join('')}
                 </div>
