@@ -20,6 +20,8 @@ class App {
     }
 
     init() {
+        document.documentElement.setAttribute('data-theme', this.theme);
+        
         if (!window.levels || !window.lessonsData || !window.placementBank) {
             setTimeout(() => this.init(), 500);
             return;
