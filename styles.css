@@ -1,5 +1,37 @@
  /* 1. الإعدادات العامة والخطوط */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+:root {
+    --bg-main: #f1f5f9;
+    --bg-card: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --header-bg: #1e40af;
+}
+
+/* الألوان عند تفعيل الوضع الليلي */
+[data-theme="dark"] {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --header-bg: #1e3a8a;
+}
+
+body { 
+    background: var(--bg-main); 
+    color: var(--text-main); 
+    transition: background 0.3s, color 0.3s;
+}
+
+.flashcard-front, .flashcard-back, .reading-card, .feature-card, .controls, .quiz-opt-btn {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+.header { background: var(--header-bg); }
 
 * { 
     margin: 0; 
@@ -315,35 +347,3 @@ body {
     100% { transform: scale(1); }
 }
 
-:root {
-    --bg-main: #f1f5f9;
-    --bg-card: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --header-bg: #1e40af;
-}
-
-/* الألوان عند تفعيل الوضع الليلي */
-[data-theme="dark"] {
-    --bg-main: #0f172a;
-    --bg-card: #1e293b;
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --header-bg: #1e3a8a;
-}
-
-body { 
-    background: var(--bg-main); 
-    color: var(--text-main); 
-    transition: background 0.3s, color 0.3s;
-}
-
-.flashcard-front, .flashcard-back, .reading-card, .feature-card, .controls, .quiz-opt-btn {
-    background: var(--bg-card) !important;
-    color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
-}
-
-.header { background: var(--header-bg); }
