@@ -528,7 +528,8 @@ class App {
             </main>`;
         }
 
-        if (this.currentPage === 'placement_test') {
+                if (this.currentPage === 'placement_test') {
+            // شاشة النتيجة النهائية
             if (this.placementStep >= 25) {
                 return `<div class="reading-card result-card">
                     <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
@@ -546,24 +547,38 @@ class App {
                     </div>
                 </div>`;
             }
-            
+
+            // --- منطق جلب السؤال التكيفي ---
             const q = this.getAdaptiveQuestion();
-            // جلب الخيارات سواء كانت في مصفوفة options أو أحرف a,b,c,d
+            // جلب الخيارات من أي مسمى موجود في البنك (options أو a,b,c,d)
             const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
             const opts = rawOpts.filter(o => o !== undefined).sort(() => 0.5 - Math.random());
 
             return `<div class="reading-card">
                 <div style="display:flex; justify-content:center; margin-bottom:15px;">
-                    <span style="font-weight:bold; color:#64748b;">سؤال: ${this.placementStep + 1} / 25</span>
+                    <span style="font-weight:bold; color:#64748b; background:#f1f5f9; padding:4px 12px; border-radius:15px;">
+                        سؤال: ${this.placementStep + 1} / 25
+                    </span>
                 </div>
-                <h2 style="margin-bottom:20px; direction:ltr; text-align:left;">${q.q}</h2>
+                <h2 style="margin-bottom:25px; direction:ltr; text-align:left; line-height:1.4;">${q.q}</h2>
                 <div class="quiz-options">
-                    ${opts.map(opt => `<button class="quiz-opt-btn" data-action="doPlacement" data-param="${opt}" data-correct="${q.a || q.answer}">${opt}</button>`).join('')}
+                    ${opts.map(opt => `
+                        <button class="quiz-opt-btn" 
+                                data-action="doPlacement" 
+                                data-param="${opt}" 
+                                data-correct="${q.a || q.answer}">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div style="margin-top:20px; text-align:center; opacity:0.5; font-size:0.8rem;">
+                    المستوى الحالي للذكاء: ${this.currentDifficulty}
                 </div>
             </div>`;
         }
 
-        
+            
+                    
 const q = this.getAdaptiveQuestion();
 
 const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
