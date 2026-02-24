@@ -101,14 +101,30 @@ class App {
         } catch (e) {}
     }
 
-    playTone(type) {
+        playTone(type) {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
-        osc.connect(gain); gain.connect(this.audioCtx.destination);
-        osc.frequency.setValueAtTime(type === 'correct' ? 800 : 300, this.audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
-        osc.start(); osc.stop(this.audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        if (type === 'correct') {
+            // نغمة نجاح: نغمتين متتاليتين صاعدتين
+            osc.frequency.setValueAtTime(523.25, this.audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(880, this.audioCtx.currentTime + 0.1); // A5
+            gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.3);
+        } else {
+            // نغمة خطأ: نغمة غليظة ومنخفضة
+            osc.frequency.setValueAtTime(220, this.audioCtx.currentTime); // A3
+            osc.frequency.linearRampToValueAtTime(110, this.audioCtx.currentTime + 0.2); // A2
+            gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.4);
+        }
+
+        osc.start();
+        osc.stop(this.audioCtx.currentTime + 0.4);
     }
+
 
     getAdaptiveQuestion() {
         const levelQuestions = window.placementBank[this.currentDifficulty];
