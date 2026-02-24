@@ -587,5 +587,12 @@ if (this.currentPage === 'placement_test') {
         return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
     }
 }
+toggleTheme() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', this.theme);
+    localStorage.setItem('theme', this.theme);
+    this.render();
+}
+
 
 const appInstance = new App();
