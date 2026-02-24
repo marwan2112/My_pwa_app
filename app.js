@@ -401,14 +401,14 @@ class App {
         }
     }
 
-    getHeader() {
+        getHeader() {
         if (this.currentPage === 'auth') return '';
         let nav = '';
         if (this.selectedLessonId && ['reading', 'flashcards', 'quiz'].includes(this.currentPage) && !this.isUnlockTest) {
             nav = `<nav class="nav-menu">
-                <button class="nav-btn ${this.currentPage==='reading'?'active':''}" data-action="setPage" data-param="reading">📖 النص</button>
-                <button class="nav-btn ${this.currentPage==='flashcards'?'active':''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
-                <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
+                <button class="nav-btn ${this.currentPage === 'reading' ? 'active' : ''}" data-action="setPage" data-param="reading">📖 النص</button>
+                <button class="nav-btn ${this.currentPage === 'flashcards' ? 'active' : ''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
+                <button class="nav-btn ${this.currentPage === 'quiz' ? 'active' : ''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
             </nav>`;
         }
         return `<header class="header">
@@ -422,6 +422,8 @@ class App {
         ${nav}
     </div>
 </header>`;
+    }
+
 
 
     getView(lesson, allTerms) {
