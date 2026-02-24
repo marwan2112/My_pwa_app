@@ -20,10 +20,14 @@ class App {
         this.jumbleOriginalSentence = '';
         this.jumbleWords = [];
         this.jumbleUserAnswer = [];
+        this.jumbleChecked = false;
+        this.jumbleCorrect = false;
 
         // متغيرات خاصة بميزة الاستماع
-        this.listeningQuestion = null;
+        this.listeningRemaining = [];
+        this.listeningCurrent = null;
         this.listeningOptions = [];
+        this.listeningAnswered = false;
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -320,6 +324,8 @@ class App {
         // خلط الكلمات
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
+        this.jumbleChecked = false;
+        this.jumbleCorrect = false;
     }
 
     shuffleArray(arr) {
@@ -330,6 +336,7 @@ class App {
     }
 
     handleJumbleSelect(word) {
+        if (this.jumbleChecked) return; // بعد التحقق لا يمكن التعديل
         // ننقل الكلمة من jumbleWords إلى jumbleUserAnswer
         const index = this.jumbleWords.indexOf(word);
         if (index !== -1) {
@@ -344,22 +351,22 @@ class App {
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
+        this.jumbleChecked = false;
+        this.jumbleCorrect = false;
         this.render();
     }
 
     handleJumbleCheck() {
+        if (this.jumbleChecked) return; // لا نعيد التحقق
         const userSentence = this.jumbleUserAnswer.join(' ');
-        const isCorrect = (userSentence.toLowerCase() === this.jumbleOriginalSentence.toLowerCase());
+        const isCorrect = (userSentence.toLowerCase().trim() === this.jumbleOriginalSentence.toLowerCase().trim());
+        this.jumbleChecked = true;
+        this.jumbleCorrect = isCorrect;
+        this.playTone(isCorrect ? 'correct' : 'error');
         if (isCorrect) {
-            this.playTone('correct');
-            alert('✅ إجابة صحيحة! أحسنت.');
-            // يمكن إضافة نقاط أو أي مكافأة
-            this.updateProgress(5); // 5 نقاط إضافية
-        } else {
-            this.playTone('error');
-            alert('❌ إجابة خاطئة. حاول مرة أخرى.');
+            this.updateProgress(5); // مكافأة
         }
-        // لا نعيد تعيين، يمكن للمستخدم المحاولة مرة أخرى أو الضغط على زر إعادة
+        this.render();
     }
 
     // ================== دوال اختبار الاستماع ==================
@@ -376,37 +383,73 @@ class App {
             return;
         }
 
-        // اختيار كلمة عشوائية لتكون السؤال
-        this.listeningQuestion = available[Math.floor(Math.random() * available.length)];
+        // إذا كانت القائمة الحالية فارغة، أنشئ قائمة جديدة مرتبة عشوائياً
+        if (this.listeningRemaining.length === 0) {
+            this.listeningRemaining = [...available].sort(() => 0.5 - Math.random());
+        }
 
-        // تحضير خيارات: الإجابة الصحيحة + 3 كلمات عشوائية أخرى من نفس الدرس
-        const otherTerms = allTerms.filter(t => t.id !== this.listeningQuestion.id);
+        // اختر أول كلمة من القائمة
+        this.listeningCurrent = this.listeningRemaining[0];
+        this.listeningAnswered = false;
+
+        // تحضير الخيارات: الإجابة الصحيحة + 3 كلمات عشوائية أخرى من جميع الكلمات
+        const otherTerms = allTerms.filter(t => t.id !== this.listeningCurrent.id);
         const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
         const wrongOptions = shuffled.slice(0, 3).map(t => t.arabic);
-        while (wrongOptions.length < 3) wrongOptions.push('???'); // في حال عدم وجود كلمات كافية
-        this.listeningOptions = [this.listeningQuestion.arabic, ...wrongOptions].sort(() => 0.5 - Math.random());
+        while (wrongOptions.length < 3) wrongOptions.push('???');
+        this.listeningOptions = [this.listeningCurrent.arabic, ...wrongOptions].sort(() => 0.5 - Math.random());
 
         // تشغيل صوت الكلمة
-        this.speak(this.listeningQuestion.english);
+        this.speak(this.listeningCurrent.english);
     }
 
     handleListeningAnswer(selectedArabic) {
-        if (!this.listeningQuestion) return;
+        if (this.listeningAnswered || !this.listeningCurrent) return;
+        this.listeningAnswered = true;
 
-        const isCorrect = (selectedArabic === this.listeningQuestion.arabic);
+        const isCorrect = (selectedArabic === this.listeningCurrent.arabic);
+        this.playTone(isCorrect ? 'correct' : 'error');
+
+        // تلوين الأزرار
+        const allOptions = document.querySelectorAll('.listening-opt-btn');
+        allOptions.forEach(btn => {
+            btn.disabled = true;
+            if (btn.dataset.param === this.listeningCurrent.arabic) {
+                btn.style.backgroundColor = '#10b981';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#059669';
+            } else if (btn.dataset.param === selectedArabic && !isCorrect) {
+                btn.style.backgroundColor = '#ef4444';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#b91c1c';
+            } else {
+                btn.style.opacity = '0.7';
+            }
+        });
+
         if (isCorrect) {
-            this.playTone('correct');
-            alert('✅ إجابة صحيحة!');
-            this.updateProgress(5); // مكافأة
-            // ننتقل إلى سؤال جديد
-            this.prepareListeningQuiz();
+            // إزالة الكلمة من القائمة المتبقية (لأنها أُجيب عنها بشكل صحيح)
+            this.listeningRemaining.shift();
+            this.updateProgress(5);
         } else {
-            this.playTone('error');
-            alert('❌ إجابة خاطئة. حاول مرة أخرى.');
-            // نعيد تشغيل الصوت
-            this.speak(this.listeningQuestion.english);
+            // إذا كانت خاطئة، ننقل الكلمة إلى نهاية القائمة (لتتكرر لاحقاً)
+            if (this.listeningRemaining.length > 1) {
+                const wrongWord = this.listeningRemaining.shift();
+                this.listeningRemaining.push(wrongWord);
+            }
         }
-        this.render(); // لإعادة عرض الخيارات (يمكن أن يتغير السؤال إذا كانت الإجابة صحيحة)
+
+        this.render();
+    }
+
+    handleListeningNext() {
+        if (this.listeningRemaining.length === 0) {
+            alert('🎉 تهانينا! أكملت جميع الكلمات.');
+            this.currentPage = 'reading'; // العودة للنص
+        } else {
+            this.prepareListeningQuiz(); // تحضر السؤال التالي
+        }
+        this.render();
     }
 
     setupGlobalEvents() {
@@ -582,6 +625,9 @@ class App {
                     break;
                 case 'listeningAnswer':
                     this.handleListeningAnswer(param);
+                    break;
+                case 'listeningNext':
+                    this.handleListeningNext();
                     break;
             }
             this.render();
@@ -947,19 +993,19 @@ class App {
             }
             return `<div class="reading-card">
                 <h3>🔤 رتب الكلمات لتكوين جملة صحيحة</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: #f1f5f9; border-radius: 8px; min-height: 60px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: ${this.jumbleChecked ? (this.jumbleCorrect ? '#d1fae5' : '#fee2e2') : '#f1f5f9'}; border-radius: 8px; min-height: 60px; border: ${this.jumbleChecked ? (this.jumbleCorrect ? '2px solid #10b981' : '2px solid #ef4444') : 'none'};">
                     ${this.jumbleUserAnswer.map(word => `
                         <span style="background: #3b82f6; color: white; padding: 8px 15px; border-radius: 20px; font-size: 1.2rem;">${word}</span>
                     `).join('')}
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: #e2e8f0; border-radius: 8px; min-height: 60px;">
                     ${this.jumbleWords.map(word => `
-                        <button class="hero-btn" data-action="jumbleSelect" data-param="${word}" style="padding: 8px 15px; background: #64748b; font-size: 1rem;">${word}</button>
+                        <button class="hero-btn" data-action="jumbleSelect" data-param="${word}" style="padding: 8px 15px; background: #64748b; font-size: 1rem; ${this.jumbleChecked ? 'opacity:0.5; pointer-events:none;' : ''}">${word}</button>
                     `).join('')}
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="hero-btn" data-action="jumbleReset" style="background:#f59e0b;">🔄 إعادة</button>
-                    <button class="hero-btn" data-action="jumbleCheck" style="background:#10b981;">✅ تحقق</button>
+                    <button class="hero-btn" data-action="jumbleCheck" style="background:#10b981;" ${this.jumbleChecked ? 'disabled' : ''}>✅ تحقق</button>
                 </div>
                 <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">الجملة الأصلية: ${this.jumbleOriginalSentence}</p>
             </div>`;
@@ -967,19 +1013,20 @@ class App {
 
         // ========== صفحة اختبار الاستماع ==========
         if (this.currentPage === 'listening') {
-            if (!this.listeningQuestion) {
+            if (!this.listeningCurrent) {
                 return `<div class="reading-card"><p>لا توجد كلمات متاحة. حاول مرة أخرى.</p></div>`;
             }
             return `<div class="reading-card">
                 <h3>🎧 استمع واختر الكلمة الصحيحة</h3>
                 <div style="text-align: center; margin: 30px 0;">
-                    <button class="hero-btn" data-action="speak" data-param="${this.listeningQuestion.english}" style="font-size: 2rem; padding: 20px; background: #6366f1;">🔊 استمع مرة أخرى</button>
+                    <button class="hero-btn" data-action="speak" data-param="${this.listeningCurrent.english}" style="font-size: 2rem; padding: 20px; background: #6366f1;">🔊 استمع مرة أخرى</button>
                 </div>
                 <div class="quiz-options">
                     ${this.listeningOptions.map(opt => `
-                        <button class="quiz-opt-btn" data-action="listeningAnswer" data-param="${opt}">${opt}</button>
+                        <button class="quiz-opt-btn listening-opt-btn" data-action="listeningAnswer" data-param="${opt}">${opt}</button>
                     `).join('')}
                 </div>
+                ${this.listeningAnswered ? `<button class="hero-btn" data-action="listeningNext" style="margin-top:20px; width:100%;">➡️ التالي</button>` : ''}
             </div>`;
         }
 
