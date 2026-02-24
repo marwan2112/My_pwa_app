@@ -119,39 +119,40 @@ class App {
         return selected;
     }
 
-    handlePlacement(selected, correct) {
-    if(this.isWaiting) return;
-    this.isWaiting = true;
-    const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
-    
-    // احتساب النقاط
-    if (isCorrect) {
-        this.playTone('correct');
-        this.placementScore++; // تأكد من إضافة هذا المتغير لتجميع النقاط
-    } else {
-        this.playTone('error');
+        handlePlacement(selected, correct) {
+        if(this.isWaiting) return;
+        this.isWaiting = true;
+        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        
+        if (isCorrect) {
+            this.playTone('correct');
+            this.placementScore++;
+        } else {
+            this.playTone('error');
+        }
+
+        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+        let idx = levels.indexOf(this.currentDifficulty);
+
+        if (isCorrect && idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
+        else if (!isCorrect && idx > 0) this.currentDifficulty = levels[idx - 1];
+
+        this.placementStep++;
+
+        // حفظ النتيجة عند الانتهاء
+        if (this.placementStep >= 25) {
+            const res = {
+                level: this.currentDifficulty,
+                date: new Date().toLocaleString('ar-EG'),
+                score: this.placementScore
+            };
+            this.placementResults.unshift(res);
+            localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
+        }
+
+        setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
     }
-
-    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-    let idx = levels.indexOf(this.currentDifficulty);
-
-    // التحرك بين المستويات
-    if (isCorrect && idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
-    else if (!isCorrect && idx > 0) this.currentDifficulty = levels[idx - 1];
-
-    this.placementStep++;
-
-    // إذا انتهى الاختبار (وصل 25 سؤال)
-    if (this.placementStep >= 25) {
-        const newResult = {
-            level: this.currentDifficulty,
-            ielts: this.getIeltsEquivalent(this.currentDifficulty),
-            date: new Date().toLocaleString('ar-EG'),
-            score: this.placementScore
-        };
-        this.placementResults.unshift(newResult); // إضافة النتيجة في أول القائمة
-        localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
-    }
+}
 
     setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
 }
