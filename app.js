@@ -178,7 +178,30 @@ this.placementLog = [];
         this.currentDifficulty = levels[idx-1];
     }
 
-    this.placementStep++;
+    setTimeout(() => {
+        this.isWaiting = false;
+
+        if (this.placementStep >= 25) {
+            let finalLevel = "A1";
+            const levels = ["A1","A2","B1","B2","C1","C2"];
+
+            for (let lvl of levels) {
+                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
+            }
+
+            const res = {
+                level: finalLevel,
+                date: new Date().toLocaleString("ar-EG"),
+                details: this.placementLog
+            };
+
+            this.placementResults.unshift(res);
+            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
+        }
+
+        this.render();
+    }, 2000);
+}
 
     setTimeout(() => {
         this.isWaiting = false;
