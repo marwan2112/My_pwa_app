@@ -597,7 +597,7 @@ if (this.currentPage === 'placement_test') {
                     <button class="hero-btn" onclick="appInstance.saveNewCustomLesson()" style="width: 100%; background:#10b981; padding: 15px; font-size: 1.1rem; flex-shrink: 0;">💾 حفظ النص</button>
                 </div>
             </main>`;
-        }
+        } 
                 return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
     }
 
