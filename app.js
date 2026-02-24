@@ -139,44 +139,70 @@ this.placementLog = [];
     return selected;
 }
 
-  handlePlacement(selected, correct) {
+  handlePlacement(selected, correct, btn) {
     if (this.isWaiting) return;
     this.isWaiting = true;
-    
-    const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
-    
-    // تشغيل الصوت
-    this.playTone(isCorrect ? 'correct' : 'error');
+
+    const isCorrect = selected.trim().toLowerCase() === correct.trim().toLowerCase();
+
+    // 🎨 تلوين الزر
+    btn.style.background = isCorrect ? "#22c55e" : "#ef4444";
+    btn.style.color = "white";
+
+    // 🔊 صوت
+    this.playTone(isCorrect ? "correct" : "error");
+
+    // 📊 حفظ السؤال
+    this.placementLog.push({
+        q: this.currentQuestion.q,
+        chosen: selected,
+        correct: correct,
+        level: this.currentDifficulty
+    });
 
     if (isCorrect) {
-        this.placementScore++;
+        this.levelStats[this.currentDifficulty]++;
+    } else {
+        this.levelFails[this.currentDifficulty]++;
     }
 
-    // منطق التتبع الذكي (Adaptive Logic)
-    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+    // 🧠 منطق التتبع الذكي
+    const levels = ["A1","A2","B1","B2","C1","C2"];
     let idx = levels.indexOf(this.currentDifficulty);
 
-    if (isCorrect && idx < levels.length - 1) {
-        this.currentDifficulty = levels[idx + 1];
-    } else if (!isCorrect && idx > 0) {
-        this.currentDifficulty = levels[idx - 1];
+    if (this.levelStats[this.currentDifficulty] >= 3 && idx < levels.length-1) {
+        this.currentDifficulty = levels[idx+1];
+    }
+
+    if (this.levelFails[this.currentDifficulty] >= 2 && idx > 0) {
+        this.currentDifficulty = levels[idx-1];
     }
 
     this.placementStep++;
 
-    // حفظ النتيجة عند انتهاء 25 سؤال
-    if (this.placementStep >= 25) {
-        const res = {
-            level: this.currentDifficulty,
-            date: new Date().toLocaleString('ar-EG'),
-            score: this.placementScore,
-            ielts: this.getIeltsEquivalent(this.currentDifficulty)
-        };
-        this.placementResults.unshift(res);
-        localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
-    }
+    setTimeout(() => {
+        this.isWaiting = false;
 
-    // ⏳ الانتقال للسؤال التالي بعد ثانيتين
+        if (this.placementStep >= 25) {
+            // 🏁 حساب المستوى النهائي الحقيقي
+            let finalLevel = "A1";
+            for (let lvl of levels) {
+                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
+            }
+
+            const res = {
+                level: finalLevel,
+                date: new Date().toLocaleString("ar-EG"),
+                details: this.placementLog
+            };
+
+            this.placementResults.unshift(res);
+            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
+        }
+
+        this.render();
+    }, 2000);
+}
     setTimeout(() => {
         this.isWaiting = false;
         this.render();
