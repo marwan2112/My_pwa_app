@@ -119,9 +119,10 @@ class App {
         return selected;
     }
 
-        handlePlacement(selected, correct) {
-        if(this.isWaiting) return;
+            handlePlacement(selected, correct) {
+        if (this.isWaiting) return;
         this.isWaiting = true;
+        
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
         
         if (isCorrect) {
@@ -134,29 +135,40 @@ class App {
         const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
         let idx = levels.indexOf(this.currentDifficulty);
 
-        if (isCorrect && idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
-        else if (!isCorrect && idx > 0) this.currentDifficulty = levels[idx - 1];
+        // منطق ترفيع أو تنزيل المستوى بناءً على الإجابة
+        if (isCorrect && idx < levels.length - 1) {
+            this.currentDifficulty = levels[idx + 1];
+        } else if (!isCorrect && idx > 0) {
+            this.currentDifficulty = levels[idx - 1];
+        }
 
         this.placementStep++;
 
-        // حفظ النتيجة عند الانتهاء
+        // حفظ النتيجة النهائية بالتاريخ عند الوصول للسؤال رقم 25
         if (this.placementStep >= 25) {
             const res = {
                 level: this.currentDifficulty,
                 date: new Date().toLocaleString('ar-EG'),
-                score: this.placementScore
+                score: this.placementScore,
+                ielts: this.getIeltsEquivalent(this.currentDifficulty)
             };
             this.placementResults.unshift(res);
             localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
         }
 
-        setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
+        setTimeout(() => { 
+            this.isWaiting = false; 
+            this.render(); 
+        }, 600);
     }
-}
 
-    setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
-}
-
+    resetPlacement() {
+        this.placementStep = 0;
+        this.placementScore = 0;
+        this.currentDifficulty = 'A2';
+        this.placementHistory = [];
+        this.render();
+    }
 
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
@@ -517,25 +529,38 @@ class App {
         }
 
 
-if (this.currentPage === 'placement_test') {
-        if (this.placementStep >= 25) {
-        return `<div class="reading-card result-card">
-            <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
-            <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
-                <h3>المستوى: ${this.currentDifficulty}</h3>
-                <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-            </div>
-            <h4 style="margin-top:15px;">📜 السجل السابق:</h4>
-            <div style="max-height:100px; overflow-y:auto; font-size:0.8rem; margin-bottom:15px;">
-                ${this.placementResults.map(r => `<div style="border-bottom:1px solid #eee; padding:5px;">📅 ${r.date} - المستوى: ${r.level}</div>`).join('')}
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="hero-btn" onclick="appInstance.resetPlacement()" style="background:#ec4899; flex:1;">إعادة الاختبار 🔄</button>
-                <button class="hero-btn" data-action="goHome" style="background:#64748b; flex:1;">تم</button>
-            </div>
-        </div>`;
-    }
-
+        if (this.currentPage === 'placement_test') {
+            if (this.placementStep >= 25) {
+                return `<div class="reading-card result-card">
+                    <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
+                    <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
+                        <h3>المستوى: ${this.currentDifficulty}</h3>
+                        <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
+                    </div>
+                    <h4 style="margin-top:15px;">📜 السجل السابق:</h4>
+                    <div style="max-height:100px; overflow-y:auto; font-size:0.8rem; margin-bottom:15px;">
+                        ${this.placementResults.map(r => `<div style="border-bottom:1px solid #eee; padding:5px;">📅 ${r.date} - المستوى: ${r.level}</div>`).join('')}
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="hero-btn" onclick="appInstance.resetPlacement()" style="background:#ec4899; flex:1;">إعادة الاختبار 🔄</button>
+                        <button class="hero-btn" data-action="goHome" style="background:#64748b; flex:1;">تم</button>
+                    </div>
+                </div>`;
+            }
+            
+            const q = this.getAdaptiveQuestion();
+            const opts = [q.a, q.b, q.c, q.d].sort(() => 0.5 - Math.random());
+            return `<div class="reading-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <span>سؤال: ${this.placementStep + 1}/25</span>
+                    <span>المستوى الحالي: ${this.currentDifficulty}</span>
+                </div>
+                <h2 style="margin-bottom:20px; direction:ltr;">${q.q}</h2>
+                <div class="quiz-options">
+                    ${opts.map(opt => `<button class="quiz-opt-btn" data-action="doPlacement" data-param="${opt}" data-correct="${q.a}">${opt}</button>`).join('')}
+                </div>
+            </div>`;
+        } // تأكد من وجود هذا القوس هنا لإغلاق قسم الاختبار
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
