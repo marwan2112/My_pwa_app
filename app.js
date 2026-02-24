@@ -174,7 +174,7 @@ class App {
         }, 1100);
     }
 
-    setupGlobalEvents() {
+        setupGlobalEvents() {
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
             if (!btn) return;
@@ -226,7 +226,7 @@ class App {
                             this.saveData(); this.render();
                         }, 550);
                     }
-                    return; // نمنع الـ render التلقائي تحت ليتم بعد الأنيميشن
+                    return; 
                 case 'deleteWord': 
                     if(confirm('حذف نهائي من البطاقات؟')) { 
                         const cardD = document.querySelector('.flashcard-container');
@@ -286,6 +286,10 @@ class App {
                     return;
                 case 'doAuth': 
                     this.handleAuth(); 
+                    return;
+                // --- هذه الإضافة الجديدة لحل مشكلة اختبار المستوى ---
+                case 'doPlacement':
+                    this.handlePlacement(param, correct);
                     return;
             }
             this.render();
