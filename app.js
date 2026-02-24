@@ -136,43 +136,48 @@ class App {
     }
 
   handlePlacement(selected, correct) {
-        if (this.isWaiting) return;
-        this.isWaiting = true;
-        
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
-        
-        // تشغيل الصوت المخصص
-        this.playTone(isCorrect ? 'correct' : 'error');
+    if (this.isWaiting) return;
+    this.isWaiting = true;
+    
+    const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+    
+    // تشغيل الصوت
+    this.playTone(isCorrect ? 'correct' : 'error');
 
-        if (isCorrect) {
-            this.placementScore++;
-        }
+    if (isCorrect) {
+        this.placementScore++;
+    }
 
-        // منطق التتبع الذكي (Adaptive Logic)
-        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-        let idx = levels.indexOf(this.currentDifficulty);
+    // منطق التتبع الذكي (Adaptive Logic)
+    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+    let idx = levels.indexOf(this.currentDifficulty);
 
-        if (isCorrect && idx < levels.length - 1) {
-            this.currentDifficulty = levels[idx + 1]; // رفع المستوى فوراً عند الإجابة الصحيحة
-        } else if (!isCorrect && idx > 0) {
-            this.currentDifficulty = levels[idx - 1]; // خفض المستوى عند الخطأ
-        }
+    if (isCorrect && idx < levels.length - 1) {
+        this.currentDifficulty = levels[idx + 1];
+    } else if (!isCorrect && idx > 0) {
+        this.currentDifficulty = levels[idx - 1];
+    }
 
-        this.placementStep++;
+    this.placementStep++;
 
-        // حفظ النتيجة عند انتهاء الـ 25 سؤال
-        if (this.placementStep >= 25) {
-            const res = {
-                level: this.currentDifficulty,
-                date: new Date().toLocaleString('ar-EG'),
-                score: this.placementScore,
-                ielts: this.getIeltsEquivalent(this.currentDifficulty)
-            };
-            this.placementResults.unshift(res);
-            localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
-        }
-  }
+    // حفظ النتيجة عند انتهاء 25 سؤال
+    if (this.placementStep >= 25) {
+        const res = {
+            level: this.currentDifficulty,
+            date: new Date().toLocaleString('ar-EG'),
+            score: this.placementScore,
+            ielts: this.getIeltsEquivalent(this.currentDifficulty)
+        };
+        this.placementResults.unshift(res);
+        localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
+    }
 
+    // ⏳ الانتقال للسؤال التالي بعد ثانيتين
+    setTimeout(() => {
+        this.isWaiting = false;
+        this.render();
+    }, 2000);
+}
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
         return map[level];
