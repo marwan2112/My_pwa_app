@@ -548,19 +548,12 @@ class App {
                 </div>`;
             }
             
-            const q = this.getAdaptiveQuestion();
-            const opts = [q.a, q.b, q.c, q.d].sort(() => 0.5 - Math.random());
-            return `<div class="reading-card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                    <span>سؤال: ${this.placementStep + 1}/25</span>
-                    <span>المستوى الحالي: ${this.currentDifficulty}</span>
-                </div>
-                <h2 style="margin-bottom:20px; direction:ltr;">${q.q}</h2>
-                <div class="quiz-options">
-                    ${opts.map(opt => `<button class="quiz-opt-btn" data-action="doPlacement" data-param="${opt}" data-correct="${q.a}">${opt}</button>`).join('')}
-                </div>
-            </div>`;
-        } // تأكد من وجود هذا القوس هنا لإغلاق قسم الاختبار
+
+const q = this.getAdaptiveQuestion();
+
+const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
+const opts = rawOpts.filter(o => o !== undefined).sort(() => 0.5 - Math.random());
+
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
