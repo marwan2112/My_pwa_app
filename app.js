@@ -10,7 +10,21 @@ class App {
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
         this.placementScore = 0;
-       this.theme = localStorage.getItem('theme') || 'light';
+        this.theme = localStorage.getItem('theme') || 'light';
+        updateProgress(points) {
+       this.userStats.xp += points;
+    // زيادة المستوى كل 100 نقطة
+    this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
+
+    // فحص الأوسمة (Badges)
+    const totalMastered = this.masteredWords.length;
+    if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
+    if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
+    if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
+
+    // حفظ البيانات
+    localStorage.setItem('userStats', JSON.stringify(this.userStats));
+}
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -18,6 +32,20 @@ class App {
             this.init();
         }
     }
+updateProgress(points) {
+    this.userStats.xp += points;
+    // زيادة المستوى كل 100 نقطة
+    this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
+
+    // فحص الأوسمة (Badges)
+    const totalMastered = this.masteredWords.length;
+    if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
+    if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
+    if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
+
+    // حفظ البيانات
+    localStorage.setItem('userStats', JSON.stringify(this.userStats));
+}
 
     init() {
         document.documentElement.setAttribute('data-theme', this.theme);
