@@ -1,5 +1,8 @@
 class App {
     constructor() {
+        this.levelStats = { A1:0, A2:0, B1:0, B2:0, C1:0, C2:0 };
+this.levelFails = { A1:0, A2:0, B1:0, B2:0, C1:0, C2:0 };
+this.placementLog = [];
         this.placementStep = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
