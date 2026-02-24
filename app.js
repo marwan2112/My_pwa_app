@@ -1,21 +1,15 @@
-/**
- * BOOSTER APP - PRO MAX EDITION (ANIMATED VERSION)
- * المبرمج: مروان
- * حالة الكود: جاهز للتشغيل 100% مع مؤثرات بصرية مطورة
- */
-
 class App {
     constructor() {
-
         this.placementStep = 0;
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
 
-        // 1. تعريف الإحصائيات (XP والنقاط) - ضروري جداً
+        // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
-this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
+        this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
@@ -23,17 +17,14 @@ this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || 
         }
     }
 
-    // 2. دالة تحديث التقدم (خارج الـ constructor وتحت بعضها مرة واحدة فقط)
+    // دالة التحديث (تأكد أنها خارج الـ constructor)
     updateProgress(points) {
         this.userStats.xp += points;
         this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
-
         const totalMastered = this.masteredWords ? this.masteredWords.length : 0;
-        
         if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
         if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
         if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
-
         localStorage.setItem('userStats', JSON.stringify(this.userStats));
     }
 
