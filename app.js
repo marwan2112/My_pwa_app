@@ -214,6 +214,14 @@ updateProgress(points) {
             if (action === 'ansQ') { this.handleAnswer(param, correct, btn); return; }
 
             switch(action) {
+                    case 'masterWord':
+    if (!this.masteredWords.includes(String(param))) {
+        this.masteredWords.push(String(param));
+        this.updateProgress(10); // زيادة 10 نقاط عند حفظ كل كلمة
+        this.saveData();
+    }
+    break;
+
                 case 'goHome': 
                     this.currentPage = 'home'; 
                     this.selectedLessonId = null; 
