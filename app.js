@@ -6,6 +6,10 @@
 
 class App {
     constructor() {
+        this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
+// أضف السطر التالي تحت السطر السابق مباشرة:
+this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
+
         this.placementStep = 0;
         this.currentDifficulty = 'A2';
         this.placementHistory = [];
