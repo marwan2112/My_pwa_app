@@ -11,20 +11,9 @@ class App {
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
-        updateProgress(points) {
-       this.userStats.xp += points;
-    // زيادة المستوى كل 100 نقطة
-    this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
 
-    // فحص الأوسمة (Badges)
-    const totalMastered = this.masteredWords.length;
-    if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
-    if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
-    if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
-
-    // حفظ البيانات
-    localStorage.setItem('userStats', JSON.stringify(this.userStats));
-}
+        // 1. تعريف الإحصائيات (XP والنقاط) - ضروري جداً
+        this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -32,20 +21,23 @@ class App {
             this.init();
         }
     }
-updateProgress(points) {
-    this.userStats.xp += points;
-    // زيادة المستوى كل 100 نقطة
-    this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
 
-    // فحص الأوسمة (Badges)
-    const totalMastered = this.masteredWords.length;
-    if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
-    if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
-    if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
+    // 2. دالة تحديث التقدم (خارج الـ constructor وتحت بعضها مرة واحدة فقط)
+    updateProgress(points) {
+        this.userStats.xp += points;
+        this.userStats.level = Math.floor(this.userStats.xp / 100) + 1;
 
-    // حفظ البيانات
-    localStorage.setItem('userStats', JSON.stringify(this.userStats));
-}
+        const totalMastered = this.masteredWords ? this.masteredWords.length : 0;
+        
+        if (totalMastered >= 10 && !this.userStats.badges.includes('🥉')) this.userStats.badges.push('🥉');
+        if (totalMastered >= 50 && !this.userStats.badges.includes('🥈')) this.userStats.badges.push('🥈');
+        if (totalMastered >= 100 && !this.userStats.badges.includes('🥇')) this.userStats.badges.push('🥇');
+
+        localStorage.setItem('userStats', JSON.stringify(this.userStats));
+    }
+
+    init() {
+        // ... باقي الكود كما هو
 
     init() {
         document.documentElement.setAttribute('data-theme', this.theme);
