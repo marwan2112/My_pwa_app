@@ -473,21 +473,45 @@ updateProgress(points) {
             </div></main>`;
         }
 
-        if (this.currentPage === 'home') {
+                if (this.currentPage === 'home') {
+            const progressLevel = this.userStats.xp % 100;
+
             return `<main class="main-content">
-                <div class="reading-card welcome-banner">
-                    <h3>مرحباً، ${this.userData.name} 👋</h3>
-                    <p>أتقنت ${this.masteredWords.length} كلمة</p>
+                <div class="reading-card welcome-banner" style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border: none; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin:0;">مرحباً، ${this.userData.name} 👋</h3>
+                        <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">
+                            ⭐ مستوى ${this.userStats.level}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
+                            <span>التقدم للمستوى التالي</span>
+                            <span>${progressLevel}%</span>
+                        </div>
+                        <div style="width: 100%; height: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="width: ${progressLevel}%; height: 100%; background: #10b981; box-shadow: 0 0 10px #10b981; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 12px; font-size: 1.6rem; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 12px;">
+                        ${this.userStats.badges.length > 0 ? this.userStats.badges.join(' ') : '<span style="font-size:0.8rem; opacity:0.8;">اجمع 10 كلمات للحصول على وسامك الأول! 🏅</span>'}
+                    </div>
                 </div>
-                <button class="hero-btn" data-action="setPage" data-param="addLesson" style="width:100%; background:#8b5cf6;">📸 إضافة من الكاميرا أو الهاتف</button>
-                <button class="hero-btn" data-action="setPage" data-param="placement_test" style="width:100%; background:#ec4899; margin:15px 0;">🧠 اختبار مستوى IELTS</button>
+
+                <button class="hero-btn" data-action="setPage" data-param="addLesson" style="width:100%; background:#8b5cf6; margin-top:15px; box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.3);">📸 إضافة من الكاميرا أو الهاتف</button>
+                <button class="hero-btn" data-action="setPage" data-param="placement_test" style="width:100%; background:#ec4899; margin:15px 0; box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.3);">🧠 اختبار مستوى </button>
+                
                 <div class="features-grid">
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
-                <button data-action="logout" class="logout-btn">تسجيل الخروج</button>
+                
+                <button data-action="logout" class="logout-btn" style="margin-top: 20px;">تسجيل الخروج</button>
             </main>`;
         }
+
 
 if (this.currentPage === 'placement_test') {
     if (this.placementStep >= 25) {
