@@ -170,90 +170,41 @@ this.placementLog = [];
     const levels = ["A1","A2","B1","B2","C1","C2"];
     let idx = levels.indexOf(this.currentDifficulty);
 
-    if (this.levelStats[this.currentDifficulty] >= 3 && idx < levels.length-1) {
-        this.currentDifficulty = levels[idx+1];
+    /* 🧠 منطق ذكي:
+       - 3 صح في مستوى = صعود
+       - 2 خطأ = نزول
+    */
+    if (this.levelStats[this.currentDifficulty] >= 3 && idx < levels.length - 1) {
+        this.currentDifficulty = levels[idx + 1];
     }
 
     if (this.levelFails[this.currentDifficulty] >= 2 && idx > 0) {
-        this.currentDifficulty = levels[idx-1];
+        this.currentDifficulty = levels[idx - 1];
+    }
+setTimeline() {
+    const levels = ["A1","A2","B1","B2","C1","C2"];
+    let idx = levels.indexOf(this.currentDifficulty);
+
+    const correctCount = this.levelStats[this.currentDifficulty];
+    const failCount = this.levelFails[this.currentDifficulty];
+
+    // 🧠 منطق التدرج الذكي:
+    // 3 إجابات صحيحة في مستوى = صعود
+    if (correctCount >= 3 && idx < levels.length - 1) {
+        this.currentDifficulty = levels[idx + 1];
+        return;
     }
 
-    setTimeout(() => {
-        this.isWaiting = false;
+    // 2 أخطاء في مستوى = نزول
+    if (failCount >= 2 && idx > 0) {
+        this.currentDifficulty = levels[idx - 1];
+        return;
+    }
 
-        if (this.placementStep >= 25) {
-            let finalLevel = "A1";
-            const levels = ["A1","A2","B1","B2","C1","C2"];
-
-            for (let lvl of levels) {
-                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
-            }
-
-            const res = {
-                level: finalLevel,
-                date: new Date().toLocaleString("ar-EG"),
-                details: this.placementLog
-            };
-
-            this.placementResults.unshift(res);
-            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
-        }
-
-        this.render();
-    }, 2000);
+    // غير ذلك: ابقَ في نفس المستوى
 }
-
-    setTimeout(() => {
-        this.isWaiting = false;
-
-        if (this.placementStep >= 25) {
-            let finalLevel = "A1";
-            for (let lvl of levels) {
-                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
-            }
-
-            const res = {
-                level: finalLevel,
-                date: new Date().toLocaleString("ar-EG"),
-                details: this.placementLog
-            };
-
-            this.placementResults.unshift(res);
-            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
-        }
-
-        this.render();
-    }, 2000);
-}
-    setTimeout(() => {
-        this.isWaiting = false;
-
-        if (this.placementStep >= 25) {
-            // 🏁 حساب المستوى النهائي الحقيقي
-            let finalLevel = "A1";
-            for (let lvl of levels) {
-                if (this.levelStats[lvl] >= 2) finalLevel = lvl;
-            }
-
-            const res = {
-                level: finalLevel,
-                date: new Date().toLocaleString("ar-EG"),
-                details: this.placementLog
-            };
-
-            this.placementResults.unshift(res);
-            localStorage.setItem("placementResults", JSON.stringify(this.placementResults));
-        }
-
-        this.render();
-    }, 2000);
-}
-    setTimeout(() => {
-        this.isWaiting = false;
-        this.render();
-    }, 2000);
-}
-    getIeltsEquivalent(level) {
+   
+     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
         return map[level];
     }
