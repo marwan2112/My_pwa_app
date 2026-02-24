@@ -688,20 +688,21 @@ class App {
                 return `<div style="text-align:center; padding:50px;">جاري التحميل...</div>`;
     }
 
-    toggleTheme() {
+     toggleTheme() {
         this.theme = this.theme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', this.theme);
         localStorage.setItem('theme', this.theme);
         this.render();
     }
-} 
-    resetPlacement() {
+
+    resetPlacement() { 
         this.placementStep = 0;
         this.placementScore = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
         this.render();
     }
-
+} // القوس يغلق الكلاس هنا بعد دالة ريسيت
 
 const appInstance = new App();
+
