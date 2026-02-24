@@ -135,7 +135,7 @@ class App {
         return selected;
     }
 
-                    handlePlacement(selected, correct) {
+  handlePlacement(selected, correct) {
         if (this.isWaiting) return;
         this.isWaiting = true;
         
@@ -171,7 +171,7 @@ class App {
             this.placementResults.unshift(res);
             localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
         }
-
+  }
 
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
