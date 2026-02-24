@@ -430,6 +430,13 @@ this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || 
             this.saveData(); this.render();
         }
     }
+resetPlacement() {
+    this.placementStep = 0;
+    this.placementScore = 0;
+    this.currentDifficulty = 'A2';
+    this.placementHistory = [];
+    this.render();
+}
 
     render() {
         const app = document.getElementById('app');
@@ -526,27 +533,29 @@ this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || 
 
 if (this.currentPage === 'placement_test') {
     if (this.placementStep >= 25) {
-        return `<div class="reading-card result-card">
-            <h2>المستوى: ${this.currentDifficulty}</h2>
-            <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-            <button class="hero-btn" data-action="goHome">تم</button>
-        </div>`;
-    }
-    const q = this.getAdaptiveQuestion();
-    return `<div class="reading-card">
-        <p>السؤال ${this.placementStep+1}/25</p>
-        <h3 style="direction:ltr; text-align:left;">${q.q}</h3>
-        <div class="options-stack" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-            ${q.options.map(o => `
-                <button class="quiz-opt-btn" 
-                        data-action="doPlacement" 
-                        data-param="${o}" 
-                        data-correct="${q.correct}">${o}</button>
+    return `<div class="reading-card result-card">
+        <h2 style="text-align:center; color:#ec4899;">🏁 انتهى الاختبار</h2>
+        <div style="background:#f8fafc; padding:15px; border-radius:12px; margin:15px 0; text-align:center; border:2px solid #ec4899;">
+            <p>مستواك الحالي: <b>${this.currentDifficulty}</b></p>
+            <p>IELTS: <b>${this.getIeltsEquivalent(this.currentDifficulty)}</b></p>
+        </div>
+        
+        <h4 style="margin-bottom:10px;">📜 سجل المحاولات السابقة:</h4>
+        <div style="max-height:150px; overflow-y:auto; margin-bottom:15px; font-size:0.85rem;">
+            ${this.placementResults.map(res => `
+                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">
+                    <span>📅 ${res.date}</span>
+                    <b>${res.level}</b>
+                </div>
             `).join('')}
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button class="hero-btn" onclick="appInstance.resetPlacement()" style="background:#ec4899;">محاولة جديدة 🔄</button>
+            <button class="hero-btn" data-action="goHome" style="background:#64748b;">تم</button>
         </div>
     </div>`;
 }
-
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
