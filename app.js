@@ -598,7 +598,7 @@ this.placementLog = [];
                 <div class="quiz-options">
                     ${opts.map(opt => `
                         <button class="quiz-opt-btn" 
-                                data-action="doPlacement" 
+onclick="appInstance.handlePlacement('${opt}','${q.a || q.answer}', this)"
                                 data-param="${opt}" 
                                 data-correct="${q.a || q.answer}">
                             ${opt}
