@@ -198,6 +198,10 @@ class App {
                     this.selectedLevel = param; 
                     this.currentPage = (param === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
                     break;
+                    case 'toggleTheme':
+    this.toggleTheme();
+    break;
+
                 case 'selLesson':
                     this.scrollPos = window.scrollY;
                     const list = window.lessonsList[this.selectedLevel] || [];
@@ -407,8 +411,18 @@ class App {
                 <button class="nav-btn ${this.currentPage==='quiz'?'active':''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
             </nav>`;
         }
-        return `<header class="header"><div class="header-content"><h2 data-action="goHome" style="cursor:pointer">🏠 Home</h2>${nav}</div></header>`;
-    }
+        return `<header class="header">
+    <div class="header-content">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <h2 data-action="goHome" style="cursor:pointer">🏠</h2>
+            <button data-action="toggleTheme" style="background:none; border:none; font-size:1.3rem; cursor:pointer; padding:5px;">
+                ${this.theme === 'light' ? '🌙' : '☀️'}
+            </button>
+        </div>
+        ${nav}
+    </div>
+</header>`;
+
 
     getView(lesson, allTerms) {
         if (this.currentPage === 'auth') {
