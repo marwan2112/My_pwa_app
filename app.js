@@ -16,6 +16,15 @@ class App {
         // لعرض تفاصيل اختبار سابق
         this.viewingPlacementDetails = null;
 
+        // متغيرات خاصة بميزة إعادة ترتيب الجمل
+        this.jumbleOriginalSentence = '';
+        this.jumbleWords = [];
+        this.jumbleUserAnswer = [];
+
+        // متغيرات خاصة بميزة الاستماع
+        this.listeningQuestion = null;
+        this.listeningOptions = [];
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
@@ -291,6 +300,115 @@ class App {
         }, 1100);
     }
 
+    // ================== دوال إعادة ترتيب الجمل ==================
+    prepareJumble() {
+        const lesson = window.lessonsData[this.selectedLessonId];
+        if (!lesson) return;
+
+        // نختار جملة عشوائية من محتوى الدرس (نقسم النص على .!? ثم نختار جملة)
+        const sentences = lesson.content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        if (sentences.length === 0) {
+            // إذا لم نجد جملة، ننشئ جملة من أول 3 كلمات في الدرس
+            const words = lesson.terms.map(t => t.english).slice(0, 3);
+            this.jumbleOriginalSentence = words.join(' ');
+        } else {
+            this.jumbleOriginalSentence = sentences[Math.floor(Math.random() * sentences.length)].trim();
+        }
+
+        // تقسيم الجملة إلى كلمات (مع الحفاظ على علامات الترقيم؟ الأفضل إزالتها مؤقتاً)
+        this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
+        // خلط الكلمات
+        this.shuffleArray(this.jumbleWords);
+        this.jumbleUserAnswer = [];
+    }
+
+    shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+
+    handleJumbleSelect(word) {
+        // ننقل الكلمة من jumbleWords إلى jumbleUserAnswer
+        const index = this.jumbleWords.indexOf(word);
+        if (index !== -1) {
+            this.jumbleWords.splice(index, 1);
+            this.jumbleUserAnswer.push(word);
+            this.render();
+        }
+    }
+
+    handleJumbleReset() {
+        // إعادة تعيين: نجمع الكلمات مرة أخرى ونخلطها
+        this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
+        this.shuffleArray(this.jumbleWords);
+        this.jumbleUserAnswer = [];
+        this.render();
+    }
+
+    handleJumbleCheck() {
+        const userSentence = this.jumbleUserAnswer.join(' ');
+        const isCorrect = (userSentence.toLowerCase() === this.jumbleOriginalSentence.toLowerCase());
+        if (isCorrect) {
+            this.playTone('correct');
+            alert('✅ إجابة صحيحة! أحسنت.');
+            // يمكن إضافة نقاط أو أي مكافأة
+            this.updateProgress(5); // 5 نقاط إضافية
+        } else {
+            this.playTone('error');
+            alert('❌ إجابة خاطئة. حاول مرة أخرى.');
+        }
+        // لا نعيد تعيين، يمكن للمستخدم المحاولة مرة أخرى أو الضغط على زر إعادة
+    }
+
+    // ================== دوال اختبار الاستماع ==================
+    prepareListeningQuiz() {
+        const lesson = window.lessonsData[this.selectedLessonId];
+        if (!lesson) return;
+
+        // نأخذ الكلمات غير المتقنة والمخفية من الدرس
+        const allTerms = [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)];
+        const available = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
+
+        if (available.length === 0) {
+            alert('لا توجد كلمات متاحة للاستماع. قم بإضافة كلمات جديدة أو إعادة تعيين الكلمات المتقنة.');
+            return;
+        }
+
+        // اختيار كلمة عشوائية لتكون السؤال
+        this.listeningQuestion = available[Math.floor(Math.random() * available.length)];
+
+        // تحضير خيارات: الإجابة الصحيحة + 3 كلمات عشوائية أخرى من نفس الدرس
+        const otherTerms = allTerms.filter(t => t.id !== this.listeningQuestion.id);
+        const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
+        const wrongOptions = shuffled.slice(0, 3).map(t => t.arabic);
+        while (wrongOptions.length < 3) wrongOptions.push('???'); // في حال عدم وجود كلمات كافية
+        this.listeningOptions = [this.listeningQuestion.arabic, ...wrongOptions].sort(() => 0.5 - Math.random());
+
+        // تشغيل صوت الكلمة
+        this.speak(this.listeningQuestion.english);
+    }
+
+    handleListeningAnswer(selectedArabic) {
+        if (!this.listeningQuestion) return;
+
+        const isCorrect = (selectedArabic === this.listeningQuestion.arabic);
+        if (isCorrect) {
+            this.playTone('correct');
+            alert('✅ إجابة صحيحة!');
+            this.updateProgress(5); // مكافأة
+            // ننتقل إلى سؤال جديد
+            this.prepareListeningQuiz();
+        } else {
+            this.playTone('error');
+            alert('❌ إجابة خاطئة. حاول مرة أخرى.');
+            // نعيد تشغيل الصوت
+            this.speak(this.listeningQuestion.english);
+        }
+        this.render(); // لإعادة عرض الخيارات (يمكن أن يتغير السؤال إذا كانت الإجابة صحيحة)
+    }
+
     setupGlobalEvents() {
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
@@ -349,6 +467,8 @@ class App {
                 case 'setPage':
                     this.currentPage = param;
                     if (param === 'quiz' && this.selectedLessonId) this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
+                    if (param === 'jumble' && this.selectedLessonId) this.prepareJumble();
+                    if (param === 'listening' && this.selectedLessonId) this.prepareListeningQuiz();
                     this.currentCardIndex = 0; 
                     break;
 
@@ -448,6 +568,20 @@ class App {
                     this.viewingPlacementDetails = null;
                     this.currentPage = 'placement_test';
                     this.render();
+                    break;
+
+                // الأحداث الجديدة
+                case 'jumbleSelect':
+                    this.handleJumbleSelect(param);
+                    break;
+                case 'jumbleReset':
+                    this.handleJumbleReset();
+                    break;
+                case 'jumbleCheck':
+                    this.handleJumbleCheck();
+                    break;
+                case 'listeningAnswer':
+                    this.handleListeningAnswer(param);
                     break;
             }
             this.render();
@@ -555,11 +689,13 @@ class App {
     getHeader() {
         if (this.currentPage === 'auth') return '';
         let nav = '';
-        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz'].includes(this.currentPage) && !this.isUnlockTest) {
+        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz', 'jumble', 'listening'].includes(this.currentPage) && !this.isUnlockTest) {
             nav = `<nav class="nav-menu">
                 <button class="nav-btn ${this.currentPage === 'reading' ? 'active' : ''}" data-action="setPage" data-param="reading">📖 النص</button>
                 <button class="nav-btn ${this.currentPage === 'flashcards' ? 'active' : ''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
                 <button class="nav-btn ${this.currentPage === 'quiz' ? 'active' : ''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
+                <button class="nav-btn ${this.currentPage === 'jumble' ? 'active' : ''}" data-action="setPage" data-param="jumble">🔤 ترتيب</button>
+                <button class="nav-btn ${this.currentPage === 'listening' ? 'active' : ''}" data-action="setPage" data-param="listening">🎧 استماع</button>
             </nav>`;
         }
         return `<header class="header">
@@ -800,6 +936,49 @@ class App {
                 <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}">🔊</button>
                 <div class="quiz-options">
                     ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
+                </div>
+            </div>`;
+        }
+
+        // ========== صفحة إعادة ترتيب الجمل ==========
+        if (this.currentPage === 'jumble') {
+            if (!this.jumbleWords || this.jumbleWords.length === 0) {
+                return `<div class="reading-card"><p>لا توجد كلمات للترتيب. الرجاء العودة لاحقاً.</p></div>`;
+            }
+            return `<div class="reading-card">
+                <h3>🔤 رتب الكلمات لتكوين جملة صحيحة</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: #f1f5f9; border-radius: 8px; min-height: 60px;">
+                    ${this.jumbleUserAnswer.map(word => `
+                        <span style="background: #3b82f6; color: white; padding: 8px 15px; border-radius: 20px; font-size: 1.2rem;">${word}</span>
+                    `).join('')}
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: #e2e8f0; border-radius: 8px; min-height: 60px;">
+                    ${this.jumbleWords.map(word => `
+                        <button class="hero-btn" data-action="jumbleSelect" data-param="${word}" style="padding: 8px 15px; background: #64748b; font-size: 1rem;">${word}</button>
+                    `).join('')}
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="hero-btn" data-action="jumbleReset" style="background:#f59e0b;">🔄 إعادة</button>
+                    <button class="hero-btn" data-action="jumbleCheck" style="background:#10b981;">✅ تحقق</button>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">الجملة الأصلية: ${this.jumbleOriginalSentence}</p>
+            </div>`;
+        }
+
+        // ========== صفحة اختبار الاستماع ==========
+        if (this.currentPage === 'listening') {
+            if (!this.listeningQuestion) {
+                return `<div class="reading-card"><p>لا توجد كلمات متاحة. حاول مرة أخرى.</p></div>`;
+            }
+            return `<div class="reading-card">
+                <h3>🎧 استمع واختر الكلمة الصحيحة</h3>
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="hero-btn" data-action="speak" data-param="${this.listeningQuestion.english}" style="font-size: 2rem; padding: 20px; background: #6366f1;">🔊 استمع مرة أخرى</button>
+                </div>
+                <div class="quiz-options">
+                    ${this.listeningOptions.map(opt => `
+                        <button class="quiz-opt-btn" data-action="listeningAnswer" data-param="${opt}">${opt}</button>
+                    `).join('')}
                 </div>
             </div>`;
         }
