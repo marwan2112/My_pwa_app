@@ -551,39 +551,35 @@ class App {
             </main>`;
         }
 
-                if (this.currentPage === 'placement_test') {
-            // شاشة النتيجة النهائية
+                        if (this.currentPage === 'placement_test') {
             if (this.placementStep >= 25) {
                 return `<div class="reading-card result-card">
                     <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
                     <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
-                        <h3>المستوى: ${this.currentDifficulty}</h3>
-                        <p>IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
+                        <h1 style="color:#1e40af; margin-bottom:5px;">${this.currentDifficulty}</h1>
+                        <p style="font-weight:bold; color:#3b82f6;">IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
+                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 25</p>
                     </div>
-                    <h4 style="margin-top:15px;">📜 السجل السابق:</h4>
-                    <div style="max-height:100px; overflow-y:auto; font-size:0.8rem; margin-bottom:15px;">
-                        ${this.placementResults.map(r => `<div style="border-bottom:1px solid #eee; padding:5px;">📅 ${r.date} - المستوى: ${r.level}</div>`).join('')}
+                    <h4 style="margin-top:15px;">📜 سجل نتائجك السابقة:</h4>
+                    <div style="max-height:150px; overflow-y:auto; font-size:0.8rem; margin-bottom:15px; border:1px solid #eee; border-radius:8px;">
+                        ${this.placementResults.map(r => `<div style="border-bottom:1px solid #eee; padding:8px; display:flex; justify-content:space-between;"><span>📅 ${r.date}</span> <strong>المستوى: ${r.level}</strong></div>`).join('')}
                     </div>
                     <div style="display:flex; gap:10px;">
                         <button class="hero-btn" onclick="appInstance.resetPlacement()" style="background:#ec4899; flex:1;">إعادة الاختبار 🔄</button>
-                        <button class="hero-btn" data-action="goHome" style="background:#64748b; flex:1;">تم</button>
+                        <button class="hero-btn" data-action="goHome" style="background:#64748b; flex:1;">الرئيسية</button>
                     </div>
                 </div>`;
             }
 
-            // --- منطق جلب السؤال التكيفي ---
             const q = this.getAdaptiveQuestion();
-            // جلب الخيارات من أي مسمى موجود في البنك (options أو a,b,c,d)
             const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
             const opts = rawOpts.filter(o => o !== undefined).sort(() => 0.5 - Math.random());
 
             return `<div class="reading-card">
-                <div style="display:flex; justify-content:center; margin-bottom:15px;">
-                    <span style="font-weight:bold; color:#64748b; background:#f1f5f9; padding:4px 12px; border-radius:15px;">
-                        سؤال: ${this.placementStep + 1} / 25
-                    </span>
+                <div style="display:flex; justify-content:center; margin-bottom:20px;">
+                    <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">السؤال رقم ${this.placementStep + 1}</span>
                 </div>
-                <h2 style="margin-bottom:25px; direction:ltr; text-align:left; line-height:1.4;">${q.q}</h2>
+                <h2 style="margin-bottom:30px; direction:ltr; text-align:left; line-height:1.5; color:#1e293b;">${q.q}</h2>
                 <div class="quiz-options">
                     ${opts.map(opt => `
                         <button class="quiz-opt-btn" 
@@ -594,18 +590,8 @@ class App {
                         </button>
                     `).join('')}
                 </div>
-                <div style="margin-top:20px; text-align:center; opacity:0.5; font-size:0.8rem;">
-                    المستوى الحالي للذكاء: ${this.currentDifficulty}
-                </div>
             </div>`;
         }
-
-            
-                    
-const q = this.getAdaptiveQuestion();
-
-const rawOpts = q.options ? q.options : [q.a, q.b, q.c, q.d];
-const opts = rawOpts.filter(o => o !== undefined).sort(() => 0.5 - Math.random());
 
 
         if (this.currentPage === 'lessons') {
