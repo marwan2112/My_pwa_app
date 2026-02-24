@@ -129,22 +129,42 @@ this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || 
     }
 
     handlePlacement(selected, correct) {
-        if(this.isWaiting) return;
-        this.isWaiting = true;
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
-        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-        let idx = levels.indexOf(this.currentDifficulty);
-
-        if (isCorrect) {
-            this.playTone('correct');
-            if (idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
-        } else {
-            this.playTone('error');
-            if (idx > 0) this.currentDifficulty = levels[idx - 1];
-        }
-        this.placementStep++;
-        setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
+    if(this.isWaiting) return;
+    this.isWaiting = true;
+    const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+    
+    // احتساب النقاط
+    if (isCorrect) {
+        this.playTone('correct');
+        this.placementScore++; // تأكد من إضافة هذا المتغير لتجميع النقاط
+    } else {
+        this.playTone('error');
     }
+
+    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+    let idx = levels.indexOf(this.currentDifficulty);
+
+    // التحرك بين المستويات
+    if (isCorrect && idx < levels.length - 1) this.currentDifficulty = levels[idx + 1];
+    else if (!isCorrect && idx > 0) this.currentDifficulty = levels[idx - 1];
+
+    this.placementStep++;
+
+    // إذا انتهى الاختبار (وصل 25 سؤال)
+    if (this.placementStep >= 25) {
+        const newResult = {
+            level: this.currentDifficulty,
+            ielts: this.getIeltsEquivalent(this.currentDifficulty),
+            date: new Date().toLocaleString('ar-EG'),
+            score: this.placementScore
+        };
+        this.placementResults.unshift(newResult); // إضافة النتيجة في أول القائمة
+        localStorage.setItem('placementResults', JSON.stringify(this.placementResults));
+    }
+
+    setTimeout(() => { this.isWaiting = false; this.render(); }, 600);
+}
+
 
     getIeltsEquivalent(level) {
         const map = { 'A1': '2.0-3.0', 'A2': '3.0-4.0', 'B1': '4.0-5.0', 'B2': '5.5-6.5', 'C1': '7.0-8.0', 'C2': '8.5-9.0' };
