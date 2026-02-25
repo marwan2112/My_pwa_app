@@ -23,6 +23,7 @@ class App {
         this.jumbleChecked = false;
         this.jumbleCorrect = false;
         this.jumbleHintUsed = false;
+        this.jumbleHistory = []; // سجل الجمل المستخدمة
 
         // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
@@ -30,6 +31,7 @@ class App {
         this.listeningOptions = [];
         this.listeningAnswered = false;
         this.listeningTimer = null;
+        this.listeningErrorTimer = null;
         this.listeningUnlocked = false; // لتحديد إذا كان قد دفع للدخول لهذا الدرس
 
         if (document.readyState === 'loading') {
@@ -362,16 +364,23 @@ class App {
             return words >= 3 && words <= 7;
         });
 
-        if (usefulSentences.length > 0) {
-            this.jumbleOriginalSentence = usefulSentences[Math.floor(Math.random() * usefulSentences.length)];
-        } else if (sentences.length > 0) {
-            // نأخذ أول جملة ونقتطعها
-            const words = sentences[0].split(/\s+/).slice(0, 5);
-            this.jumbleOriginalSentence = words.join(' ');
-        } else {
+        let availableSentences = usefulSentences.length > 0 ? usefulSentences : sentences;
+        if (availableSentences.length === 0) {
             // نبني جملة من الكلمات
             const words = lesson.terms.slice(0, 4).map(t => t.english);
             this.jumbleOriginalSentence = words.join(' ');
+        } else {
+            // إزالة الجمل المستخدمة سابقاً من القائمة المتاحة
+            const unused = availableSentences.filter(s => !this.jumbleHistory.includes(s));
+            if (unused.length === 0) {
+                // إذا استنفذت كل الجمل، نعيد تعيين التاريخ
+                this.jumbleHistory = [];
+                this.jumbleOriginalSentence = availableSentences[Math.floor(Math.random() * availableSentences.length)];
+            } else {
+                this.jumbleOriginalSentence = unused[Math.floor(Math.random() * unused.length)];
+            }
+            // إضافة الجملة إلى التاريخ
+            this.jumbleHistory.push(this.jumbleOriginalSentence);
         }
 
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
@@ -461,6 +470,10 @@ class App {
             clearTimeout(this.listeningTimer);
             this.listeningTimer = null;
         }
+        if (this.listeningErrorTimer) {
+            clearTimeout(this.listeningErrorTimer);
+            this.listeningErrorTimer = null;
+        }
 
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
@@ -514,25 +527,37 @@ class App {
         });
 
         if (isCorrect) {
+            // الإجابة صحيحة: نزيل الكلمة من القائمة وننتقل للتي تليها بعد 2.5 ثانية
             this.listeningRemaining.shift();
             this.updateProgress(5);
-        } else {
-            if (this.listeningRemaining.length > 1) {
-                const wrongWord = this.listeningRemaining.shift();
-                this.listeningRemaining.push(wrongWord);
-            }
-        }
 
-        this.listeningTimer = setTimeout(() => {
-            this.listeningTimer = null;
-            if (this.listeningRemaining.length === 0) {
-                alert('🎉 تهانينا! أكملت جميع الكلمات.');
-                this.currentPage = 'reading';
-            } else {
-                this.prepareListeningQuiz();
-            }
-            this.render();
-        }, 2500);
+            this.listeningTimer = setTimeout(() => {
+                this.listeningTimer = null;
+                if (this.listeningRemaining.length === 0) {
+                    alert('🎉 تهانينا! أكملت جميع الكلمات.');
+                    this.currentPage = 'reading';
+                } else {
+                    this.prepareListeningQuiz();
+                }
+                this.render();
+            }, 2500);
+        } else {
+            // الإجابة خاطئة: لا نغير القائمة، وبعد 1.5 ثانية نعيد تعيين الأزرار ليمكن المحاولة مرة أخرى
+            this.listeningErrorTimer = setTimeout(() => {
+                this.listeningErrorTimer = null;
+                this.listeningAnswered = false; // السماح بإعادة المحاولة
+                // إعادة تعيين ألوان الأزرار
+                allOptions.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.backgroundColor = ''; // إزالة الألوان المخصصة
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                });
+                // إعادة تشغيل الصوت تلقائياً؟ يمكن اختيارياً:
+                // this.speak(this.listeningCurrent.english);
+                this.render();
+            }, 1500);
+        }
     }
 
     // دالة لفتح اختبار الاستماع بالعملات
@@ -648,6 +673,7 @@ class App {
                         // إعادة تعيين حالة الدفع للتمارين الخاصة بهذا الدرس
                         this.listeningUnlocked = false;
                         this.jumbleUnlocked = false;
+                        this.jumbleHistory = []; // إعادة تعيين تاريخ الجمل لكل درس جديد
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
                         const prevId = list[curIdx - 1].id;
