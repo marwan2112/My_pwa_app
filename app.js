@@ -22,6 +22,7 @@ class App {
         this.jumbleUserAnswer = [];
         this.jumbleChecked = false;
         this.jumbleCorrect = false;
+        this.jumbleHintUsed = false;
 
         // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
@@ -29,7 +30,7 @@ class App {
         this.listeningOptions = [];
         this.listeningAnswered = false;
         this.listeningTimer = null;
-        this.listeningUnlocked = false; // لتحديد إذا كان قد دفع للدخول
+        this.listeningUnlocked = false; // لتحديد إذا كان قد دفع للدخول لهذا الدرس
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -49,6 +50,9 @@ class App {
     }
 
     init() {
+        // إضافة CSS للوضع الليلي
+        this.addThemeStyles();
+
         document.documentElement.setAttribute('data-theme', this.theme);
         
         if (!window.levels || !window.lessonsData || !window.placementBank) {
@@ -85,6 +89,63 @@ class App {
 
         this.setupGlobalEvents();
         this.render();
+    }
+
+    addThemeStyles() {
+        const styleId = 'theme-dynamic-styles';
+        if (document.getElementById(styleId)) return;
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            [data-theme="dark"] body {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+            [data-theme="dark"] .header {
+                background-color: #1e1e1e !important;
+                border-bottom: 1px solid #333 !important;
+            }
+            [data-theme="dark"] .reading-card,
+            [data-theme="dark"] .feature-card,
+            [data-theme="dark"] .quiz-box,
+            [data-theme="dark"] .flashcard-container,
+            [data-theme="dark"] .jumble-card {
+                background-color: #1e1e1e !important;
+                color: #ffffff !important;
+                border-color: #444 !important;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.5) !important;
+            }
+            [data-theme="dark"] .hero-btn,
+            [data-theme="dark"] .quiz-opt-btn,
+            [data-theme="dark"] .nav-btn {
+                background-color: #333 !important;
+                color: #fff !important;
+                border-color: #555 !important;
+            }
+            [data-theme="dark"] .hero-btn:hover,
+            [data-theme="dark"] .quiz-opt-btn:hover {
+                background-color: #444 !important;
+            }
+            [data-theme="dark"] input,
+            [data-theme="dark"] textarea {
+                background-color: #2d2d2d !important;
+                color: #fff !important;
+                border-color: #555 !important;
+            }
+            [data-theme="dark"] .flashcard-front,
+            [data-theme="dark"] .flashcard-back {
+                background-color: #2d2d2d !important;
+                color: #fff !important;
+            }
+            [data-theme="dark"] .logout-btn {
+                background-color: #4a4a4a !important;
+                color: #fff !important;
+            }
+            [data-theme="dark"] .welcome-banner {
+                background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     saveData() {
@@ -293,20 +354,23 @@ class App {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
-        // محاولة أخذ جملة قصيرة من النص
-        const sentences = lesson.content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        // تصفية الجمل الطويلة جداً (أكثر من 7 كلمات) لأننا نريد جمل قصيرة
-        const shortSentences = sentences.filter(s => s.split(/\s+/).length <= 7);
-        
-        if (shortSentences.length > 0) {
-            this.jumbleOriginalSentence = shortSentences[Math.floor(Math.random() * shortSentences.length)].trim();
+        // محاولة استخراج جمل مفيدة من النص
+        const sentences = lesson.content.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
+        // نختار جملة قصيرة ذات معنى (3-7 كلمات)
+        const usefulSentences = sentences.filter(s => {
+            const words = s.split(/\s+/).length;
+            return words >= 3 && words <= 7;
+        });
+
+        if (usefulSentences.length > 0) {
+            this.jumbleOriginalSentence = usefulSentences[Math.floor(Math.random() * usefulSentences.length)];
         } else if (sentences.length > 0) {
-            // إذا لم نجد جمل قصيرة، نأخذ أول 5 كلمات من أي جملة
+            // نأخذ أول جملة ونقتطعها
             const words = sentences[0].split(/\s+/).slice(0, 5);
             this.jumbleOriginalSentence = words.join(' ');
         } else {
-            // إنشاء جملة من أول 3 كلمات في الدرس
-            const words = lesson.terms.map(t => t.english).slice(0, 3);
+            // نبني جملة من الكلمات
+            const words = lesson.terms.slice(0, 4).map(t => t.english);
             this.jumbleOriginalSentence = words.join(' ');
         }
 
@@ -315,6 +379,7 @@ class App {
         this.jumbleUserAnswer = [];
         this.jumbleChecked = false;
         this.jumbleCorrect = false;
+        this.jumbleHintUsed = false;
     }
 
     shuffleArray(arr) {
@@ -334,10 +399,11 @@ class App {
         }
     }
 
-    handleJumbleRemove(index) {
+    // إزالة كلمة من المربع العلوي عند النقر عليها (بدون زر)
+    handleJumbleRemove(word) {
         if (this.jumbleChecked) return;
-        if (index >= 0 && index < this.jumbleUserAnswer.length) {
-            const word = this.jumbleUserAnswer[index];
+        const index = this.jumbleUserAnswer.indexOf(word);
+        if (index !== -1) {
             this.jumbleUserAnswer.splice(index, 1);
             this.jumbleWords.push(word);
             this.render();
@@ -350,6 +416,7 @@ class App {
         this.jumbleUserAnswer = [];
         this.jumbleChecked = false;
         this.jumbleCorrect = false;
+        this.jumbleHintUsed = false;
         this.render();
     }
 
@@ -362,6 +429,23 @@ class App {
         this.playTone(isCorrect ? 'correct' : 'error');
         if (isCorrect) {
             this.updateProgress(5);
+        }
+        this.render();
+    }
+
+    handleJumbleHint() {
+        if (this.jumbleChecked) return;
+        if (this.jumbleHintUsed) return;
+        this.jumbleHintUsed = true;
+        // نعرض أول كلمة من الجملة الأصلية في المربع العلوي
+        const firstWord = this.jumbleOriginalSentence.split(/\s+/)[0];
+        if (firstWord && !this.jumbleUserAnswer.includes(firstWord)) {
+            // ننقل الكلمة الأولى من الأسفل إلى الأعلى إذا كانت موجودة
+            const index = this.jumbleWords.indexOf(firstWord);
+            if (index !== -1) {
+                this.jumbleWords.splice(index, 1);
+                this.jumbleUserAnswer.push(firstWord);
+            }
         }
         this.render();
     }
@@ -453,14 +537,61 @@ class App {
 
     // دالة لفتح اختبار الاستماع بالعملات
     unlockListening() {
+        if (this.listeningUnlocked) return true; // مفتوح بالفعل
         if (this.userCoins >= 50) {
-            this.userCoins -= 50;
-            this.listeningUnlocked = true;
-            this.prepareListeningQuiz();
-            this.saveData();
-            this.render();
+            if (confirm('هل تريد فتح اختبار الاستماع لهذا الدرس باستخدام 50 لؤلؤة؟')) {
+                this.userCoins -= 50;
+                this.listeningUnlocked = true;
+                this.saveData();
+                this.prepareListeningQuiz();
+                this.render();
+                return true;
+            } else {
+                return false;
+            }
         } else {
             alert(`❌ ليس لديك لآلئ كافية! تحتاج 50 لؤلؤة. رصيدك الحالي: ${this.userCoins}`);
+            return false;
+        }
+    }
+
+    // دالة لفتح الترتيب بالعملات
+    unlockJumble() {
+        if (this.jumbleUnlocked) return true;
+        if (this.userCoins >= 50) {
+            if (confirm('هل تريد فتح تمرين ترتيب الجمل لهذا الدرس باستخدام 50 لؤلؤة؟')) {
+                this.userCoins -= 50;
+                this.jumbleUnlocked = true;
+                this.saveData();
+                this.prepareJumble();
+                this.render();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            alert(`❌ ليس لديك لآلئ كافية! تحتاج 50 لؤلؤة. رصيدك الحالي: ${this.userCoins}`);
+            return false;
+        }
+    }
+
+    // التحقق من إكمال الدرس (جميع الكلمات mastered)
+    isLessonCompleted(lessonId) {
+        const lesson = window.lessonsData[lessonId];
+        if (!lesson) return false;
+        const allTermIds = lesson.terms.map(t => String(t.id));
+        // التحقق إذا كانت جميع كلمات الدرس موجودة في masteredWords
+        return allTermIds.every(id => this.masteredWords.includes(id));
+    }
+
+    // منح مكافأة إكمال الدرس (مرة واحدة فقط)
+    grantLessonCompletionReward(lessonId) {
+        const key = `lesson_completed_${lessonId}`;
+        if (!localStorage.getItem(key) && this.isLessonCompleted(lessonId)) {
+            this.userCoins += 20;
+            localStorage.setItem(key, 'true');
+            this.saveData();
+            alert(`🎉 أحسنت! أكملت جميع كلمات الدرس وحصلت على 20 لؤلؤة إضافية.`);
         }
     }
 
@@ -478,6 +609,10 @@ class App {
                         this.masteredWords.push(String(param));
                         this.updateProgress(10);
                         this.saveData();
+                        // بعد إتقان كلمة، نتحقق إذا اكتمل الدرس
+                        if (this.selectedLessonId) {
+                            this.grantLessonCompletionReward(this.selectedLessonId);
+                        }
                     }
                     break;
 
@@ -509,11 +644,10 @@ class App {
                         this.selectedLessonId = param; 
                         this.currentPage = 'reading'; 
                         this.isUnlockTest = false;
-                        // منح 20 لؤلؤة عند فتح درس (لأول مرة؟ يمكن التحقق)
-                        if (!this.unlockedLessons.includes(String(param))) {
-                            this.userCoins += 20;
-                            this.saveData();
-                        }
+
+                        // إعادة تعيين حالة الدفع للتمارين الخاصة بهذا الدرس
+                        this.listeningUnlocked = false;
+                        this.jumbleUnlocked = false;
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
                         const prevId = list[curIdx - 1].id;
@@ -525,18 +659,22 @@ class App {
                     break;
 
                 case 'setPage':
-                    this.currentPage = param;
-                    if (param === 'quiz' && this.selectedLessonId) this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
-                    if (param === 'jumble' && this.selectedLessonId) this.prepareJumble();
                     if (param === 'listening' && this.selectedLessonId) {
-                        // التحقق من الدفع
                         if (!this.listeningUnlocked) {
-                            this.unlockListening();
-                            return;
+                            if (!this.unlockListening()) return;
                         } else {
                             this.prepareListeningQuiz();
                         }
+                    } else if (param === 'jumble' && this.selectedLessonId) {
+                        if (!this.jumbleUnlocked) {
+                            if (!this.unlockJumble()) return;
+                        } else {
+                            this.prepareJumble();
+                        }
+                    } else if (param === 'quiz' && this.selectedLessonId) {
+                        this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
                     }
+                    this.currentPage = param;
                     this.currentCardIndex = 0; 
                     break;
 
@@ -545,9 +683,15 @@ class App {
                     if(cardM) {
                         cardM.classList.add('master-anim');
                         setTimeout(() => {
-                            if(!this.masteredWords.includes(String(param))) this.masteredWords.push(String(param)); 
-                            // عند إتقان كلمة، قد نضيف نقاط
-                            this.saveData(); this.render();
+                            if(!this.masteredWords.includes(String(param))) {
+                                this.masteredWords.push(String(param));
+                                this.updateProgress(10);
+                                this.saveData();
+                                if (this.selectedLessonId) {
+                                    this.grantLessonCompletionReward(this.selectedLessonId);
+                                }
+                            }
+                            this.render();
                         }, 550);
                     }
                     return; 
@@ -643,13 +787,16 @@ class App {
                     this.handleJumbleSelect(param);
                     break;
                 case 'jumbleRemove':
-                    this.handleJumbleRemove(parseInt(param));
+                    this.handleJumbleRemove(param);
                     break;
                 case 'jumbleReset':
                     this.handleJumbleReset();
                     break;
                 case 'jumbleCheck':
                     this.handleJumbleCheck();
+                    break;
+                case 'jumbleHint':
+                    this.handleJumbleHint();
                     break;
                 case 'jumbleNext':
                     this.handleJumbleNext();
@@ -1007,8 +1154,10 @@ class App {
                 const pass = (this.quizScore/this.quizQuestions.length) >= 0.75;
                 if (this.isUnlockTest && pass) {
                     this.unlockedLessons.push(String(this.tempLessonToUnlock));
-                    // منح 20 لؤلؤة عند فتح درس جديد (بعد النجاح في اختبار الفتح)
+                    // منح 20 لؤلؤة عند فتح درس جديد (لأول مرة)
                     this.userCoins += 20;
+                    this.saveData();
+                    alert(`🎉 لقد فتحت درساً جديداً وحصلت على 20 لؤلؤة!`);
                 }
                 this.saveData();
                 return `<div class="reading-card finish-box">
@@ -1029,14 +1178,19 @@ class App {
 
         // ========== صفحة إعادة ترتيب الجمل ==========
         if (this.currentPage === 'jumble') {
+            if (!this.jumbleUnlocked) {
+                return `<div class="reading-card" style="text-align: center;">
+                    <h3>🔤 ترتيب الجمل</h3>
+                    <p>لفتح هذا التمرين تحتاج 50 💎 لؤلؤة.</p>
+                    <p>رصيدك الحالي: ${this.userCoins} 💎</p>
+                    <button class="hero-btn" onclick="appInstance.unlockJumble()" style="background: #8b5cf6;">فتح (50 💎)</button>
+                </div>`;
+            }
             return `<div class="reading-card">
                 <h3>🔤 رتب الكلمات لتكوين جملة صحيحة</h3>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: ${this.jumbleChecked ? (this.jumbleCorrect ? '#d1fae5' : '#fee2e2') : '#f1f5f9'}; border-radius: 8px; min-height: 60px; border: ${this.jumbleChecked ? (this.jumbleCorrect ? '2px solid #10b981' : '2px solid #ef4444') : 'none'};">
-                    ${this.jumbleUserAnswer.map((word, idx) => `
-                        <span style="display: inline-flex; align-items: center; gap: 5px; background: #3b82f6; color: white; padding: 8px 15px; border-radius: 20px; font-size: 1.2rem;">
-                            ${word}
-                            <button class="hero-btn" data-action="jumbleRemove" data-param="${idx}" style="background: none; border: none; color: white; font-size: 1rem; padding: 0 5px; margin-left: 5px;">✖</button>
-                        </span>
+                    ${this.jumbleUserAnswer.map(word => `
+                        <span class="jumble-word-top" data-action="jumbleRemove" data-param="${word}" style="cursor: pointer; background: #3b82f6; color: white; padding: 8px 15px; border-radius: 20px; font-size: 1.2rem;">${word}</span>
                     `).join('')}
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 15px; background: #e2e8f0; border-radius: 8px; min-height: 60px;">
@@ -1044,12 +1198,13 @@ class App {
                         <button class="hero-btn" data-action="jumbleSelect" data-param="${word}" style="padding: 8px 15px; background: #64748b; font-size: 1rem; ${this.jumbleChecked ? 'opacity:0.5; pointer-events:none;' : ''}">${word}</button>
                     `).join('')}
                 </div>
-                <div style="display: flex; gap: 10px; justify-content: center;">
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button class="hero-btn" data-action="jumbleReset" style="background:#f59e0b;">🔄 إعادة</button>
                     <button class="hero-btn" data-action="jumbleCheck" style="background:#10b981;" ${this.jumbleChecked ? 'disabled' : ''}>✅ تحقق</button>
+                    <button class="hero-btn" data-action="jumbleHint" style="background:#3b82f6;" ${this.jumbleChecked || this.jumbleHintUsed ? 'disabled' : ''}>💡 تلميح</button>
                     ${this.jumbleChecked ? `<button class="hero-btn" data-action="jumbleNext" style="background:#3b82f6;">➡️ التالي</button>` : ''}
                 </div>
-                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">الجملة الأصلية: ${this.jumbleOriginalSentence}</p>
+                ${this.jumbleHintUsed ? `<p style="margin-top: 10px; color: #f59e0b;">🔎 تلميح: أول كلمة هي "${this.jumbleOriginalSentence.split(/\s+/)[0]}"</p>` : ''}
             </div>`;
         }
 
