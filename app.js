@@ -146,6 +146,71 @@ class App {
             [data-theme="dark"] .welcome-banner {
                 background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             }
+            
+            /* أنماط جديدة للوجو والاسم */
+            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 20px;
+            }
+            .logo-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+            }
+            .logo-container img {
+                height: 40px;
+                width: auto;
+                transition: transform 0.3s;
+            }
+            .logo-container:hover img {
+                transform: scale(1.05);
+            }
+            .logo-container h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #1e40af, #3b82f6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            [data-theme="dark"] .logo-container h2 {
+                background: linear-gradient(135deg, #ffd700, #fbbf24);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            /* أنماط صفحة Auth */
+            .auth-container {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .auth-container img {
+                height: 100px;
+                width: auto;
+                margin-bottom: 15px;
+            }
+            .auth-container h1 {
+                font-size: 2.5rem;
+                margin: 0;
+                color: #1e40af;
+            }
+            .auth-container p {
+                font-size: 1.2rem;
+                color: #64748b;
+            }
+            [data-theme="dark"] .auth-container h1 {
+                color: #ffd700;
+            }
+            [data-theme="dark"] .auth-container p {
+                color: #ccc;
+            }
+            .auth-card {
+                max-width: 400px;
+                margin: 0 auto;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -951,10 +1016,14 @@ class App {
                 <button class="nav-btn ${this.currentPage === 'listening' ? 'active' : ''}" data-action="setPage" data-param="listening">🎧 استماع</button>
             </nav>`;
         }
+        
         return `<header class="header">
     <div class="header-content">
+        <div class="logo-container" data-action="goHome">
+            <img src="wordwise_logo.png" alt="WordWise">
+            <h2>WordWise</h2>
+        </div>
         <div style="display:flex; align-items:center; gap:12px;">
-            <h2 data-action="goHome" style="cursor:pointer">🏠</h2>
             <button data-action="toggleTheme" style="background:none; border:none; font-size:1.3rem; cursor:pointer; padding:5px;">
                 ${this.theme === 'light' ? '🌙' : '☀️'}
             </button>
@@ -962,20 +1031,27 @@ class App {
                 <span>💎</span> ${this.userCoins}
             </div>
         </div>
-        ${nav}
     </div>
+    ${nav}
 </header>`;
     }
 
     getView(lesson, allTerms) {
         if (this.currentPage === 'auth') {
-            return `<main class="main-content"><div class="reading-card auth-card">
-                <h2>🚀 Welcome to Booster</h2>
-                <input id="authName" placeholder="الاسم الكامل" class="auth-input">
-                <input id="authEmail" placeholder="البريد الإلكتروني" class="auth-input">
-                <input type="password" id="authPass" placeholder="كلمة المرور" class="auth-input">
-                <button class="hero-btn" data-action="doAuth" style="width:100%;">ابدأ الآن ✨</button>
-            </div></main>`;
+            return `<main class="main-content">
+                <div class="auth-container">
+                    <img src="wordwise_logo.png" alt="WordWise">
+                    <h1>WordWise</h1>
+                    <p>كن حكيماً في اختيار كلماتك</p>
+                </div>
+                <div class="reading-card auth-card">
+                    <h2>🚀 مرحباً بك</h2>
+                    <input id="authName" placeholder="الاسم الكامل" class="auth-input">
+                    <input id="authEmail" placeholder="البريد الإلكتروني" class="auth-input">
+                    <input type="password" id="authPass" placeholder="كلمة المرور" class="auth-input">
+                    <button class="hero-btn" data-action="doAuth" style="width:100%;">ابدأ الآن ✨</button>
+                </div>
+            </main>`;
         }
 
         if (this.currentPage === 'home') {
@@ -1281,6 +1357,13 @@ class App {
         this.theme = this.theme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', this.theme);
         localStorage.setItem('theme', this.theme);
+        
+        // تحديث اللوجو في الهيدر إذا كان موجوداً
+        const logoImg = document.querySelector('.logo-container img');
+        if (logoImg) {
+            logoImg.src = 'wordwise_logo.png'; // نفس الملف لكل الأوضاع (يمكن تغييره لاحقاً إذا أردت نسختين)
+        }
+        
         this.render();
     }
 
