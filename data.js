@@ -66,6 +66,8 @@ window.lessonsList = {
     { id: '58', title: "58. The Benefits of Reading" },
     { id: '59', title: "59. Navigating an International Airport" },
     { id: '60', title: "60. Environmental Protection" },
+  ],
+  'intermediate': [
     { id: '61', title: "61. A Surprise Celebration" },
     { id: '62', title: "62. The Evolution of Communication" },
     { id: '63', title: "63. Healthy Eating Habits" },
@@ -81,9 +83,6 @@ window.lessonsList = {
     { id: '73', title: "73. Human Exploration of Mars" },
     { id: '74', title: "74. Artificial Intelligence and the Future of Work" },
     { id: '75', title: "75. The Role of Governance in Modern Society" },
-  ],
-  'intermediate': [
-    { id: '201', title: 'marwan', description: 'تحليل نص سياسي معمق' }
   ],
   'advanced': [
     { id: '301', title: 'Cooperative Sovereignty in a Globalized Era' },
