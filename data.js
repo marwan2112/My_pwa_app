@@ -136,7 +136,7 @@ window.lessonsList = {
 window.lessonsData = {
   "1": {
     "title": "Greetings and Introductions",
-    "content": "Hello! Good morning. How are you? I"m fine, thank you. This is my friend. What is your name? My name is Adam. Nice to meet you. See you later! Goodbye!",
+    "content": "Hello! Good morning. How are you? I'm fine, thank you. This is my friend. What is your name? My name is Adam. Nice to meet you. See you later! Goodbye!",
     "terms": [
       {"id": "1-1", "english": "Hi", "arabic": "مرحباً (غير رسمي)"},
       {"id": "1-2", "english": "Good morning", "arabic": "صباح الخير"},
@@ -152,7 +152,7 @@ window.lessonsData = {
   },
   "2": {
     "title": "Numbers 1-10",
-    "content": "Let"s learn numbers! One, two, three, four, five. Six, seven, eight, nine, ten. I have two cats. She has three books. He is ten years old. How many apples? Five apples.",
+    "content": "Let's learn numbers! One, two, three, four, five. Six, seven, eight, nine, ten. I have two cats. She has three books. He is ten years old. How many apples? Five apples.",
     "terms": [
       {"id": "2-1", "english": "One", "arabic": "واحد"},
       {"id": "2-2", "english": "Two", "arabic": "اثنان"},
