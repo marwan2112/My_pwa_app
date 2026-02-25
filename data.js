@@ -33,12 +33,12 @@ window.lessonsList = {
     { id: "25", title: "25. Linking Words" },
     { id: "26", title: "26. Personal Introduction" },
     { id: "27", title: "27. Adam and His Friend" },
-    { id: "28", title: "28. Adam"s Morning Routine" },
+    { id: "28", title: "28. Adam's Morning Routine" },
     { id: "29", title: "29. Adam at School" },
     { id: "30", title: "30. Adam at the Café" },
     { id: "31", title: "31. Adam’s Family" },
     { id: "32", title: "32. Shopping Day" },
-    { id: "33", title: "33. Adam"s Hobby" },
+    { id: "33", title: "33. Adam's Hobby" },
     { id: "34", title: "34. A Rainy Day" },
     { id: "35", title: "35. Helping a Neighbor" },
     { id: "36", title: "36. A Busy Morning" },
@@ -120,7 +120,7 @@ window.lessonsList = {
     { id: "317", title: " The Unintended Consequences of Unconventional Monetary Policy" },
     { id: "318", title: "The Autonomy Dilemma: Ethical and Legal Quandaries of Lethal Autonomous Weapon Systems" },
     { id: "319", title: " Modern Public Transportation Systems" },
-    { id: "320, title: " History and Evolution of the Internet" },
+    { id: "320", title: " History and Evolution of the Internet" },
     { id: "321", title: " Modern Architecture and Smart Cities" },
     { id: "322", title: " Healthy Eating Habits and Home Cooking" },
     { id: "323", title: " Global Warming and Environmental Challenges" },
@@ -146,7 +146,7 @@ window.lessonsData = {
       {"id": "1-6", "english": "See you later", "arabic": "أراك لاحقاً"},
       {"id": "1-7", "english": "Welcome", "arabic": "أهلاً وسهلاً"},
       {"id": "1-8", "english": "How are you?", "arabic": "كيف حالك؟"},
-      {"id": "1-9", "english": "I"m fine", "arabic": "أنا بخير"},
+      {"id": "1-9", "english": "I'm fine", "arabic": "أنا بخير"},
       {"id": "1-10", "english": "Thank you", "arabic": "شكراً لك"}
     ]
   },
@@ -232,7 +232,7 @@ window.lessonsData = {
   },
   "7": {
     "title": "Feelings",
-    "content": "How are you today? I am happy because it is sunny. My friend is sad because he is sick. When I am hungry, I eat food. After playing, I am tired. In winter, I feel cold. In summer, I feel hot. I am excited for the party! Don"t be scared of the dark.",
+    "content": "How are you today? I am happy because it is sunny. My friend is sad because he is sick. When I am hungry, I eat food. After playing, I am tired. In winter, I feel cold. In summer, I feel hot. I am excited for the party! Don't be scared of the dark.",
     "terms": [
       {"id": "7-1", "english": "Happy", "arabic": "سعيد"},
       {"id": "7-2", "english": "Sad", "arabic": "حزين"},
@@ -504,7 +504,7 @@ window.lessonsData = {
   },
   "24": {
     "title": "Prepositions of Place",
-    "content": "The book is on the table. My pencil is in the bag. The cat is under the chair. The school is next to the park. I sit between Omar and Lina. The garden is behind the house. The car is in front of the building. The clock is above the door. My room is below my parents" room. The library is near my home.",
+    "content": "The book is on the table. My pencil is in the bag. The cat is under the chair. The school is next to the park. I sit between Omar and Lina. The garden is behind the house. The car is in front of the building. The clock is above the door. My room is below my parent's room. The library is near my home.",
     "terms": [
       {"id": "24-1", "english": "In", "arabic": "في (داخل)"},
       {"id": "24-2", "english": "On", "arabic": "على"},
@@ -738,7 +738,7 @@ window.lessonsData = {
   },
   "35": {
     "title": "Helping a Neighbor",
-    "content": "Adam has an old neighbor named Mr. Ahmed. Mr. Ahmed lives alone in a small cottage. He is very kind but he is tired today. Adam decides to help him. First, Adam cleans the leaves from the front yard. He uses a rake. Then, he paints the wooden fence. The fence is now white and clean. Mr. Ahmed is very happy. He gives Adam a cold glass of lemonade. They sit on the porch and talk. Adam carries the heavy trash bags to the bin. He also waters the plants in the garden. Helping others is a good thing. Adam feels proud and helpful. Mr. Ahmed smiles and says, "Thank you, Adam. You are a good boy." Adam goes home with a happy heart today.",
+    "content": "Adam has an old neighbor named Mr. Ahmed. Mr. Ahmed lives alone in a small cottage. He is very kind but he is tired today. Adam decides to help him. First, Adam cleans the leaves from the front yard. He uses a rake. Then, he paints the wooden fence. The fence is now white and clean. Mr. Ahmed is very happy. He gives Adam a cold glass of lemonade. They sit on the porch and talk. Adam carries the heavy trash bags to the bin. He also waters the plants in the garden. Helping others is a good thing. Adam feels proud and helpful. Mr. Ahmed smiles and says, 'Thank you, Adam. You are a good boy.' Adam goes home with a happy heart today.",
     "terms": [
       {"id": "35-1", "english": "Neighbor", "arabic": "جار"},
       {"id": "35-2", "english": "Alone", "arabic": "وحيد"},
@@ -826,7 +826,7 @@ window.lessonsData = {
   },
   "39": {
     "title": "At the Doctor",
-    "content": "Adam feels sick today. He has a bad headache and a sore throat. His father, Ali, takes him to the clinic. They wait in a small waiting room. A nurse calls Adam"s name. She checks his weight and height. Then, they enter the doctor"s office. The doctor is a friendly man. He uses a stethoscope to listen to Adam"s heart. He also looks at Adam"s ears and eyes. "You have a small cold," the doctor says. He tells Adam to drink lots of water and rest in bed. He writes a prescription for some medicine. Adam"s father buys the medicine from the pharmacy nearby. Adam goes home to sleep. He hopes to feel better soon. The clinic is very clean and the people are helpful. He feels safe there.",
+    "content": "Adam feels sick today. He has a bad headache and a sore throat. His father, Ali, takes him to the clinic. They wait in a small waiting room. A nurse calls Adam's name. She checks his weight and height. Then, they enter the doctor's office. The doctor is a friendly man. He uses a stethoscope to listen to Adam's heart. He also looks at Adam's ears and eyes. 'You have a small cold,' the doctor says. He tells Adam to drink lots of water and rest in bed. He writes a prescription for some medicine. Adam's father buys the medicine from the pharmacy nearby. Adam goes home to sleep. He hopes to feel better soon. The clinic is very clean and the people are helpful. He feels safe there.",
     "terms": [
       {"id": "39-1", "english": "Sick", "arabic": "مريض"},
       {"id": "39-2", "english": "Headache", "arabic": "صداع"},
