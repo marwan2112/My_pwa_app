@@ -1,3 +1,4 @@
+
 class App {
     constructor() {
         this.placementStep = 0;
@@ -5,7 +6,8 @@ class App {
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
-this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمساعدة
+        this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمساعدة
+
         // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
         this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
@@ -251,6 +253,18 @@ this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمس
         } catch (e) {}
     }
 
+    // دالة جديدة للترجمة بدون الحاجة لعنصر DOM
+    async translateText(text) {
+        if (!text) return '';
+        try {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`);
+            const data = await res.json();
+            return data.responseData.translatedText || '';
+        } catch (e) {
+            return '';
+        }
+    }
+
     playTone(type) {
         if (this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
@@ -447,16 +461,16 @@ this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمس
             // إضافة الجملة إلى التاريخ
             this.jumbleHistory.push(this.jumbleOriginalSentence);
         }
-// ترجمة الجملة إلى العربية للمساعدة
-this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
-    if (translated) {
-        this.jumbleArabicHint = translated;
-    } else {
-        this.jumbleArabicHint = '';
-    }
-}).catch(() => {
-    this.jumbleArabicHint = '';
-});
+
+        // ترجمة الجملة إلى العربية للمساعدة
+        this.translateText(this.jumbleOriginalSentence).then(translated => {
+            this.jumbleArabicHint = translated;
+            this.render(); // إعادة الرسم بعد الترجمة
+        }).catch(() => {
+            this.jumbleArabicHint = '';
+            this.render();
+        });
+
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
@@ -1103,13 +1117,13 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
         }
 
         if (this.currentPage === 'placement_test') {
-            if (this.placementStep >= 50) {
+            if (this.placementStep >= 25) {
                 return `<div class="reading-card result-card">
                     <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
                     <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
                         <h1 style="color:#1e40af; margin-bottom:5px;">${this.currentDifficulty}</h1>
                         <p style="font-weight:bold; color:#3b82f6;">IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 50</p>
+                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 25</p>
                     </div>
                     <h4 style="margin-top:15px;">📜 سجل نتائجك السابقة:</h4>
                     <div style="max-height:200px; overflow-y:auto; font-size:0.9rem; margin-bottom:15px; border:1px solid #e2e8f0; border-radius:8px;">
@@ -1158,7 +1172,7 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
             return `<div class="reading-card">
                 <button class="hero-btn" data-action="backFromDetails" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
                 <h2 style="text-align:center;">تفاصيل اختبار ${this.viewingPlacementDetails.date}</h2>
-                <p style="text-align:center;">المستوى النهائي: <strong>${this.viewingPlacementDetails.level}</strong> | الدرجة: ${this.viewingPlacementDetails.score}/50</p>
+                <p style="text-align:center;">المستوى النهائي: <strong>${this.viewingPlacementDetails.level}</strong> | الدرجة: ${this.viewingPlacementDetails.score}/25</p>
                 <div style="max-height:400px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
                     ${details.map((d, i) => `
                         <div style="border-bottom:1px solid #e2e8f0; padding:10px; margin-bottom:5px;">
@@ -1285,7 +1299,6 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
                     ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
                 </div>
             </div>`;
-            ${this.jumbleArabicHint ? `<div style="margin-top: 15px; padding: 10px; background: #e0f2fe; border-radius: 8px; text-align: center; font-size: 1.1rem; color: #0369a1;">🔍 المساعدة: ${this.jumbleArabicHint}</div>` : ''}
         }
 
         // ========== صفحة إعادة ترتيب الجمل ==========
@@ -1316,6 +1329,7 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
                     <button class="hero-btn" data-action="jumbleHint" style="background:#3b82f6;" ${this.jumbleChecked || this.jumbleHintUsed ? 'disabled' : ''}>💡 تلميح</button>
                     ${this.jumbleChecked ? `<button class="hero-btn" data-action="jumbleNext" style="background:#3b82f6;">➡️ التالي</button>` : ''}
                 </div>
+                ${this.jumbleArabicHint ? `<div style="margin-top: 15px; padding: 10px; background: #e0f2fe; border-radius: 8px; text-align: center; font-size: 1.1rem; color: #0369a1;">🔍 الترجمة: ${this.jumbleArabicHint}</div>` : ''}
                 ${this.jumbleHintUsed ? `<p style="margin-top: 10px; color: #f59e0b;">🔎 تلميح: أول كلمة هي "${this.jumbleOriginalSentence.split(/\s+/)[0]}"</p>` : ''}
             </div>`;
         }
@@ -1388,3 +1402,4 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
 }
 
 const appInstance = new App();
+```
