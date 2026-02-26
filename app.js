@@ -1285,6 +1285,7 @@ this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
                     ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
                 </div>
             </div>`;
+            ${this.jumbleArabicHint ? `<div style="margin-top: 15px; padding: 10px; background: #e0f2fe; border-radius: 8px; text-align: center; font-size: 1.1rem; color: #0369a1;">🔍 المساعدة: ${this.jumbleArabicHint}</div>` : ''}
         }
 
         // ========== صفحة إعادة ترتيب الجمل ==========
