@@ -7,7 +7,7 @@ window.levels = [
 window.lessonsList = {
   "beginner": [
     { id: "1", title: "1. Greetings and Introductions" },
-    { id: "2", title: "2. Numbers 1-10"},
+    { id: "2", title: "2. Numbers 1-20"},
     { id: "3", title: "3. Colors" },
     { id: "4", title: "4. Family Members" },
     { id: "5", title: "5. Things at Home" },
