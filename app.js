@@ -5,7 +5,7 @@ class App {
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
-
+this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمساعدة
         // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
         this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
