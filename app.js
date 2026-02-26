@@ -1018,12 +1018,7 @@ class App {
         
         app.innerHTML = this.getHeader() + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
         
-        if(this.currentPage === 'flashcards' && allTerms.length > 0) {
-            const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
-            if(active[this.currentCardIndex]) {
-                this.translateAuto(active[this.currentCardIndex].english, 'auto-trans-text');
-            }
-        }
+        
     }
 
     getHeader() {
