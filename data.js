@@ -1839,50 +1839,6 @@ window.lessonsData = {
 {"id": "74-35", "english": "Difficult", "arabic": "صعب"}
 ]
 },
-"75": {
-"title": "Urban Planning",
-"content": "Planning a city is very important to make life easy for the people who live there. Modern cities need good public transport, like buses and trains, to reduce traffic. When the transport system is good, there are fewer cars and the air is cleaner. Adam lives in a city where he can use a mobile app to see when the next bus is coming. Many cities are also building special paths for bicycles and electric scooters. This makes travel faster and cheaper. Although it costs a lot of money to build these systems, it helps the city grow and helps people find jobs. A well-planned city is a place where everyone can move around easily and safely.",
-"terms": [
-{"id": "75-1", "english": "Urban", "arabic": "حضري/مدني"},
-{"id": "75-2", "english": "Planning", "arabic": "تخطيط"},
-{"id": "75-3", "english": "Important", "arabic": "مهم"},
-{"id": "75-4", "english": "Public transport", "arabic": "النقل العام"},
-{"id": "75-5", "english": "Reduce", "arabic": "يقلل"},
-{"id": "75-6", "english": "Traffic", "arabic": "الازدحام المروري"},
-{"id": "75-7", "english": "System", "arabic": "نظام"},
-{"id": "75-8", "english": "Fewer", "arabic": "أقل"},
-{"id": "75-9", "english": "Cleaner", "arabic": "أكثر نظافة"},
-{"id": "75-10", "english": "Mobile app", "arabic": "تطبيق هاتف"},
-{"id": "75-11", "english": "Special", "arabic": "خاص"},
-{"id": "75-12", "english": "Paths", "arabic": "مسارات"},
-{"id": "75-13", "english": "Bicycles", "arabic": "دراجات هوائية"},
-{"id": "75-14", "english": "Electric", "arabic": "كهربائي"},
-{"id": "75-15", "english": "Scooters", "arabic": "سكوترات"},
-{"id": "75-16", "english": "Faster", "arabic": "أسرع"},
-{"id": "75-17", "english": "Cheaper", "arabic": "أرخص"},
-{"id": "75-18", "english": "Although", "arabic": "بالرغم من"},
-{"id": "75-19", "english": "Costs", "arabic": "تكاليف"},
-{"id": "75-20", "english": "Grow", "arabic": "تنمو"},
-{"id": "75-21", "english": "Well-planned", "arabic": "مخطط جيداً"},
-{"id": "75-22", "english": "Move around", "arabic": "يتنقل"},
-{"id": "75-23", "english": "Easily", "arabic": "بسهولة"},
-{"id": "75-24", "english": "Safely", "arabic": "بأمان"},
-{"id": "75-25", "english": "Modern", "arabic": "حديث"},
-{"id": "75-26", "english": "Buses", "arabic": "حافلات"},
-{"id": "75-27", "english": "Trains", "arabic": "قطارات"},
-{"id": "75-28", "english": "Air", "arabic": "هواء"},
-{"id": "75-29", "english": "Building", "arabic": "بناء"},
-{"id": "75-30", "english": "Travel", "arabic": "سفر/تنقل"},
-{"id": "75-31", "english": "Money", "arabic": "مال"},
-{"id": "75-32", "english": "Jobs", "arabic": "وظائف"},
-{"id": "75-33", "english": "Place", "arabic": "مكان"},
-{"id": "75-34", "english": "Everyone", "arabic": "الجميع"},
-{"id": "75-35", "english": "Next", "arabic": "القادم"}
-]
-},
-
-
-
 window.placementBank = {
   "A1": [  
     {"q": "She ___ a doctor.", "options": ["am", "is", "are"], "correct": "is"},
