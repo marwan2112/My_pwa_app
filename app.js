@@ -291,7 +291,40 @@ class App {
         osc.start();
         osc.stop(this.audioCtx.currentTime + 0.4);
     }
+playAudio(src) {
+    if (this.currentAudio) {
+        this.currentAudio.pause();
+    }
+    this.currentAudio = new Audio(src);
+    this.currentAudio.playbackRate = this.audioPlaybackRate;
+    this.currentAudio.play();
+}
 
+pauseAudio() {
+    if (this.currentAudio) {
+        this.currentAudio.pause();
+    }
+}
+
+resumeAudio() {
+    if (this.currentAudio) {
+        this.currentAudio.play();
+    }
+}
+
+stopAudio() {
+    if (this.currentAudio) {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+    }
+}
+
+setAudioSpeed(rate) {
+    this.audioPlaybackRate = rate;
+    if (this.currentAudio) {
+        this.currentAudio.playbackRate = rate;
+    }
+}
     getCorrectAnswer(q) {
         return q.correct || q.answer || q.a || q.right || q.rightAnswer || '';
     }
