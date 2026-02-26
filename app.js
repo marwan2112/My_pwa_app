@@ -1094,13 +1094,13 @@ class App {
         }
 
         if (this.currentPage === 'placement_test') {
-            if (this.placementStep >= 25) {
+            if (this.placementStep >= 50) {
                 return `<div class="reading-card result-card">
                     <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
                     <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
                         <h1 style="color:#1e40af; margin-bottom:5px;">${this.currentDifficulty}</h1>
                         <p style="font-weight:bold; color:#3b82f6;">IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 25</p>
+                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 50</p>
                     </div>
                     <h4 style="margin-top:15px;">📜 سجل نتائجك السابقة:</h4>
                     <div style="max-height:200px; overflow-y:auto; font-size:0.9rem; margin-bottom:15px; border:1px solid #e2e8f0; border-radius:8px;">
@@ -1149,7 +1149,7 @@ class App {
             return `<div class="reading-card">
                 <button class="hero-btn" data-action="backFromDetails" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
                 <h2 style="text-align:center;">تفاصيل اختبار ${this.viewingPlacementDetails.date}</h2>
-                <p style="text-align:center;">المستوى النهائي: <strong>${this.viewingPlacementDetails.level}</strong> | الدرجة: ${this.viewingPlacementDetails.score}/25</p>
+                <p style="text-align:center;">المستوى النهائي: <strong>${this.viewingPlacementDetails.level}</strong> | الدرجة: ${this.viewingPlacementDetails.score}/50</p>
                 <div style="max-height:400px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
                     ${details.map((d, i) => `
                         <div style="border-bottom:1px solid #e2e8f0; padding:10px; margin-bottom:5px;">
