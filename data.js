@@ -129,7 +129,6 @@ window.lessonsList = {
     { id: "326", title: " Space Exploration and the Future of Humanity" },
     { id: "327", title: " Artificial Intelligence and the Future of Work" },
     { id: "328", title: " Digital Citizenship and Online Safety" }
-
   ]
 };
 
@@ -1882,19 +1881,19 @@ window.lessonsData = {
   },
 
   "301": {
-    title: "Cooperative Sovereignty in a Globalized Era",
-    content: `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory, resources, and population without external interference. However, the emergence of transnational challenges such as climate change, cyber-organized crime, and global pandemics has starkly revealed the limits of this concept. States are no longer capable of confronting these challenges individually, which has compelled them to negotiate and cede portions of their authority to global governance bodies. This shift propels a model known as 'cooperative sovereignty' or 'sovereignty as responsibility' Proponents argue that in an interconnected world, the ultimate exercise of sovereignty is the ability to participate effectively in international systems, shape global norms, and protect one"s citizens from threats that originate beyond borders. This requires a pragmatic surrender of absolute autonomy in exchange for influence and collective security. For example, a country adhering to World Trade Organization rules accepts constraints on its domestic trade policies but gains access to a dispute resolution mechanism and a vast global market. Critics, however, view this evolution with suspicion, interpreting it as a dilution of statehood and a potential infringement on national self-determination. They warn that powerful states or unaccountable bureaucracies in international organizations can dominate the rule-setting process, effectively imposing their will on smaller nations under the guise of global cooperation. The tension between the imperative for international collaboration and the desire to preserve national autonomy and identity forms the core of contemporary geopolitical discourse, influencing debates on issues ranging from migration and environmental treaties to data privacy regulations and military alliances.`,
-    terms: [
-      { id: "301-1", english: "Cooperative", arabic: "تعاون" },
-      { id: "301-2", english: "Sovereignty", arabic: "سيادة" },
-      { id: "301-3", english: "Globalized", arabic: "عولمة" },
-      { id: "301-4", english: "Era", arabic: "عصر" },
-      { id: "301-5", english: "Multilateral", arabic: "متعدد الأطراف" },
-      { id: "301-6", english: "Associated", arabic: "مرتبط" },
-      { id: "301-7", english: "Absolute right", arabic: "الحق المطلق" },
-      { id: "301-8", english: "Emergence", arabic: "ظهور" },
-      { id: "301-9", english: "Pandemics", arabic: "أوبئة" },
-      { id: "301-10", english: "Revealed", arabic: "يكشف" },
+    "title": "Cooperative Sovereignty in a Globalized Era",
+    "content": `Recent decades have witnessed a fundamental transformation in the concept of national sovereignty, driven by the growing power of international institutions and multilateral agreements. Sovereignty, in its classical sense, has long been associated with the absolute right of a state to control its territory, resources, and population without external interference. However, the emergence of transnational challenges such as climate change, cyber-organized crime, and global pandemics has starkly revealed the limits of this concept. States are no longer capable of confronting these challenges individually, which has compelled them to negotiate and cede portions of their authority to global governance bodies. This shift propels a model known as 'cooperative sovereignty' or 'sovereignty as responsibility' Proponents argue that in an interconnected world, the ultimate exercise of sovereignty is the ability to participate effectively in international systems, shape global norms, and protect one"s citizens from threats that originate beyond borders. This requires a pragmatic surrender of absolute autonomy in exchange for influence and collective security. For example, a country adhering to World Trade Organization rules accepts constraints on its domestic trade policies but gains access to a dispute resolution mechanism and a vast global market. Critics, however, view this evolution with suspicion, interpreting it as a dilution of statehood and a potential infringement on national self-determination. They warn that powerful states or unaccountable bureaucracies in international organizations can dominate the rule-setting process, effectively imposing their will on smaller nations under the guise of global cooperation. The tension between the imperative for international collaboration and the desire to preserve national autonomy and identity forms the core of contemporary geopolitical discourse, influencing debates on issues ranging from migration and environmental treaties to data privacy regulations and military alliances.`,
+    "terms": [
+      { id: "301-1", "english": "Cooperative", arabic: "تعاون" },
+      { id: "301-2", "english": "Sovereignty", arabic: "سيادة" },
+      { id: "301-3", "english": "Globalized", arabic: "عولمة" },
+      { id: "301-4", "english": "Era", arabic: "عصر" },
+      { id: "301-5", "english": "Multilateral", arabic: "متعدد الأطراف" },
+      { id: "301-6", "english": "Associated", arabic: "مرتبط" },
+      { id: "301-7", "english": "Absolute right", arabic: "الحق المطلق" },
+      { id: "301-8", "english": "Emergence", arabic: "ظهور" },
+      { id: "301-9", "english": "Pandemics", arabic: "أوبئة" },
+      { id: "301-10", english": "Revealed", arabic: "يكشف" },
       { id: "301-11", english: "Starkly", arabic: "بشكل صارخ" },
       { id: "301-12", english: "Compel", arabic: "يجبر" },
       { id: "301-13", english: "Global Governance bodies", arabic: "هيئات الحوكمة العالمية" },
@@ -1949,9 +1948,9 @@ window.lessonsData = {
   },
 
 "302": {
-title: "Decoupling and the Future of Globalization",
-content: "The economic doctrine of 'decoupling' – the strategic disentanglement of national economies, particularly between major powers like the United States and China – has moved from theoretical debate to active policy consideration. Triggered by geopolitical rivalries, concerns over supply chain resilience, and national security anxieties regarding critical technologies, this trend marks a potential reversal of the globalization that defined the late 20th and early 21st centuries. Proponents argue that decoupling is necessary to reduce strategic dependencies, protect intellectual property, and bolster domestic industries in key sectors such as semiconductors, pharmaceuticals, and rare earth minerals. However, a nuanced analysis reveals that full-scale decoupling is an economic fiction. The depth of existing integration, characterized by complex, multi-tiered supply chains, makes a clean separation prohibitively expensive and logistically chaotic. A more probable and already unfolding scenario is 'derisking,' a targeted approach focused on limiting dependencies in a handful of strategically sensitive areas while maintaining robust trade and investment flows in others. For instance, a country might restrict foreign investment in its artificial intelligence or quantum computing sectors while continuing to import consumer electronics or agricultural products freely. The long-term implications of this selective disentanglement are multifaceted. Economically, it could lead to inefficiencies, higher costs for consumers and businesses (a phenomenon often termed 'greenflation' or 'security inflation'), and a fragmentation of global technological standards. Politically, it may solidify economic blocs aligned with competing geopolitical spheres of influence. Ultimately, the decoupling debate underscores a fundamental recalibration: nations are increasingly prioritizing economic security and strategic autonomy over the pure efficiency gains that fueled the previous era of hyper-globalization. The challenge for policymakers is to navigate this shift without triggering a full-blown, mutually detrimental economic conflict.",
-terms: [
+"title": "Decoupling and the Future of Globalization",
+"content": "The economic doctrine of 'decoupling' – the strategic disentanglement of national economies, particularly between major powers like the United States and China – has moved from theoretical debate to active policy consideration. Triggered by geopolitical rivalries, concerns over supply chain resilience, and national security anxieties regarding critical technologies, this trend marks a potential reversal of the globalization that defined the late 20th and early 21st centuries. Proponents argue that decoupling is necessary to reduce strategic dependencies, protect intellectual property, and bolster domestic industries in key sectors such as semiconductors, pharmaceuticals, and rare earth minerals. However, a nuanced analysis reveals that full-scale decoupling is an economic fiction. The depth of existing integration, characterized by complex, multi-tiered supply chains, makes a clean separation prohibitively expensive and logistically chaotic. A more probable and already unfolding scenario is 'derisking,' a targeted approach focused on limiting dependencies in a handful of strategically sensitive areas while maintaining robust trade and investment flows in others. For instance, a country might restrict foreign investment in its artificial intelligence or quantum computing sectors while continuing to import consumer electronics or agricultural products freely. The long-term implications of this selective disentanglement are multifaceted. Economically, it could lead to inefficiencies, higher costs for consumers and businesses (a phenomenon often termed 'greenflation' or 'security inflation'), and a fragmentation of global technological standards. Politically, it may solidify economic blocs aligned with competing geopolitical spheres of influence. Ultimately, the decoupling debate underscores a fundamental recalibration: nations are increasingly prioritizing economic security and strategic autonomy over the pure efficiency gains that fueled the previous era of hyper-globalization. The challenge for policymakers is to navigate this shift without triggering a full-blown, mutually detrimental economic conflict.",
+"terms": [
 { id: "302-1", english: "Decoupling", arabic: "فك ارتباط" },
 { id: "302-2", english: "Doctrine", arabic: "عقيدة/ نظرية" },
 { id: "302-3", english: "Disentanglement", arabic: "تفكيك/ فصل" },
@@ -2015,12 +2014,12 @@ terms: [
 ]
 },
   "303": {
-    title: "Modern Conflict in the Information Age",
-    content: `Military historians often categorize warfare into distinct "generations," delineating evolutionary leaps in tactics, technology, and the character of conflict. The widely cited framework describes a progression from massed manpower (1st Generation) through firepower and attrition (2nd), maneuver warfare (3rd), to the asymmetric and networked conflict of non-state actors (4th). In contemporary discourse, a vigorous debate centers on whether we are now witnessing the emergence of a "Fifth Generation Warfare" (5GW).
+    "title": "Modern Conflict in the Information Age",
+    "content": `Military historians often categorize warfare into distinct "generations," delineating evolutionary leaps in tactics, technology, and the character of conflict. The widely cited framework describes a progression from massed manpower (1st Generation) through firepower and attrition (2nd), maneuver warfare (3rd), to the asymmetric and networked conflict of non-state actors (4th). In contemporary discourse, a vigorous debate centers on whether we are now witnessing the emergence of a "Fifth Generation Warfare" (5GW).
 Proponents of the 5GW concept argue that the very nature of the battlefield has dissolved. They posit that modern conflict is dominated by non-kinetic, informational, and cognitive dimensions, where the primary objectives are to manipulate the adversary"s perception, decision-making, and social cohesion. Key tools include sophisticated cyber operations, pervasive disinformation campaigns, economic coercion, and the weaponization of social media to create societal division and erode trust in institutions. In this view, a successful 5GW campaign could achieve strategic objectives without firing a single shot, by crippling an enemy from within.
 Skeptics, however, challenge the utility of this new generational label. They contend that many described 5GW tactics are merely modern iterations of age-old strategies of deception, subversion, and political warfare, now amplified by new technology. They warn that an overemphasis on this nebulous concept risks diverting attention and resources from the enduring realities of combined arms warfare, territorial defense, and the potential for high-intensity kinetic conflict, which remains a definitive element of state power. The debate, therefore, is not merely academic; it directly influences defense budgeting, force structure design, and the training of military personnel, forcing institutions to balance preparation for invisible, pervasive threats with readiness for traditional combat.
 `,
-  terms: [  
+  "terms": [  
 { id: "303-1", english: "Asymmetric", arabic: "غير متماثل" },
 { id: "303-2", english: "categorize", arabic: "يصنف" },
 { id: "303-3", english: "Warfare", arabic: "صراع/ حرب" },
@@ -2075,11 +2074,11 @@ Skeptics, however, challenge the utility of this new generational label. They co
 },
 
   "304": {
-    title: "The Paradox of Sovereignty in Global Governance",
-    content: `Global governance in the 21st century presents a complex paradox. The need for multilateral cooperation is escalating to address pressing transnational challenges—such as climate change, pandemics, and cybersecurity—at a time when nationalistic tendencies and assertions of state sovereignty are intensifying. These challenges have effectively led to an erosion of the concept of absolute sovereignty as defined by the Westphalian system, where domestic decisions are now significantly influenced by variables outside a state’s direct control. However, the existing international institutions, whose foundational rules were established in the mid-20th century, suffer from structural inertia that impedes their capacity to respond effectively to the speed and complexity of the evolving global landscape.
+    "title": "The Paradox of Sovereignty in Global Governance",
+    "content": `Global governance in the 21st century presents a complex paradox. The need for multilateral cooperation is escalating to address pressing transnational challenges—such as climate change, pandemics, and cybersecurity—at a time when nationalistic tendencies and assertions of state sovereignty are intensifying. These challenges have effectively led to an erosion of the concept of absolute sovereignty as defined by the Westphalian system, where domestic decisions are now significantly influenced by variables outside a state’s direct control. However, the existing international institutions, whose foundational rules were established in the mid-20th century, suffer from structural inertia that impedes their capacity to respond effectively to the speed and complexity of the evolving global landscape.
 Many analysts suggest that the lack of consensus regarding the reform of the UN Security Council, and the increasing use of the veto power, is not merely a procedural disagreement; it is a reflection of major powers’ reluctance to relinquish their privileges in favor of a more representative and equitable structure. This inertia has created "Grey Zones" filled by non-governmental initiatives or temporary regional coalitions attempting to fill the vacuum, which often results in scattered efforts instead of cohesive integration. The fundamental question facing the international system now is: Can the concept of Flexible Sovereignty, which involves a partial delegation to supranational organizations in specific domains, offer a compromise? Or are we inevitably heading towards a world dominated by narrow self-interests, where global solidarity becomes increasingly ineffective? The answer lies in the ability of leaders to move beyond zero-sum thinking.
  `,
-    terms: [
+    "terms": [
     { id: "304-1", english: "Governance", arabic: "حوكمة" },
     { id: "304-2", english: "Paradox", arabic: "مفارقة" },
     { id: "304-3", english: "Escalating", arabic: "متزايد" },
