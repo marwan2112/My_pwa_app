@@ -1,4 +1,3 @@
-
 class App {
     constructor() {
         this.placementStep = 0;
@@ -1402,4 +1401,3 @@ class App {
 }
 
 const appInstance = new App();
-```
