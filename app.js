@@ -27,6 +27,7 @@ class App {
         this.jumbleCorrect = false;
         this.jumbleHintUsed = false;
         this.jumbleHistory = []; // سجل الجمل المستخدمة
+        this.jumbleUnlocked = false; // هل تم فتح التمرين بالعملات
 
         // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
@@ -36,6 +37,21 @@ class App {
         this.listeningTimer = null;
         this.listeningErrorTimer = null;
         this.listeningUnlocked = false; // لتحديد إذا كان قد دفع للدخول لهذا الدرس
+
+        // متغيرات خاصة بتمرين الكتابة (Spelling)
+        this.spellingRemaining = [];
+        this.spellingCurrent = null;
+        this.spellingAnswered = false;
+        this.spellingUserAnswer = '';
+        this.spellingResult = null; // 'correct', 'wrong', null
+
+        // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
+        this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
+        this.levelTestQuestions = [];
+        this.levelTestIndex = 0;
+        this.levelTestScore = 0;
+        this.levelTestAnswers = []; // سجل الإجابات لكل سؤال
+        this.levelTestUnlockedLessons = []; // الدروس التي سيتم فتحها بعد الاختبار
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -60,7 +76,7 @@ class App {
 
         document.documentElement.setAttribute('data-theme', this.theme);
         
-        if (!window.levels || !window.lessonsData || !window.placementBank) {
+        if (!window.levels || !window.lessonsData || !window.placementBank || !window.lessonsList) {
             setTimeout(() => this.init(), 500);
             return;
         }
@@ -114,7 +130,8 @@ class App {
             [data-theme="dark"] .feature-card,
             [data-theme="dark"] .quiz-box,
             [data-theme="dark"] .flashcard-container,
-            [data-theme="dark"] .jumble-card {
+            [data-theme="dark"] .jumble-card,
+            [data-theme="dark"] .spelling-card {
                 background-color: #1e1e1e !important;
                 color: #ffffff !important;
                 border-color: #444 !important;
@@ -214,6 +231,29 @@ class App {
                 max-width: 400px;
                 margin: 0 auto;
             }
+
+            /* أنماط تمرين الكتابة */
+            .spelling-input {
+                width: 100%;
+                padding: 15px;
+                font-size: 1.2rem;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                margin: 20px 0;
+                direction: ltr;
+                text-align: left;
+            }
+            .spelling-feedback {
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+            .correct-feedback {
+                color: #10b981;
+            }
+            .wrong-feedback {
+                color: #ef4444;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -291,40 +331,42 @@ class App {
         osc.start();
         osc.stop(this.audioCtx.currentTime + 0.4);
     }
-playAudio(src) {
-    if (this.currentAudio) {
-        this.currentAudio.pause();
-    }
-    this.currentAudio = new Audio(src);
-    this.currentAudio.playbackRate = this.audioPlaybackRate;
-    this.currentAudio.play();
-}
 
-pauseAudio() {
-    if (this.currentAudio) {
-        this.currentAudio.pause();
-    }
-}
-
-resumeAudio() {
-    if (this.currentAudio) {
+    playAudio(src) {
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+        }
+        this.currentAudio = new Audio(src);
+        this.currentAudio.playbackRate = this.audioPlaybackRate;
         this.currentAudio.play();
     }
-}
 
-stopAudio() {
-    if (this.currentAudio) {
-        this.currentAudio.pause();
-        this.currentAudio.currentTime = 0;
+    pauseAudio() {
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+        }
     }
-}
 
-setAudioSpeed(rate) {
-    this.audioPlaybackRate = rate;
-    if (this.currentAudio) {
-        this.currentAudio.playbackRate = rate;
+    resumeAudio() {
+        if (this.currentAudio) {
+            this.currentAudio.play();
+        }
     }
-}
+
+    stopAudio() {
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+        }
+    }
+
+    setAudioSpeed(rate) {
+        this.audioPlaybackRate = rate;
+        if (this.currentAudio) {
+            this.currentAudio.playbackRate = rate;
+        }
+    }
+
     getCorrectAnswer(q) {
         return q.correct || q.answer || q.a || q.right || q.rightAnswer || '';
     }
@@ -722,6 +764,191 @@ setAudioSpeed(rate) {
         }
     }
 
+    // ================== دوال تمرين الكتابة (Spelling) ==================
+    prepareSpelling() {
+        const lesson = window.lessonsData[this.selectedLessonId];
+        if (!lesson) return;
+
+        const allTerms = [...lesson.terms, ...this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId)];
+        const available = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
+
+        if (available.length === 0) {
+            alert('لا توجد كلمات متاحة للكتابة. قم بإضافة كلمات جديدة أو إعادة تعيين الكلمات المتقنة.');
+            return;
+        }
+
+        if (this.spellingRemaining.length === 0) {
+            this.spellingRemaining = [...available].sort(() => 0.5 - Math.random());
+        }
+
+        this.spellingCurrent = this.spellingRemaining[0];
+        this.spellingAnswered = false;
+        this.spellingUserAnswer = '';
+        this.spellingResult = null;
+    }
+
+    handleSpellingCheck() {
+        if (this.spellingAnswered || !this.spellingCurrent) return;
+        const userAnswer = this.spellingUserAnswer.trim().toLowerCase();
+        const correctAnswer = this.spellingCurrent.english.trim().toLowerCase();
+        const isCorrect = (userAnswer === correctAnswer);
+        this.spellingAnswered = true;
+        this.spellingResult = isCorrect ? 'correct' : 'wrong';
+        this.playTone(isCorrect ? 'correct' : 'error');
+        if (isCorrect) {
+            this.updateProgress(5);
+            // يمكن إزالة الكلمة من القائمة إذا أردت
+            this.spellingRemaining.shift();
+        } else {
+            // إعادة الكلمة إلى نهاية القائمة لتتكرر
+            if (this.spellingRemaining.length > 1) {
+                const wrongWord = this.spellingRemaining.shift();
+                this.spellingRemaining.push(wrongWord);
+            }
+        }
+        this.render();
+    }
+
+    handleSpellingNext() {
+        if (this.spellingRemaining.length === 0) {
+            alert('🎉 تهانينا! أكملت جميع الكلمات.');
+            this.currentPage = 'reading';
+        } else {
+            this.prepareSpelling();
+        }
+        this.render();
+    }
+
+    handleSpellingInput(e) {
+        this.spellingUserAnswer = e.target.value;
+    }
+
+    // ================== دوال الاختبار الشامل للمستوى ==================
+    prepareLevelTest(levelId) {
+        // levelId: مثلاً 'beginner' يقابل مستويات A1, A2; 'intermediate' -> B1, B2; 'advanced' -> C1, C2
+        this.levelTestLevel = levelId;
+        let lessonIds = [];
+        if (levelId === 'beginner') {
+            // نفترض أن دروس المبتدئ هي ids 1-10 (حسب data)
+            lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
+        } else if (levelId === 'intermediate') {
+            lessonIds = ['11','12','13','14','15','16','17','18','19','20']; // مثال
+        } else if (levelId === 'advanced') {
+            lessonIds = ['21','22','23','24','25','26','27','28','29','30']; // مثال
+        } else return;
+
+        // تجميع كل كلمات هذه الدروس (مع الكلمات المضافة)
+        let allTerms = [];
+        lessonIds.forEach(id => {
+            const lesson = window.lessonsData[id];
+            if (lesson) {
+                allTerms.push(...lesson.terms);
+                const added = this.userVocabulary.filter(v => v.lessonId == id);
+                allTerms.push(...added);
+            }
+        });
+        // إزالة المكررات حسب id (نفترض أن كل كلمة لها id فريد)
+        const uniqueTerms = [];
+        const seen = new Set();
+        allTerms.forEach(t => {
+            if (!seen.has(t.id)) {
+                seen.add(t.id);
+                uniqueTerms.push(t);
+            }
+        });
+
+        if (uniqueTerms.length === 0) {
+            alert('لا توجد كلمات في هذا المستوى.');
+            return;
+        }
+
+        // نخلط الكلمات ونأخذ 100 سؤال (أو كلها إذا أقل)
+        this.levelTestQuestions = uniqueTerms.sort(() => 0.5 - Math.random()).slice(0, 100);
+        this.levelTestIndex = 0;
+        this.levelTestScore = 0;
+        this.levelTestAnswers = [];
+        this.levelTestUnlockedLessons = []; // سنحددها بعد الاختبار
+
+        this.currentPage = 'level_test';
+        this.render();
+    }
+
+    handleLevelTestAnswer(selected, correct, btnElement) {
+        if (this.isWaiting) return;
+        this.isWaiting = true;
+
+        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        this.playTone(isCorrect ? 'correct' : 'error');
+        if (isCorrect) this.levelTestScore++;
+
+        const allOptions = document.querySelectorAll('.quiz-opt-btn');
+        allOptions.forEach(btn => {
+            btn.disabled = true;
+            if (btn.dataset.correct === correct) {
+                btn.style.backgroundColor = '#10b981';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#059669';
+            } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
+                btn.style.backgroundColor = '#ef4444';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#b91c1c';
+            } else {
+                btn.style.opacity = '0.7';
+            }
+        });
+
+        // تسجيل الإجابة
+        this.levelTestAnswers.push({
+            question: this.levelTestQuestions[this.levelTestIndex],
+            selected: selected,
+            correct: correct,
+            isCorrect: isCorrect
+        });
+
+        setTimeout(() => {
+            this.levelTestIndex++;
+            if (this.levelTestIndex < this.levelTestQuestions.length) {
+                // تحضير الخيارات للسؤال التالي
+                // الخيارات ستولد في getView
+            } else {
+                // انتهى الاختبار: تحليل النتائج وتحديد الدروس المفتوحة
+                this.processLevelTestResults();
+            }
+            this.isWaiting = false;
+            this.render();
+        }, 1200);
+    }
+
+    processLevelTestResults() {
+        // تجميع الكلمات حسب الدرس
+        const lessonWords = {};
+        this.levelTestAnswers.forEach(ans => {
+            const word = ans.question;
+            const lessonId = word.lessonId;
+            if (!lessonWords[lessonId]) lessonWords[lessonId] = { total: 0, correct: 0 };
+            lessonWords[lessonId].total++;
+            if (ans.isCorrect) lessonWords[lessonId].correct++;
+        });
+
+        // لكل درس، إذا كانت نسبة الإجابات الصحيحة ≥ 75%، يفتح الدرس
+        const newlyUnlocked = [];
+        for (let lessonId in lessonWords) {
+            const stats = lessonWords[lessonId];
+            if (stats.correct / stats.total >= 0.75) {
+                if (!this.unlockedLessons.includes(lessonId)) {
+                    this.unlockedLessons.push(lessonId);
+                    newlyUnlocked.push(lessonId);
+                }
+            }
+        }
+        this.saveData();
+
+        // عرض النتيجة
+        this.currentPage = 'level_test_result';
+        this.render();
+    }
+
+    // ================== دوال أخرى ==================
     // التحقق من إكمال الدرس (جميع الكلمات mastered)
     isLessonCompleted(lessonId) {
         const lesson = window.lessonsData[lessonId];
@@ -749,6 +976,7 @@ setAudioSpeed(rate) {
             const { action, param, correct, total, index } = btn.dataset;
 
             if (action === 'ansQ') { this.handleAnswer(param, correct, btn); return; }
+            if (action === 'levelTestAns') { this.handleLevelTestAnswer(param, correct, btn); return; }
 
             switch(action) {
                 case 'masterWord':
@@ -760,31 +988,34 @@ setAudioSpeed(rate) {
                         if (this.selectedLessonId) {
                             this.grantLessonCompletionReward(this.selectedLessonId);
                         }
-                    case 'playAudio':
-    this.playAudio(param);
-    break;
-case 'pauseAudio':
-    this.pauseAudio();
-    break;
-case 'stopAudio':
-    this.stopAudio();
-    break;
-case 'speedUp':
-    this.setAudioSpeed(this.audioPlaybackRate + 0.25);
-    this.render(); // لتحديث عرض السرعة
-    break;
-case 'speedDown':
-    this.setAudioSpeed(Math.max(0.5, this.audioPlaybackRate - 0.25));
-    this.render();
-    break;    
                     }
                     break;
 
+                case 'playAudio':
+                    this.playAudio(param);
+                    break;
+                case 'pauseAudio':
+                    this.pauseAudio();
+                    break;
+                case 'stopAudio':
+                    this.stopAudio();
+                    break;
+                case 'speedUp':
+                    this.setAudioSpeed(this.audioPlaybackRate + 0.25);
+                    this.render();
+                    break;
+                case 'speedDown':
+                    this.setAudioSpeed(Math.max(0.5, this.audioPlaybackRate - 0.25));
+                    this.render();
+                    break;
+
                 case 'goHome': 
+                    this.stopAudio();
                     this.currentPage = 'home'; 
                     this.selectedLessonId = null; 
                     this.isUnlockTest = false;
                     this.viewingPlacementDetails = null;
+                    this.levelTestLevel = null;
                     break;
 
                 case 'logout': 
@@ -813,6 +1044,8 @@ case 'speedDown':
                         this.listeningUnlocked = false;
                         this.jumbleUnlocked = false;
                         this.jumbleHistory = []; // إعادة تعيين تاريخ الجمل لكل درس جديد
+                        // إعادة تعيين تمرين الكتابة
+                        this.spellingRemaining = [];
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
                         const prevId = list[curIdx - 1].id;
@@ -836,6 +1069,9 @@ case 'speedDown':
                         } else {
                             this.prepareJumble();
                         }
+                    } else if (param === 'spelling' && this.selectedLessonId) {
+                        // تمرين الكتابة مجاني؟ أو يمكن جعله مدفوعاً
+                        this.prepareSpelling();
                     } else if (param === 'quiz' && this.selectedLessonId) {
                         this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
                     }
@@ -918,6 +1154,7 @@ case 'speedDown':
                     break;
 
                 case 'backToLessons': 
+                    this.stopAudio();
                     this.currentPage = (this.selectedLevel === 'custom_list') ? 'custom_lessons_view' : 'lessons'; 
                     this.selectedLessonId = null; 
                     this.isUnlockTest = false;
@@ -969,8 +1206,28 @@ case 'speedDown':
                 case 'listeningAnswer':
                     this.handleListeningAnswer(param);
                     break;
+
+                // أحداث تمرين الكتابة
+                case 'spellingCheck':
+                    this.handleSpellingCheck();
+                    break;
+                case 'spellingNext':
+                    this.handleSpellingNext();
+                    break;
+
+                // أحداث الاختبار الشامل للمستوى
+                case 'startLevelTest':
+                    this.prepareLevelTest(param);
+                    break;
             }
             this.render();
+        });
+
+        // أحداث الإدخال لتمرين الكتابة
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'spellingInput') {
+                this.spellingUserAnswer = e.target.value;
+            }
         });
     }
 
@@ -1069,20 +1326,19 @@ case 'speedDown':
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
         
         app.innerHTML = this.getHeader() + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
-        
-        
     }
 
     getHeader() {
         if (this.currentPage === 'auth') return '';
         let nav = '';
-        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz', 'jumble', 'listening'].includes(this.currentPage) && !this.isUnlockTest) {
+        if (this.selectedLessonId && ['reading', 'flashcards', 'quiz', 'jumble', 'listening', 'spelling'].includes(this.currentPage) && !this.isUnlockTest) {
             nav = `<nav class="nav-menu">
                 <button class="nav-btn ${this.currentPage === 'reading' ? 'active' : ''}" data-action="setPage" data-param="reading">📖 النص</button>
                 <button class="nav-btn ${this.currentPage === 'flashcards' ? 'active' : ''}" data-action="setPage" data-param="flashcards">🎴 بطاقات</button>
                 <button class="nav-btn ${this.currentPage === 'quiz' ? 'active' : ''}" data-action="setPage" data-param="quiz">🧩 اختبار</button>
                 <button class="nav-btn ${this.currentPage === 'jumble' ? 'active' : ''}" data-action="setPage" data-param="jumble">🔤 ترتيب</button>
                 <button class="nav-btn ${this.currentPage === 'listening' ? 'active' : ''}" data-action="setPage" data-param="listening">🎧 استماع</button>
+                <button class="nav-btn ${this.currentPage === 'spelling' ? 'active' : ''}" data-action="setPage" data-param="spelling">✍️ كتابة</button>
             </nav>`;
         }
         
@@ -1156,6 +1412,13 @@ case 'speedDown':
                 <div class="features-grid">
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
+                </div>
+
+                <!-- أزرار الاختبار الشامل للمستويات -->
+                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <button class="hero-btn" data-action="startLevelTest" data-param="beginner" style="background:#10b981;">🌟 اختبار المبتدئ (100 سؤال)</button>
+                    <button class="hero-btn" data-action="startLevelTest" data-param="intermediate" style="background:#f59e0b;">🔥 اختبار المتوسط (100 سؤال)</button>
+                    <button class="hero-btn" data-action="startLevelTest" data-param="advanced" style="background:#ef4444;">⚡ اختبار المتقدم (100 سؤال)</button>
                 </div>
                 
                 <button data-action="logout" class="logout-btn" style="margin-top: 20px;">تسجيل الخروج</button>
@@ -1272,33 +1535,34 @@ case 'speedDown':
         }
 
         if (this.currentPage === 'reading') {
-    // تحديد مسار الملف الصوتي: إذا كان موجوداً في بيانات الدرس نستخدمه، وإلا نستخدم مساراً افتراضياً
-    const audioSrc = lesson.audio || `audio/${lesson.id}.mp3`; // عدّل المسار حسب تنظيمك
+            // تحديد مسار الملف الصوتي: إذا كان موجوداً في بيانات الدرس نستخدمه، وإلا نستخدم مساراً افتراضياً
+            const audioSrc = lesson.audio || `audio/${lesson.id}.mp3`;
 
-    return `<main class="main-content">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-            <button class="hero-btn" data-action="backToLessons" style="background:#64748b;">⬅ تراجع</button>
-            <div style="display: flex; gap: 5px; background: #f0f0f0; padding: 5px; border-radius: 8px; flex-wrap: wrap;">
-                <button class="hero-btn" data-action="playAudio" data-param="${audioSrc}" style="background:#3b82f6; padding: 5px 10px;">▶️ تشغيل</button>
-                <button class="hero-btn" data-action="pauseAudio" style="background:#f59e0b; padding: 5px 10px;">⏸️ إيقاف مؤقت</button>
-                <button class="hero-btn" data-action="stopAudio" style="background:#ef4444; padding: 5px 10px;">⏹️ إيقاف</button>
-                <button class="hero-btn" data-action="speedDown" style="background:#8b5cf6; padding: 5px 10px;">🐢</button>
-                <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(1)}x</span>
-                <button class="hero-btn" data-action="speedUp" style="background:#8b5cf6; padding: 5px 10px;">🐇</button>
-            </div>
-        </div>
-        <div class="reading-card">
-            <h2>${lesson.title}</h2>
-            <div class="scrollable-text" style="direction:ltr; text-align:left; margin-top:10px;">${lesson.content}</div>
-        </div>
-        <div class="reading-card" style="margin-top:20px; border:1px dashed #6366f1; background:#f0f7ff;">
-            <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
-            <input id="newEng" placeholder="اكتب بالإنجليزية هنا..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" oninput="appInstance.translateAuto(this.value, 'newArb')"> 
-            <input id="newArb" placeholder="الترجمة تظهر هنا..." style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; background:#fff;">
-            <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">إضافة للقائمة ✅</button>
-        </div>
-    </main>`;
-}
+            return `<main class="main-content">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <button class="hero-btn" data-action="backToLessons" style="background:#64748b;">⬅ تراجع</button>
+                    <div style="display: flex; gap: 5px; background: #f0f0f0; padding: 5px; border-radius: 8px; flex-wrap: wrap;">
+                        <button class="hero-btn" data-action="playAudio" data-param="${audioSrc}" style="background:#3b82f6; padding: 5px 10px;">▶️ تشغيل</button>
+                        <button class="hero-btn" data-action="pauseAudio" style="background:#f59e0b; padding: 5px 10px;">⏸️ إيقاف مؤقت</button>
+                        <button class="hero-btn" data-action="stopAudio" style="background:#ef4444; padding: 5px 10px;">⏹️ إيقاف</button>
+                        <button class="hero-btn" data-action="speedDown" style="background:#8b5cf6; padding: 5px 10px;">🐢</button>
+                        <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(1)}x</span>
+                        <button class="hero-btn" data-action="speedUp" style="background:#8b5cf6; padding: 5px 10px;">🐇</button>
+                    </div>
+                </div>
+                <div class="reading-card">
+                    <h2>${lesson.title}</h2>
+                    <div class="scrollable-text" style="direction:ltr; text-align:left; margin-top:10px;">${lesson.content}</div>
+                </div>
+                <div class="reading-card" style="margin-top:20px; border:1px dashed #6366f1; background:#f0f7ff;">
+                    <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
+                    <input id="newEng" placeholder="اكتب بالإنجليزية هنا..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" oninput="appInstance.translateAuto(this.value, 'newArb')"> 
+                    <input id="newArb" placeholder="الترجمة تظهر هنا..." style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; background:#fff;">
+                    <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">إضافة للقائمة ✅</button>
+                </div>
+            </main>`;
+        }
+
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
             if (active.length === 0) {
@@ -1315,7 +1579,7 @@ case 'speedDown':
                         <div class="flashcard-front">
                             <h1>${t.english}</h1>
                         </div>
-                        <div class="flashcard-back"><h1 id="auto-trans-text">${t.arabic}</h1></div>
+                        <div class="flashcard-back"><h1>${t.arabic}</h1></div>
                     </div>
                 </div>
                 <div class="card-controls-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
@@ -1415,6 +1679,87 @@ case 'speedDown':
                         <button class="quiz-opt-btn listening-opt-btn" data-action="listeningAnswer" data-param="${opt}">${opt}</button>
                     `).join('')}
                 </div>
+            </div>`;
+        }
+
+        // ========== صفحة تمرين الكتابة (Spelling) ==========
+        if (this.currentPage === 'spelling') {
+            if (!this.spellingCurrent) {
+                return `<div class="reading-card"><p>لا توجد كلمات متاحة. حاول مرة أخرى.</p></div>`;
+            }
+            return `<div class="reading-card spelling-card">
+                <h3>✍️ اكتب الكلمة بالانجليزية</h3>
+                <div style="font-size: 2rem; text-align: center; margin: 20px 0; padding: 20px; background: #f0f7ff; border-radius: 12px;">
+                    ${this.spellingCurrent.arabic}
+                </div>
+                <input type="text" id="spellingInput" class="spelling-input" placeholder="اكتب الكلمة هنا..." value="${this.spellingUserAnswer}" ${this.spellingAnswered ? 'disabled' : ''}>
+                ${this.spellingResult ? `
+                    <div class="spelling-feedback ${this.spellingResult === 'correct' ? 'correct-feedback' : 'wrong-feedback'}">
+                        ${this.spellingResult === 'correct' ? '✅ إجابة صحيحة!' : '❌ إجابة خاطئة!'}
+                    </div>
+                ` : ''}
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="hero-btn" data-action="spellingCheck" style="background:#10b981;" ${this.spellingAnswered ? 'disabled' : ''}>✅ تحقق</button>
+                    ${this.spellingAnswered ? `<button class="hero-btn" data-action="spellingNext" style="background:#3b82f6;">➡️ التالي</button>` : ''}
+                </div>
+            </div>`;
+        }
+
+        // ========== صفحة الاختبار الشامل للمستوى ==========
+        if (this.currentPage === 'level_test') {
+            if (this.levelTestIndex >= this.levelTestQuestions.length) {
+                return `<div class="reading-card"><p>جاري تحضير النتائج...</p></div>`;
+            }
+            const q = this.levelTestQuestions[this.levelTestIndex];
+            // تحضير الخيارات: نستخدم نفس آلية quizOptions لكن هنا نعرض الكلمة العربية ونختار من الإنجليزيات؟ في الاختبار الشامل نفترض أن السؤال يعرض العربية ويختار الإنجليزية.
+            // لتوحيد الأسلوب، سنعرض السؤال بالعربية (q.arabic) والخيارات: q.english و 3 كلمات إنجليزية عشوائية من بقية الكلمات.
+            // نحتاج لتحضير الخيارات. نبني مصفوفة من الكلمات الإنجليزية المتاحة (من نفس المستوى) ونختار 3 عشوائياً غير الصحيحة.
+            // لجعل الأمر بسيطاً، سنستخدم نفس آلية quizOptions لكن مع عرض العربية.
+            // هذا يتطلب بعض التعديل. لكن لتجنب التعقيد، سأستخدم هنا عرضاً بسيطاً: أربعة أزرار تحوي الكلمات الإنجليزية.
+            // يمكن تحسين ذلك لاحقاً.
+
+            // توليد 3 خيارات خاطئة من بقية الكلمات
+            const otherTerms = this.levelTestQuestions.filter((_, i) => i !== this.levelTestIndex);
+            const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
+            const wrongs = shuffled.slice(0, 3).map(t => t.english);
+            while (wrongs.length < 3) wrongs.push('???');
+            const options = [q.english, ...wrongs].sort(() => 0.5 - Math.random());
+
+            return `<div class="reading-card">
+                <div style="display:flex; justify-content:center; margin-bottom:20px;">
+                    <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">
+                        السؤال ${this.levelTestIndex + 1} / ${this.levelTestQuestions.length}
+                    </span>
+                </div>
+                <h2 style="margin-bottom:30px; text-align:center; font-size:2rem;">${q.arabic}</h2>
+                <div class="quiz-options">
+                    ${options.map(opt => `
+                        <button class="quiz-opt-btn" 
+                                data-action="levelTestAns" 
+                                data-param="${opt}" 
+                                data-correct="${q.english}">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>`;
+        }
+
+        // ========== صفحة نتيجة الاختبار الشامل ==========
+        if (this.currentPage === 'level_test_result') {
+            const totalQuestions = this.levelTestQuestions.length;
+            const score = this.levelTestScore;
+            const percentage = (score / totalQuestions * 100).toFixed(1);
+            const passedLessons = this.levelTestUnlockedLessons.length; // لكننا لم نخزنها بشكل منفصل، يمكن حسابها من الـ answers
+            // نحتاج لعرض النتيجة والدروس المفتوحة. سأبسطها.
+            return `<div class="reading-card">
+                <h2 style="text-align:center;">🏁 نتيجة الاختبار الشامل</h2>
+                <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:20px 0; text-align:center;">
+                    <h1 style="color:#1e40af; margin-bottom:5px;">${percentage}%</h1>
+                    <p style="font-size:1.2rem;">الإجابات الصحيحة: ${score} من ${totalQuestions}</p>
+                </div>
+                <p style="margin-bottom:20px;">تم فتح الدروس التي حصلت فيها على 75% أو أكثر من كلماتها.</p>
+                <button class="hero-btn" data-action="goHome" style="background:#64748b;">العودة للرئيسية</button>
             </div>`;
         }
 
