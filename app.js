@@ -1255,21 +1255,33 @@ setAudioSpeed(rate) {
         }
 
         if (this.currentPage === 'reading') {
-            return `<main class="main-content">
-                <button class="hero-btn" data-action="backToLessons" style="margin-bottom:10px; background:#64748b;">⬅ تراجع</button>
-                <div class="reading-card">
-                    <h2>${lesson.title}</h2>
-                    <div class="scrollable-text" style="direction:ltr; text-align:left; margin-top:10px;">${lesson.content}</div>
-                </div>
-                <div class="reading-card" style="margin-top:20px; border:1px dashed #6366f1; background:#f0f7ff;">
-                    <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
-                    <input id="newEng" placeholder="اكتب بالإنجليزية هنا..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" oninput="appInstance.translateAuto(this.value, 'newArb')"> 
-                    <input id="newArb" placeholder="الترجمة تظهر هنا..." style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; background:#fff;">
-                    <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">إضافة للقائمة ✅</button>
-                </div>
-            </main>`;
-        }
+    // تحديد مسار الملف الصوتي: إذا كان موجوداً في بيانات الدرس نستخدمه، وإلا نستخدم مساراً افتراضياً
+    const audioSrc = lesson.audio || `audio/${lesson.id}.mp3`; // عدّل المسار حسب تنظيمك
 
+    return `<main class="main-content">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+            <button class="hero-btn" data-action="backToLessons" style="background:#64748b;">⬅ تراجع</button>
+            <div style="display: flex; gap: 5px; background: #f0f0f0; padding: 5px; border-radius: 8px; flex-wrap: wrap;">
+                <button class="hero-btn" data-action="playAudio" data-param="${audioSrc}" style="background:#3b82f6; padding: 5px 10px;">▶️ تشغيل</button>
+                <button class="hero-btn" data-action="pauseAudio" style="background:#f59e0b; padding: 5px 10px;">⏸️ إيقاف مؤقت</button>
+                <button class="hero-btn" data-action="stopAudio" style="background:#ef4444; padding: 5px 10px;">⏹️ إيقاف</button>
+                <button class="hero-btn" data-action="speedDown" style="background:#8b5cf6; padding: 5px 10px;">🐢</button>
+                <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(1)}x</span>
+                <button class="hero-btn" data-action="speedUp" style="background:#8b5cf6; padding: 5px 10px;">🐇</button>
+            </div>
+        </div>
+        <div class="reading-card">
+            <h2>${lesson.title}</h2>
+            <div class="scrollable-text" style="direction:ltr; text-align:left; margin-top:10px;">${lesson.content}</div>
+        </div>
+        <div class="reading-card" style="margin-top:20px; border:1px dashed #6366f1; background:#f0f7ff;">
+            <h4 style="margin-bottom:10px;">إضافة كلمة جديدة:</h4>
+            <input id="newEng" placeholder="اكتب بالإنجليزية هنا..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;" oninput="appInstance.translateAuto(this.value, 'newArb')"> 
+            <input id="newArb" placeholder="الترجمة تظهر هنا..." style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; background:#fff;">
+            <button class="hero-btn" data-action="addNewWord" style="width:100%; background:#10b981;">إضافة للقائمة ✅</button>
+        </div>
+    </main>`;
+}
         if (this.currentPage === 'flashcards') {
             const active = allTerms.filter(t => !this.masteredWords.includes(String(t.id)) && !this.hiddenFromCards.includes(String(t.id)));
             if (active.length === 0) {
