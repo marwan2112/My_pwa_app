@@ -204,7 +204,8 @@ window.lessonsData = {
   {"id": "1-66", "english": "at", "arabic": "في (للمكان أو الزمان)"},
   {"id": "1-67", "english": "into", "arabic": "إلى داخل"},
   {"id": "1-68", "english": "to", "arabic": "إلى"}
-]  },
+] 
+  },
 
 "2": {
 "title": "Numbers 1-10",
