@@ -48,7 +48,8 @@ class App {
 
         // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
         this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
-        this.levelTestQuestions = [];
+        this.levelTestLessons = []; // قائمة الدروس في هذا المستوى
+        this.levelTestQuestions = []; // مصفوفة الأسئلة (كل سؤال يحوي الكلمة والدرس)
         this.levelTestIndex = 0;
         this.levelTestScore = 0;
         this.levelTestAnswers = []; // سجل الإجابات لكل سؤال
@@ -336,9 +337,13 @@ class App {
 
     playAudio(src) {
         if (this.currentAudio) {
-            // إذا كان نفس الملف، فقط شغله من مكانه
+            // إذا كان نفس الملف الصوتي وما زال موجوداً
             if (this.currentAudio.src.endsWith(src)) {
-                this.currentAudio.play();
+                if (this.currentAudio.paused) {
+                    this.currentAudio.play();
+                } else {
+                    // إذا كان مشغلاً، نعيد تشغيله؟ لا، نتركه.
+                }
                 return;
             } else {
                 this.currentAudio.pause();
@@ -845,52 +850,59 @@ class App {
     }
 
     // ================== دوال الاختبار الشامل للمستوى ==================
-    prepareLevelTest(levelId) {
-        // levelId: مثلاً 'beginner' يقابل مستويات A1, A2; 'intermediate' -> B1, B2; 'advanced' -> C1, C2
-        this.levelTestLevel = levelId;
-        
-        // تحديد الدروس الخاصة بهذا المستوى بناءً على levelId
+    prepareLevelTest(levelParam) {
+        // levelParam يمكن أن يكون 'beginner', 'intermediate', 'advanced' أو معرف مستوى مثل 'A1'
+        // نحدد قائمة الدروس حسب المستوى
         let lessonIds = [];
-        if (levelId === 'beginner') {
-            // نفترض أن دروس المبتدئ هي ids 1-10 (حسب data)
-            lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
-        } else if (levelId === 'intermediate') {
-            lessonIds = ['11','12','13','14','15','16','17','18','19','20']; // مثال
-        } else if (levelId === 'advanced') {
-            lessonIds = ['21','22','23','24','25','26','27','28','29','30']; // مثال
-        } else return;
+        let levelName = '';
 
-        // تجميع كل كلمات هذه الدروس (مع الكلمات المضافة)
+        if (levelParam === 'beginner' || levelParam === 'A1' || levelParam === 'A2') {
+            lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
+            levelName = 'beginner';
+        } else if (levelParam === 'intermediate' || levelParam === 'B1' || levelParam === 'B2') {
+            lessonIds = ['11','12','13','14','15','16','17','18','19','20'];
+            levelName = 'intermediate';
+        } else if (levelParam === 'advanced' || levelParam === 'C1' || levelParam === 'C2') {
+            lessonIds = ['21','22','23','24','25','26','27','28','29','30'];
+            levelName = 'advanced';
+        } else {
+            return;
+        }
+
+        this.levelTestLevel = levelName;
+        this.levelTestLessons = lessonIds;
+
+        // تجميع كل كلمات الدروس بالترتيب (حسب ترتيب الدروس، وداخل كل درس حسب ترتيب الكلمات)
         let allTerms = [];
         lessonIds.forEach(id => {
             const lesson = window.lessonsData[id];
-            if (lesson) {
-                allTerms.push(...lesson.terms);
-                const added = this.userVocabulary.filter(v => v.lessonId == id);
-                allTerms.push(...added);
+            if (lesson && lesson.terms) {
+                // نأخذ نسخة من الكلمات (بدون الكلمات المضافة من المستخدم لأنها خارج الدروس الأساسية)
+                // نخلط الكلمات داخل الدرس لجعل الاختبار غير متوقع
+                const lessonTerms = [...lesson.terms];
+                this.shuffleArray(lessonTerms);
+                allTerms.push(...lessonTerms.map(t => ({ ...t, lessonId: id })));
             }
-        });
-        // إزالة المكررات حسب id (نفترض أن كل كلمة لها id فريد)
-        const uniqueTerms = [];
-        const seen = new Set();
-        allTerms.forEach(t => {
-            if (!seen.has(t.id)) {
-                seen.add(t.id);
-                uniqueTerms.push(t);
+            // يمكن أيضاً إضافة الكلمات المضافة من المستخدم لهذا الدرس إذا أردت
+            const added = this.userVocabulary.filter(v => v.lessonId == id);
+            if (added.length > 0) {
+                const addedCopy = [...added];
+                this.shuffleArray(addedCopy);
+                allTerms.push(...addedCopy.map(t => ({ ...t, lessonId: id })));
             }
         });
 
-        if (uniqueTerms.length === 0) {
+        if (allTerms.length === 0) {
             alert('لا توجد كلمات في هذا المستوى.');
             return;
         }
 
-        // نخلط الكلمات ونأخذ 100 سؤال (أو كلها إذا أقل)
-        this.levelTestQuestions = uniqueTerms.sort(() => 0.5 - Math.random()).slice(0, 100);
+        // نأخذ أول 100 سؤال (أو كلها إذا أقل)
+        this.levelTestQuestions = allTerms.slice(0, 100);
         this.levelTestIndex = 0;
         this.levelTestScore = 0;
         this.levelTestAnswers = [];
-        this.levelTestUnlockedLessons = []; // سنحددها بعد الاختبار
+        this.levelTestUnlockedLessons = [];
 
         this.currentPage = 'level_test';
         this.render();
@@ -931,15 +943,23 @@ class App {
         setTimeout(() => {
             this.levelTestIndex++;
             if (this.levelTestIndex < this.levelTestQuestions.length) {
-                // تحضير الخيارات للسؤال التالي
-                // الخيارات ستولد في getView
+                // continue
             } else {
-                // انتهى الاختبار: تحليل النتائج وتحديد الدروس المفتوحة
+                // انتهى الاختبار تلقائياً
                 this.processLevelTestResults();
             }
             this.isWaiting = false;
             this.render();
         }, 1200);
+    }
+
+    // إنهاء الاختبار مبكراً
+    finishLevelTestEarly() {
+        if (this.levelTestIndex > 0) {
+            this.processLevelTestResults();
+        } else {
+            alert('لم تتم الإجابة على أي سؤال بعد.');
+        }
     }
 
     processLevelTestResults() {
@@ -967,17 +987,32 @@ class App {
         this.saveData();
 
         // تحديد أول درس مقفل (لم يفتح) من قائمة الدروس الخاصة بهذا المستوى
-        let lessonIds = [];
-        if (this.levelTestLevel === 'beginner') lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
-        else if (this.levelTestLevel === 'intermediate') lessonIds = ['11','12','13','14','15','16','17','18','19','20'];
-        else if (this.levelTestLevel === 'advanced') lessonIds = ['21','22','23','24','25','26','27','28','29','30'];
+        const firstLocked = this.levelTestLessons.find(id => !this.unlockedLessons.includes(id));
+        this.levelTestFirstLockedLesson = firstLocked || null;
 
-        const firstLocked = lessonIds.find(id => !this.unlockedLessons.includes(id));
-        this.levelTestFirstLockedLesson = firstLocked || null; // إذا كان الكل مفتوحًا، يكون null
+        // إعداد رسالة بالدروس المفتوحة
+        let message = '';
+        if (newlyUnlocked.length > 0) {
+            message = `✅ تم فتح الدروس: ${newlyUnlocked.join('، ')}.`;
+            if (this.levelTestFirstLockedLesson) {
+                message += ` ابدأ من الدرس ${this.levelTestFirstLockedLesson}.`;
+            } else {
+                message += ` 🎉 لقد فتحت جميع دروس هذا المستوى!`;
+            }
+        } else {
+            if (this.levelTestFirstLockedLesson) {
+                message = `لم يتم فتح أي درس جديد. استمر في الدراسة من الدرس ${this.levelTestFirstLockedLesson}.`;
+            } else {
+                message = `🎉 جميع دروس هذا المستوى مفتوحة بالفعل.`;
+            }
+        }
 
         // عرض النتيجة
         this.currentPage = 'level_test_result';
         this.render();
+
+        // عرض رسالة منبثقة
+        setTimeout(() => alert(message), 100);
     }
 
     // ================== دوال أخرى ==================
@@ -1251,6 +1286,9 @@ class App {
                 case 'startLevelTest':
                     this.prepareLevelTest(param);
                     break;
+                case 'finishLevelTest':
+                    this.finishLevelTestEarly();
+                    break;
             }
             this.render();
         });
@@ -1445,13 +1483,6 @@ class App {
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
-
-                <!-- أزرار الاختبار الشامل للمستويات - ستكون داخل المستوى نفسه ولكننا نضعها هنا للوصول السريع -->
-                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <button class="hero-btn" data-action="startLevelTest" data-param="beginner" style="background:#10b981;">🌟 اختبار المبتدئ (100 سؤال)</button>
-                    <button class="hero-btn" data-action="startLevelTest" data-param="intermediate" style="background:#f59e0b;">🔥 اختبار المتوسط (100 سؤال)</button>
-                    <button class="hero-btn" data-action="startLevelTest" data-param="advanced" style="background:#ef4444;">⚡ اختبار المتقدم (100 سؤال)</button>
-                </div>
                 
                 <button data-action="logout" class="logout-btn" style="margin-top: 20px;">تسجيل الخروج</button>
             </main>`;
@@ -1529,6 +1560,12 @@ class App {
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
+            // تحديد المستوى المناسب للاختبار الشامل
+            let testLevelParam = '';
+            if (this.selectedLevel === 'A1' || this.selectedLevel === 'A2') testLevelParam = 'beginner';
+            else if (this.selectedLevel === 'B1' || this.selectedLevel === 'B2') testLevelParam = 'intermediate';
+            else if (this.selectedLevel === 'C1' || this.selectedLevel === 'C2') testLevelParam = 'advanced';
+
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
                 <div class="features-grid">
@@ -1538,9 +1575,11 @@ class App {
                     }).join('')}
                 </div>
                 <!-- زر الاختبار الشامل لهذا المستوى -->
+                ${testLevelParam ? `
                 <div style="margin-top:20px; text-align:center;">
-                    <button class="hero-btn" data-action="startLevelTest" data-param="${this.selectedLevel === 'A1' || this.selectedLevel === 'A2' ? 'beginner' : this.selectedLevel === 'B1' || this.selectedLevel === 'B2' ? 'intermediate' : 'advanced'}" style="background:#8b5cf6;">📊 اختبار شامل للمستوى</button>
+                    <button class="hero-btn" data-action="startLevelTest" data-param="${testLevelParam}" style="background:#8b5cf6;">📊 اختبار شامل للمستوى (100 سؤال)</button>
                 </div>
+                ` : ''}
             </main>`;
         }
 
@@ -1756,10 +1795,11 @@ class App {
             const options = [q.english, ...wrongs].sort(() => 0.5 - Math.random());
 
             return `<div class="reading-card">
-                <div style="display:flex; justify-content:center; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">
                         السؤال ${this.levelTestIndex + 1} / ${this.levelTestQuestions.length}
                     </span>
+                    <button class="hero-btn" data-action="finishLevelTest" style="background:#ef4444; padding:5px 15px;">⏹️ إنهاء الاختبار</button>
                 </div>
                 <h2 style="margin-bottom:30px; text-align:center; font-size:2rem;">${q.arabic}</h2>
                 <div class="quiz-options">
