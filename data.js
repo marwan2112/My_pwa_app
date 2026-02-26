@@ -1342,32 +1342,6 @@ window.lessonsData = {
 {"id": "59-20", "english": "Upcoming", "arabic": "قادم"}
 ]
 },
-  "60": {
-"title": "Environmental Protection",
-"content": "Adam and his friends recently joined a local organization dedicated to environmental protection. They believe that everyone has a responsibility to preserve the planet for future generations. Their first project was a beach cleanup campaign where they collected hundreds of plastic bottles and cigarette filters. Adam learned that pollution has a devastating effect on marine life and ecosystems. The organization also promotes the concept of "reduce, reuse, and recycle' within the community. They encourage people to use reusable bags instead of plastic ones to minimize waste. During a workshop, Adam learned about the importance of renewable energy sources like solar and wind power in reducing carbon emissions. He also started a small garden at home to plant more trees and flowers, which helps improve air quality. By making small changes in his daily habits, Adam feels that he is contributing to a global movement against climate change. He hopes his actions will inspire others to become more eco-friendly.",
-"terms": [
-{"id": "60-1", "english": "Organization", "arabic": "منظمة/مؤسسة"},
-{"id": "60-2", "english": "Preserve", "arabic": "يحافظ على"},
-{"id": "60-3", "english": "Generations", "arabic": "أجيال"},
-{"id": "60-4", "english": "Campaign", "arabic": "حملة"},
-{"id": "60-5", "english": "Pollution", "arabic": "تلوث"},
-{"id": "60-6", "english": "Devastating", "arabic": "مدمر"},
-{"id": "60-7", "english": "Marine", "arabic": "بحري"},
-{"id": "60-8", "english": "Ecosystems", "arabic": "أنظمة بيئية"},
-{"id": "60-9", "english": "Reduce", "arabic": "يقلل"},
-{"id": "60-10", "english": "Reuse", "arabic": "يعيد استخدام"},
-{"id": "60-11", "english": "Recycle", "arabic": "يعيد تدوير"},
-{"id": "60-12", "english": "Reusable", "arabic": "قابل لإعادة الاستخدام"},
-{"id": "60-13", "english": "Minimize", "arabic": "يقلل للحد الأدنى"},
-{"id": "60-14", "english": "Waste", "arabic": "نفايات/هدر"},
-{"id": "60-15", "english": "Renewable", "arabic": "متجدد"},
-{"id": "60-16", "english": "Emissions", "arabic": "انبعاثات"},
-{"id": "60-17", "english": "Global", "arabic": "عالمي"},
-{"id": "60-18", "english": "Climate change", "arabic": "تغير المناخ"},
-{"id": "60-19", "english": "Inspire", "arabic": "يلهم"},
-{"id": "60-20", "english": "Eco-friendly", "arabic": "صديق للبيئة"}
-]
-},
   "328": {
     "title": "Digital Citizenship and Online Safety",
     "content": "In an era where our personal and professional lives are increasingly lived online, the concept of 'digital citizenship' has become more important than ever. Being a good digital citizen involves using technology responsibly, respectfully, and critically. As social media platforms continue to influence public opinion, it is crucial for individuals to develop strong media literacy skills to identify misinformation and 'fake news.' If we teach children about online etiquette and safety at a young age, they will be better prepared to navigate the complexities of the internet. One of the greatest risks in the digital world is cybercrime, which includes identity theft, phishing, and hacking. To protect sensitive information, experts recommend using multi-factor authentication and strong, unique passwords for every account. Furthermore, understanding the concept of a 'digital footprint' is essential; everything we post online leaves a permanent trace that can be seen by future employers or university admissions officers. Adam recently attended a webinar about cybersecurity and learned how to identify suspicious emails that often contain malicious attachments. He realized that a simple click on a dangerous link could compromise his entire network. Consequently, he has become more cautious about sharing personal details on public forums. Another important aspect of digital citizenship is combating cyberbullying. Protecting vulnerable users and promoting a culture of kindness is a shared responsibility of all internet users. Despite the convenience of being constantly connected, it is also important to practice 'digital detox' to maintain mental health and avoid screen addiction. By finding a balance between our virtual and physical lives, we can enjoy the benefits of technology without losing our sense of real-world connection and well-being.",
