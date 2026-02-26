@@ -135,7 +135,8 @@ window.lessonsData = {
   "1": {
     "title": "Greetings and Introductions",
     "content": "My name is Adam. I am a student. Today is my first day at a new school. I walk into my classroom. I see a boy sitting alone. I smile and say, 'Hi!' The boy looks at me and smiles. 'Hello,' he says. I ask, 'What is your name?'  He says, 'My name is Ali. What is your name?' I say, 'My name is Adam. Nice to meet you, Ali.' Ali says, 'Nice to meet you too, Adam.' Then Ali asks, 'How are you, Adam?' I say, 'I am fine, thank you. And you?' Ali says, 'I am good, thanks.' We talk for a few minutes. Ali is very nice. Then a girl comes to us. Ali says, 'Hi Sarah! Adam, this is my friend Sarah. Sarah, this is Adam.' Sarah looks at me and says, 'Hi Adam, nice to meet you.' I say, 'Nice to meet you too, Sarah.' Sarah asks me, 'Is this your first day?' I say, 'Yes, it is my first day.' Sarah smiles. 'Welcome to our school, Adam!' I say, 'Thank you!' The teacher comes into the room. She says, 'Good morning, class!' Everyone says, 'Good morning!' The teacher looks at me. She says, 'You are Adam. I am Ms. Lana. Welcome.' I say, 'Hello Ms. Lana. Nice to meet you.' At the end of the day, I see Ali and Sarah. Ali says, 'Goodbye Adam! See you tomorrow!' Sarah says, 'Yes, see you later, Adam!' I smile and say, 'Goodbye Ali! Goodbye Sarah! See you tomorrow!'I am very happy. I have two new friends today.",
-"terms": [
+"audio: "audio/Lesson_1 Greetings and Introductions.mp3",
+    "terms": [
   {"id": "1-1", "english": "Hi", "arabic": "مرحباً"},
   {"id": "1-2", "english": "Good morning", "arabic": "صباح الخير"},
   {"id": "1-3", "english": "Good afternoon", "arabic": "مساء الخير (بعد الظهر)"},
