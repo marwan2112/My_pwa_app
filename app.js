@@ -447,7 +447,16 @@ this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمس
             // إضافة الجملة إلى التاريخ
             this.jumbleHistory.push(this.jumbleOriginalSentence);
         }
-
+// ترجمة الجملة إلى العربية للمساعدة
+this.translateAuto(this.jumbleOriginalSentence, null).then(translated => {
+    if (translated) {
+        this.jumbleArabicHint = translated;
+    } else {
+        this.jumbleArabicHint = '';
+    }
+}).catch(() => {
+    this.jumbleArabicHint = '';
+});
         this.jumbleWords = this.jumbleOriginalSentence.split(/\s+/).filter(w => w.length > 0);
         this.shuffleArray(this.jumbleWords);
         this.jumbleUserAnswer = [];
