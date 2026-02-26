@@ -359,7 +359,7 @@ class App {
 
             this.placementStep++;
 
-            if (this.placementStep >= 50) {
+            if (this.placementStep >= 35) {
                 const res = {
                     level: this.currentDifficulty,
                     date: new Date().toLocaleString('ar-EG'),
@@ -1116,13 +1116,13 @@ class App {
         }
 
         if (this.currentPage === 'placement_test') {
-            if (this.placementStep >= 50) {
+            if (this.placementStep >= 35) {
                 return `<div class="reading-card result-card">
                     <h2 style="text-align:center;">🏁 نتيجة الاختبار</h2>
                     <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:10px 0; text-align:center;">
                         <h1 style="color:#1e40af; margin-bottom:5px;">${this.currentDifficulty}</h1>
                         <p style="font-weight:bold; color:#3b82f6;">IELTS: ${this.getIeltsEquivalent(this.currentDifficulty)}</p>
-                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 50</p>
+                        <p style="font-size:0.9rem; color:#64748b;">مجموع الإجابات الصحيحة: ${this.placementScore} / 35</p>
                     </div>
                     <h4 style="margin-top:15px;">📜 سجل نتائجك السابقة:</h4>
                     <div style="max-height:200px; overflow-y:auto; font-size:0.9rem; margin-bottom:15px; border:1px solid #e2e8f0; border-radius:8px;">
