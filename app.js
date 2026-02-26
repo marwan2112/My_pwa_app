@@ -359,7 +359,7 @@ class App {
 
             this.placementStep++;
 
-            if (this.placementStep >= 25) {
+            if (this.placementStep >= 50) {
                 const res = {
                     level: this.currentDifficulty,
                     date: new Date().toLocaleString('ar-EG'),
