@@ -56,6 +56,11 @@ class App {
         this.levelTestUnlockedLessons = []; // الدروس التي سيتم فتحها بعد الاختبار
         this.levelTestFirstLockedLesson = null; // أول درس مقفل بعد الاختبار
         this.levelTestCompletedLessons = {}; // لتخزين حالة كل درس أثناء الاختبار
+        this.levelTestStartLesson = 0; // الدرس الذي نبدأ منه في هذا الاختبار
+        this.levelTestEndLesson = 0; // آخر درس نغطيه في هذا الاختبار
+
+        // تحميل آخر درس تم اختباره لكل مستوى
+        this.lastTestedLesson = JSON.parse(localStorage.getItem('lastTestedLesson')) || { beginner: 0, intermediate: 0, advanced: 0 };
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -270,6 +275,7 @@ class App {
         localStorage.setItem('customLessons', JSON.stringify(this.customLessons));
         if (this.userData) localStorage.setItem('userAccount', JSON.stringify(this.userData));
         localStorage.setItem('userCoins', JSON.stringify(this.userCoins));
+        localStorage.setItem('lastTestedLesson', JSON.stringify(this.lastTestedLesson));
     }
 
     speak(text) {
@@ -338,10 +344,9 @@ class App {
 
     playAudio(src) {
         if (this.currentAudio) {
-            if (this.currentAudio.src.endsWith(src)) {
-                if (this.currentAudio.paused) {
-                    this.currentAudio.play();
-                }
+            // إذا كان نفس الملف ولم ينتهِ، فقط شغله
+            if (this.currentAudio.src.endsWith(src) && !this.currentAudio.ended) {
+                this.currentAudio.play();
                 return;
             } else {
                 this.currentAudio.pause();
@@ -362,6 +367,18 @@ class App {
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.currentAudio.currentTime = 0;
+        }
+    }
+
+    skipBack10() {
+        if (this.currentAudio) {
+            this.currentAudio.currentTime = Math.max(0, this.currentAudio.currentTime - 10);
+        }
+    }
+
+    skipForward10() {
+        if (this.currentAudio) {
+            this.currentAudio.currentTime = Math.min(this.currentAudio.duration, this.currentAudio.currentTime + 10);
         }
     }
 
@@ -833,13 +850,14 @@ class App {
         let levelName = '';
 
         if (levelParam === 'beginner' || levelParam === 'A1' || levelParam === 'A2') {
-            lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
+            // نفترض أن دروس المبتدئ هي 1-60
+            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 1).toString());
             levelName = 'beginner';
         } else if (levelParam === 'intermediate' || levelParam === 'B1' || levelParam === 'B2') {
-            lessonIds = ['11','12','13','14','15','16','17','18','19','20'];
+            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 61).toString());
             levelName = 'intermediate';
         } else if (levelParam === 'advanced' || levelParam === 'C1' || levelParam === 'C2') {
-            lessonIds = ['21','22','23','24','25','26','27','28','29','30'];
+            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 121).toString());
             levelName = 'advanced';
         } else {
             return;
@@ -848,33 +866,49 @@ class App {
         this.levelTestLevel = levelName;
         this.levelTestLessons = lessonIds;
 
-        // تجميع كل كلمات الدروس بالترتيب (دون خلط، مع الحفاظ على ترتيب الدروس)
+        // تحديد الدرس الذي نبدأ منه (آخر درس تم اختباره + 1)
+        const startLessonIndex = this.lastTestedLesson[levelName] || 0;
+        if (startLessonIndex >= lessonIds.length) {
+            alert('🎉 لقد أكملت جميع دروس هذا المستوى مسبقاً.');
+            return;
+        }
+
+        // نأخذ الدروس من startLessonIndex حتى نصل إلى 100 سؤال (5 كلمات لكل درس)
         let allTerms = [];
-        lessonIds.forEach(id => {
+        let lessonIndex = startLessonIndex;
+        while (lessonIndex < lessonIds.length && allTerms.length < 100) {
+            const id = lessonIds[lessonIndex];
             const lesson = window.lessonsData[id];
             if (lesson && lesson.terms) {
-                // نأخذ نسخة من الكلمات (بدون خلط داخل الدرس)
-                allTerms.push(...lesson.terms.map(t => ({ ...t, lessonId: id })));
+                // نأخذ 5 كلمات عشوائية من هذا الدرس (إذا كان الدرس يحتوي على أكثر من 5)
+                const terms = lesson.terms;
+                const shuffled = [...terms].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 5).map(t => ({ ...t, lessonId: id }));
+                allTerms.push(...selected);
             }
-            // نضيف الكلمات المضافة من المستخدم لهذا الدرس (إذا أردت)
+            // نضيف الكلمات المضافة من المستخدم لهذا الدرس (اختياري)
             const added = this.userVocabulary.filter(v => v.lessonId == id);
             if (added.length > 0) {
-                allTerms.push(...added.map(t => ({ ...t, lessonId: id })));
+                const addedShuffled = [...added].sort(() => 0.5 - Math.random());
+                const addedSelected = addedShuffled.slice(0, 5).map(t => ({ ...t, lessonId: id }));
+                allTerms.push(...addedSelected);
             }
-        });
+            lessonIndex++;
+        }
 
         if (allTerms.length === 0) {
             alert('لا توجد كلمات في هذا المستوى.');
             return;
         }
 
-        // نأخذ أول 100 سؤال (أو كلها إذا أقل)
-        this.levelTestQuestions = allTerms.slice(0, 100);
+        this.levelTestQuestions = allTerms.slice(0, 100); // نأخذ أول 100
         this.levelTestIndex = 0;
         this.levelTestScore = 0;
         this.levelTestAnswers = [];
         this.levelTestUnlockedLessons = [];
-        this.levelTestCompletedLessons = {}; // لتتبع عدد الإجابات لكل درس
+        this.levelTestCompletedLessons = {};
+        this.levelTestStartLesson = startLessonIndex;
+        this.levelTestEndLesson = lessonIndex; // آخر درس تم سحب كلمات منه (قد لا يكون مكتملاً)
 
         this.currentPage = 'level_test';
         this.render();
@@ -926,7 +960,7 @@ class App {
             if (this.levelTestIndex < this.levelTestQuestions.length) {
                 // نستمر
             } else {
-                // انتهى الاختبار تلقائياً
+                // انتهى الاختبار
                 this.processLevelTestResults();
             }
             this.isWaiting = false;
@@ -934,7 +968,6 @@ class App {
         }, 1200);
     }
 
-    // إنهاء الاختبار مبكراً
     finishLevelTestEarly() {
         if (this.levelTestIndex > 0) {
             this.processLevelTestResults();
@@ -944,33 +977,41 @@ class App {
     }
 
     processLevelTestResults() {
-        // حساب الدروس التي حققت نسبة ≥ 75%
+        // حساب الدروس التي حققت نسبة ≥ 75% (4 من 5)
         const newlyUnlocked = [];
         let totalCoinsEarned = 0;
+        let lastPassedLessonIndex = this.levelTestStartLesson - 1; // آخر درس تم اجتيازه
 
+        // تجميع النتائج حسب الدرس
         for (let lessonId in this.levelTestCompletedLessons) {
             const stats = this.levelTestCompletedLessons[lessonId];
             if (stats.correct / stats.total >= 0.75) {
                 if (!this.unlockedLessons.includes(lessonId)) {
                     this.unlockedLessons.push(lessonId);
                     newlyUnlocked.push(lessonId);
-                    totalCoinsEarned += 20; // 20 لؤلؤة لكل درس يُفتح
+                    totalCoinsEarned += 20;
                 }
+                // تحديد فهرس هذا الدرس في قائمة الدروس
+                const idx = this.levelTestLessons.indexOf(lessonId);
+                if (idx > lastPassedLessonIndex) lastPassedLessonIndex = idx;
             }
         }
+
+        // تحديث آخر درس تم اختباره إلى nextLesson (أول درس لم يتم اختباره بعد)
+        const nextLessonIndex = Math.max(lastPassedLessonIndex + 1, this.levelTestEndLesson);
+        this.lastTestedLesson[this.levelTestLevel] = nextLessonIndex;
+        this.saveData();
 
         // إضافة العملات
         if (totalCoinsEarned > 0) {
             this.userCoins += totalCoinsEarned;
         }
 
-        this.saveData();
-
-        // تحديد أول درس مقفل (لم يفتح) من قائمة الدروس الخاصة بهذا المستوى
+        // تحديد أول درس مقفل
         const firstLocked = this.levelTestLessons.find(id => !this.unlockedLessons.includes(id));
         this.levelTestFirstLockedLesson = firstLocked || null;
 
-        // إعداد رسالة بالدروس المفتوحة
+        // إعداد رسالة
         let message = '';
         if (newlyUnlocked.length > 0) {
             message = `✅ تم فتح الدروس: ${newlyUnlocked.join('، ')} وحصلت على ${totalCoinsEarned} لؤلؤة.`;
@@ -987,11 +1028,8 @@ class App {
             }
         }
 
-        // عرض النتيجة
         this.currentPage = 'level_test_result';
         this.render();
-
-        // عرض رسالة منبثقة
         setTimeout(() => alert(message), 100);
     }
 
@@ -1042,6 +1080,12 @@ class App {
                     break;
                 case 'stopAudio':
                     this.stopAudio();
+                    break;
+                case 'skipBack10':
+                    this.skipBack10();
+                    break;
+                case 'skipForward10':
+                    this.skipForward10();
                     break;
                 case 'speedUp':
                     this.speedUp();
@@ -1596,6 +1640,8 @@ class App {
                         <button class="hero-btn" data-action="playAudio" data-param="${audioSrc}" style="background:#3b82f6; padding: 5px 10px;">▶️ تشغيل</button>
                         <button class="hero-btn" data-action="pauseAudio" style="background:#f59e0b; padding: 5px 10px;">⏸️ إيقاف مؤقت</button>
                         <button class="hero-btn" data-action="stopAudio" style="background:#ef4444; padding: 5px 10px;">⏹️ إيقاف</button>
+                        <button class="hero-btn" data-action="skipBack10" style="background:#8b5cf6; padding: 5px 10px;">⏪ 10</button>
+                        <button class="hero-btn" data-action="skipForward10" style="background:#8b5cf6; padding: 5px 10px;">10 ⏩</button>
                         <button class="hero-btn" data-action="speedDown" style="background:#8b5cf6; padding: 5px 10px;">🐢</button>
                         <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(2)}x</span>
                         <button class="hero-btn" data-action="speedUp" style="background:#8b5cf6; padding: 5px 10px;">🐇</button>
