@@ -148,8 +148,505 @@ window.lessonsData = {
       {"id": "1-10", "english": "Thank you", "arabic": "شكراً لك"}
     ]
   },
-  // ... باقي الدروس (2 إلى 328) بنفس المحتوى الأصلي ...
-  // تم حذف الجزء الأوسط للاختصار، ولكن في الملف النهائي سيكون كاملاً
+
+"2": {
+"title": "Numbers 1-10",
+"content": "Let's learn numbers! One, two, three, four, five. Six, seven, eight, nine, ten. I have two cats. She has three books. He is ten years old. How many apples? Five apples.",
+"terms": [
+{"id": "2-1", "english": "One", "arabic": "واحد"},
+{"id": "2-2", "english": "Two", "arabic": "اثنان"},
+{"id": "2-3", "english": "Three", "arabic": "ثلاثة"},
+{"id": "2-4", "english": "Four", "arabic": "أربعة"},
+{"id": "2-5", "english": "Five", "arabic": "خمسة"},
+{"id": "2-6", "english": "Six", "arabic": "ستة"},
+{"id": "2-7", "english": "Seven", "arabic": "سبعة"},
+{"id": "2-8", "english": "Eight", "arabic": "ثمانية"},
+{"id": "2-9", "english": "Nine", "arabic": "تسعة"},
+{"id": "2-10", "english": "Ten", "arabic": "عشرة"}
+]
+},
+"3": {
+"title": "Colors",
+"content": "The sky is blue. The sun is yellow. Grass is green. An apple is red. An orange is orange. My bag is black. My shoes are brown. I like pink flowers. The cat is white. What is your favorite color?",
+"terms": [
+{"id": "3-1", "english": "Red", "arabic": "أحمر"},
+{"id": "3-2", "english": "Blue", "arabic": "أزرق"},
+{"id": "3-3", "english": "Yellow", "arabic": "أصفر"},
+{"id": "3-4", "english": "Green", "arabic": "أخضر"},
+{"id": "3-5", "english": "Orange", "arabic": "برتقالي"},
+{"id": "3-6", "english": "Purple", "arabic": "أرجواني"},
+{"id": "3-7", "english": "Pink", "arabic": "وردي"},
+{"id": "3-8", "english": "Brown", "arabic": "بني"},
+{"id": "3-9", "english": "Black", "arabic": "أسود"},
+{"id": "3-10", "english": "White", "arabic": "أبيض"}
+]
+},
+"4": {
+"title": "Family Members",
+"content": "This is my family. My mother is Sara. My father is Ali. I have one brother and one sister. My brother is Omar. My sister is Lina. My grandmother and grandfather are kind. My uncle and aunt live in Cairo. My cousins are nice. I love my family.",
+"terms": [
+{"id": "4-1", "english": "Mother", "arabic": "أم"},
+{"id": "4-2", "english": "Father", "arabic": "أب"},
+{"id": "4-3", "english": "Brother", "arabic": "أخ"},
+{"id": "4-4", "english": "Sister", "arabic": "أخت"},
+{"id": "4-5", "english": "Grandmother", "arabic": "جدة"},
+{"id": "4-6", "english": "Grandfather", "arabic": "جد"},
+{"id": "4-7", "english": "Uncle", "arabic": "عم/خال"},
+{"id": "4-8", "english": "Aunt", "arabic": "عمة/خالة"},
+{"id": "4-9", "english": "Cousin", "arabic": "ابن عم/خال"},
+{"id": "4-10", "english": "Family", "arabic": "عائلة"}
+]
+},
+"5": {
+"title": "Things at Home",
+"content": "Look at my house. There is a table and four chairs in the kitchen. The door is brown. The window is big. In my bedroom, I have a bed and a lamp. The sofa is in the living room. The fridge and oven are in the kitchen. The cupboard is full of plates.",
+"terms": [
+{"id": "5-1", "english": "Table", "arabic": "طاولة"},
+{"id": "5-2", "english": "Chair", "arabic": "كرسي"},
+{"id": "5-3", "english": "Door", "arabic": "باب"},
+{"id": "5-4", "english": "Window", "arabic": "نافذة"},
+{"id": "5-5", "english": "Bed", "arabic": "سرير"},
+{"id": "5-6", "english": "Lamp", "arabic": "مصباح"},
+{"id": "5-7", "english": "Sofa", "arabic": "أريكة"},
+{"id": "5-8", "english": "Fridge", "arabic": "ثلاجة"},
+{"id": "5-9", "english": "Oven", "arabic": "فرن"},
+{"id": "5-10", "english": "Cupboard", "arabic": "خزانة"}
+]
+},
+"6": {
+"title": "Days and Months",
+"content": "There are seven days in a week. Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday. Friday is a holiday. My birthday is in January. School starts in September. Winter is in December, January, February. What day is it today?",
+"terms": [
+{"id": "6-1", "english": "Monday", "arabic": "الاثنين"},
+{"id": "6-2", "english": "Tuesday", "arabic": "الثلاثاء"},
+{"id": "6-3", "english": "Wednesday", "arabic": "الأربعاء"},
+{"id": "6-4", "english": "Thursday", "arabic": "الخميس"},
+{"id": "6-5", "english": "Friday", "arabic": "الجمعة"},
+{"id": "6-6", "english": "Saturday", "arabic": "السبت"},
+{"id": "6-7", "english": "Sunday", "arabic": "الأحد"},
+{"id": "6-8", "english": "January", "arabic": "يناير"},
+{"id": "6-9", "english": "February", "arabic": "فبراير"},
+{"id": "6-10", "english": "March", "arabic": "مارس"}
+]
+},
+"7": {
+"title": "Feelings",
+"content": "How are you today? I am happy because it is sunny. My friend is sad because he is sick. When I am hungry, I eat food. After playing, I am tired. In winter, I feel cold. In summer, I feel hot. I am excited for the party! Don't be scared of the dark.",
+"terms": [
+{"id": "7-1", "english": "Happy", "arabic": "سعيد"},
+{"id": "7-2", "english": "Sad", "arabic": "حزين"},
+{"id": "7-3", "english": "Angry", "arabic": "غاضب"},
+{"id": "7-4", "english": "Tired", "arabic": "متعب"},
+{"id": "7-5", "english": "Hungry", "arabic": "جائع"},
+{"id": "7-6", "english": "Thirsty", "arabic": "عطشان"},
+{"id": "7-7", "english": "Cold", "arabic": "بارد (يشعر بالبرد)"},
+{"id": "7-8", "english": "Hot", "arabic": "حار (يشعر بالحر)"},
+{"id": "7-9", "english": "Scared", "arabic": "خائف"},
+{"id": "7-10", "english": "Excited", "arabic": "متحمس"}
+]
+},
+"8": {
+"title": "Clothes",
+"content": "What are you wearing today? I am wearing a blue shirt and black pants. My sister is wearing a red dress. In winter, I wear a coat and a hat. I put on socks and shoes before going out. He has a new T-shirt. She likes her pink skirt.",
+"terms": [
+{"id": "8-1", "english": "Shirt", "arabic": "قميص"},
+{"id": "8-2", "english": "T-shirt", "arabic": "تيشيرت"},
+{"id": "8-3", "english": "Pants", "arabic": "بنطال"},
+{"id": "8-4", "english": "Dress", "arabic": "فستان"},
+{"id": "8-5", "english": "Skirt", "arabic": "تنورة"},
+{"id": "8-6", "english": "Jacket", "arabic": "جاكيت"},
+{"id": "8-7", "english": "Coat", "arabic": "معطف"},
+{"id": "8-8", "english": "Hat", "arabic": "قبعة"},
+{"id": "8-9", "english": "Shoes", "arabic": "حذاء"},
+{"id": "8-10", "english": "Socks", "arabic": "جوارب"}
+]
+},
+"9": {
+"title": "Animals",
+"content": "I have a pet dog. His name is Max. My friend has a cat. Birds fly in the sky. Fish swim in water. On the farm, there are cows, horses, and sheep. Chickens lay eggs. Ducks swim in the pond. Rabbits are small and cute. What is your favorite animal?",
+"terms": [
+{"id": "9-1", "english": "Dog", "arabic": "كلب"},
+{"id": "9-2", "english": "Cat", "arabic": "قطة"},
+{"id": "9-3", "english": "Bird", "arabic": "طائر"},
+{"id": "9-4", "english": "Fish", "arabic": "سمكة"},
+{"id": "9-5", "english": "Cow", "arabic": "بقرة"},
+{"id": "9-6", "english": "Horse", "arabic": "حصان"},
+{"id": "9-7", "english": "Sheep", "arabic": "خروف"},
+{"id": "9-8", "english": "Chicken", "arabic": "دجاجة"},
+{"id": "9-9", "english": "Duck", "arabic": "بطة"},
+{"id": "9-10", "english": "Rabbit", "arabic": "أرنب"}
+]
+},
+"10": {
+"title": "Food and Drink",
+"content": "For breakfast, I eat bread and cheese. I drink tea or milk. For lunch, we have rice with chicken and vegetables. I like pasta with meat. For dinner, I eat fish and salad. I drink water when I am thirsty. Juice is sweet. Fruit is healthy. What do you like to eat?",
+"terms": [
+{"id": "10-1", "english": "Rice", "arabic": "أرز"},
+{"id": "10-2", "english": "Pasta", "arabic": "معكرونة"},
+{"id": "10-3", "english": "Meat", "arabic": "لحم"},
+{"id": "10-4", "english": "Chicken", "arabic": "دجاج (لحم)"},
+{"id": "10-5", "english": "Vegetables", "arabic": "خضروات"},
+{"id": "10-6", "english": "Fruit", "arabic": "فاكهة"},
+{"id": "10-7", "english": "Water", "arabic": "ماء"},
+{"id": "10-8", "english": "Juice", "arabic": "عصير"},
+{"id": "10-9", "english": "Milk", "arabic": "حليب"},
+{"id": "10-10", "english": "Tea", "arabic": "شاي"}
+]
+},
+"11": {
+"title": "Daily Routines",
+"content": "Every day, I wake up at 7 AM. I get up and take a shower. Then I get dressed and have breakfast. I go to school at 8 AM. At school, I have lunch with my friends. I go home at 3 PM. I do my homework in the afternoon. In the evening, I watch TV. I go to sleep at 10 PM.",
+"terms": [
+{"id": "11-1", "english": "Wake up", "arabic": "يستيقظ"},
+{"id": "11-2", "english": "Get up", "arabic": "ينهض"},
+{"id": "11-3", "english": "Take a shower", "arabic": "يستحم"},
+{"id": "11-4", "english": "Get dressed", "arabic": "يرتدي ملابسه"},
+{"id": "11-5", "english": "Have breakfast", "arabic": "يتناول الفطور"},
+{"id": "11-6", "english": "Go to school", "arabic": "يذهب إلى المدرسة"},
+{"id": "11-7", "english": "Have lunch", "arabic": "يتناول الغداء"},
+{"id": "11-8", "english": "Go home", "arabic": "يعود إلى المنزل"},
+{"id": "11-9", "english": "Do homework", "arabic": "يقوم بالواجب"},
+{"id": "11-10", "english": "Go to sleep", "arabic": "يذهب للنوم"}
+]
+},
+"12": {
+"title": "Common Verbs",
+"content": "I eat an apple every day. I drink water in the morning. I sleep for eight hours. I walk to school. Sometimes I run in the park. I sit on a chair in class. The teacher asks us to stand up. I read a book before bed. I write in my notebook. I listen to music.",
+"terms": [
+{"id": "12-1", "english": "Eat", "arabic": "يأكل"},
+{"id": "12-2", "english": "Drink", "arabic": "يشرب"},
+{"id": "12-3", "english": "Sleep", "arabic": "ينام"},
+{"id": "12-4", "english": "Walk", "arabic": "يمشي"},
+{"id": "12-5", "english": "Run", "arabic": "يركض"},
+{"id": "12-6", "english": "Sit", "arabic": "يجلس"},
+{"id": "12-7", "english": "Stand", "arabic": "يقف"},
+{"id": "12-8", "english": "Read", "arabic": "يقرأ"},
+{"id": "12-9", "english": "Write", "arabic": "يكتب"},
+{"id": "12-10", "english": "Listen", "arabic": "يستمع"}
+]
+},
+"13": {
+"title": "Simple Adjectives",
+"content": "My house is big. My bedroom is small. My brother is tall. I am short. She has long hair. I have a new phone. My grandfather is old. The car is fast. The turtle is slow. My room is clean.",
+"terms": [
+{"id": "13-1", "english": "Big", "arabic": "كبير"},
+{"id": "13-2", "english": "Small", "arabic": "صغير"},
+{"id": "13-3", "english": "Tall", "arabic": "طويل"},
+{"id": "13-4", "english": "Short", "arabic": "قصير"},
+{"id": "13-5", "english": "Long", "arabic": "طويل (في الطول)"},
+{"id": "13-6", "english": "New", "arabic": "جديد"},
+{"id": "13-7", "english": "Old", "arabic": "قديم"},
+{"id": "13-8", "english": "Fast", "arabic": "سريع"},
+{"id": "13-9", "english": "Slow", "arabic": "بطيء"},
+{"id": "13-10", "english": "Clean", "arabic": "نظيف"}
+]
+},
+"14": {
+"title": "Telling Time",
+"content": "Look at the clock. It is 8 o'clock in the morning. School starts at 8. It is 12 o'clock. Time for lunch! At 3 o'clock in the afternoon, I go home. I have dinner at 7 in the evening. I go to bed at 10 at night. What time is it? It is half past two.",
+"terms": [
+{"id": "14-1", "english": "Clock", "arabic": "ساعة (حائط)"},
+{"id": "14-2", "english": "Hour", "arabic": "ساعة (زمن)"},
+{"id": "14-3", "english": "Minute", "arabic": "دقيقة"},
+{"id": "14-4", "english": "O'clock", "arabic": "بالضبط (الساعة)"},
+{"id": "14-5", "english": "Half past", "arabic": "والنصف"},
+{"id": "14-6", "english": "Quarter past", "arabic": "والربع"},
+{"id": "14-7", "english": "Quarter to", "arabic": "إلا ربع"},
+{"id": "14-8", "english": "Morning", "arabic": "صباح"},
+{"id": "14-9", "english": "Afternoon", "arabic": "بعد الظهر"},
+{"id": "14-10", "english": "Night", "arabic": "ليل"}
+]
+},
+"15": {
+"title": "At School",
+"content": "My teacher is kind. I am a good student. We have English class today. The lesson is interesting. I do my homework every day. Next week, we have an exam. I have a pencil and a ruler in my pencil case. I use a sharpener for my pencil. My backpack is blue.",
+"terms": [
+{"id": "15-1", "english": "Teacher", "arabic": "معلم"},
+{"id": "15-2", "english": "Student", "arabic": "طالب"},
+{"id": "15-3", "english": "Class", "arabic": "صف"},
+{"id": "15-4", "english": "Lesson", "arabic": "درس"},
+{"id": "15-5", "english": "Homework", "arabic": "واجب منزلي"},
+{"id": "15-6", "english": "Exam", "arabic": "امتحان"},
+{"id": "15-7", "english": "Pencil", "arabic": "قلم رصاص"},
+{"id": "15-8", "english": "Ruler", "arabic": "مسطرة"},
+{"id": "15-9", "english": "Sharpener", "arabic": "براية"},
+{"id": "15-10", "english": "Backpack", "arabic": "حقيبة ظهر"}
+]
+},
+"16": {
+"title": "Places in Town",
+"content": "I live in a big city. There are many streets and tall buildings. There is a shop near my house. We eat at a restaurant on Fridays. The hospital is on Main Street. The police station is next to the bank. The park is a nice place to play. I wait at the bus stop for the school bus.",
+"terms": [
+{"id": "16-1", "english": "City", "arabic": "مدينة"},
+{"id": "16-2", "english": "Street", "arabic": "شارع"},
+{"id": "16-3", "english": "Building", "arabic": "مبنى"},
+{"id": "16-4", "english": "Shop", "arabic": "متجر"},
+{"id": "16-5", "english": "Restaurant", "arabic": "مطعم"},
+{"id": "16-6", "english": "Hospital", "arabic": "مستشفى"},
+{"id": "16-7", "english": "Police station", "arabic": "مركز شرطة"},
+{"id": "16-8", "english": "Bank", "arabic": "بنك"},
+{"id": "16-9", "english": "Park", "arabic": "حديقة عامة"},
+{"id": "16-10", "english": "Bus stop", "arabic": "موقف باص"}
+]
+},
+"17": {
+"title": "Transportation",
+"content": "I go to school by car. My father takes the bus to work. We travel by train to another city. Next summer, we will go by plane to Turkey. We took a boat ride on the river. I bought a ticket for the movie. The train station is busy. We arrived at the airport early. The journey was long. It was a nice trip.",
+"terms": [
+{"id": "17-1", "english": "Car", "arabic": "سيارة"},
+{"id": "17-2", "english": "Bus", "arabic": "باص"},
+{"id": "17-3", "english": "Train", "arabic": "قطار"},
+{"id": "17-4", "english": "Plane", "arabic": "طائرة"},
+{"id": "17-5", "english": "Boat", "arabic": "قارب"},
+{"id": "17-6", "english": "Ticket", "arabic": "تذكرة"},
+{"id": "17-7", "english": "Station", "arabic": "محطة"},
+{"id": "17-8", "english": "Airport", "arabic": "مطار"},
+{"id": "17-9", "english": "Journey", "arabic": "رحلة"},
+{"id": "17-10", "english": "Trip", "arabic": "نزهة/رحلة قصيرة"}
+]
+},
+"18": {
+"title": "Weather and Seasons",
+"content": "The weather today is sunny and hot. Yesterday was cloudy and windy. In winter, it is cold and snowy. I like the rain in autumn. Spring is warm and flowers bloom. Summer is very hot. We go to the beach on sunny days. When it rains, I stay at home.",
+"terms": [
+{"id": "18-1", "english": "Weather", "arabic": "طقس"},
+{"id": "18-2", "english": "Sunny", "arabic": "مشمس"},
+{"id": "18-3", "english": "Cloudy", "arabic": "غائم"},
+{"id": "18-4", "english": "Rainy", "arabic": "ممطر"},
+{"id": "18-5", "english": "Windy", "arabic": "عاصف"},
+{"id": "18-6", "english": "Snowy", "arabic": "مثلج"},
+{"id": "18-7", "english": "Hot", "arabic": "حار"},
+{"id": "18-8", "english": "Cold", "arabic": "بارد"},
+{"id": "18-9", "english": "Spring", "arabic": "ربيع"},
+{"id": "18-10", "english": "Autumn", "arabic": "خريف"}
+]
+},
+"19": {
+"title": "Hobbies",
+"content": "My hobby is drawing. I like to draw animals. My sister loves painting. She paints beautiful pictures. My friend enjoys singing and dancing. He also plays the guitar. I like reading books in my free time. My grandfather enjoys gardening. He grows flowers and vegetables. What is your hobby?",
+"terms": [
+{"id": "19-1", "english": "Hobby", "arabic": "هواية"},
+{"id": "19-2", "english": "Drawing", "arabic": "رسم"},
+{"id": "19-3", "english": "Painting", "arabic": "تلوين"},
+{"id": "19-4", "english": "Singing", "arabic": "غناء"},
+{"id": "19-5", "english": "Dancing", "arabic": "رقص"},
+{"id": "19-6", "english": "Playing guitar", "arabic": "عزف على الغيتار"},
+{"id": "19-7", "english": "Reading", "arabic": "قراءة"},
+{"id": "19-8", "english": "Writing", "arabic": "كتابة"},
+{"id": "19-9", "english": "Collecting", "arabic": "جمع"},
+{"id": "19-10", "english": "Gardening", "arabic": "بستنة"}
+]
+},
+"20": {
+"title": "Sports",
+"content": "I like playing football with my friends. We have a team. Basketball is also fun. My sister plays tennis. She is very good. In summer, we go swimming. Running is good exercise. I enjoy cycling in the park. Yesterday, our team won the game. The other team lost. It was exciting!",
+"terms": [
+{"id": "20-1", "english": "Football", "arabic": "كرة قدم"},
+{"id": "20-2", "english": "Basketball", "arabic": "كرة سلة"},
+{"id": "20-3", "english": "Tennis", "arabic": "تنس"},
+{"id": "20-4", "english": "Swimming", "arabic": "سباحة"},
+{"id": "20-5", "english": "Running", "arabic": "جري"},
+{"id": "20-6", "english": "Cycling", "arabic": "ركوب الدراجات"},
+{"id": "20-7", "english": "Team", "arabic": "فريق"},
+{"id": "20-8", "english": "Game", "arabic": "مباراة"},
+{"id": "20-9", "english": "Win", "arabic": "يفوز"},
+{"id": "20-10", "english": "Lose", "arabic": "يخسر"}
+]
+},
+"21": {
+"title": "Past Tense - Regular Verbs",
+"content": "Yesterday, I played football with my friends. We watched a movie in the evening. Last week, I visited my grandmother. She cooked a delicious meal. I cleaned my room. I studied for two hours. I walked to the park. We talked about our plans. I helped my mother. The teacher asked a question.",
+"terms": [
+{"id": "21-1", "english": "Played", "arabic": "لعب (في الماضي)"},
+{"id": "21-2", "english": "Watched", "arabic": "شاهد (في الماضي)"},
+{"id": "21-3", "english": "Visited", "arabic": "زار (في الماضي)"},
+{"id": "21-4", "english": "Cooked", "arabic": "طبخ (في الماضي)"},
+{"id": "21-5", "english": "Cleaned", "arabic": "نظف (في الماضي)"},
+{"id": "21-6", "english": "Studied", "arabic": "درس (في الماضي)"},
+{"id": "21-7", "english": "Walked", "arabic": "مشى (في الماضي)"},
+{"id": "21-8", "english": "Talked", "arabic": "تحدث (في الماضي)"},
+{"id": "21-9", "english": "Helped", "arabic": "ساعد (في الماضي)"},
+{"id": "21-10", "english": "Asked", "arabic": "سأل (في الماضي)"}
+]
+},
+"22": {
+"title": "Past Tense - Irregular Verbs",
+"content": "Last weekend, I went to the beach. I saw many beautiful fish. I ate fish and chips. I drank cold juice. I took many photos. My friend came with me. I bought a souvenir. I read a book on the sand. I wrote a postcard. I spoke to my friend about the trip.",
+"terms": [
+{"id": "22-1", "english": "Went", "arabic": "ذهب (في الماضي)"},
+{"id": "22-2", "english": "Saw", "arabic": "رأى (في الماضي)"},
+{"id": "22-3", "english": "Ate", "arabic": "أكل (في الماضي)"},
+{"id": "22-4", "english": "Drank", "arabic": "شرب (في الماضي)"},
+{"id": "22-5", "english": "Took", "arabic": "أخذ (في الماضي)"},
+{"id": "22-6", "english": "Came", "arabic": "جاء (في الماضي)"},
+{"id": "22-7", "english": "Bought", "arabic": "اشترى (في الماضي)"},
+{"id": "22-8", "english": "Read", "arabic": "قرأ (في الماضي)"},
+{"id": "22-9", "english": "Wrote", "arabic": "كتب (في الماضي)"},
+{"id": "22-10", "english": "Spoke", "arabic": "تحدث (في الماضي)"}
+]
+},
+"23": {
+"title": "Future with Will",
+"content": "Tomorrow, I will go to the park. I will play with my friends. Next week, we will have a test. I will study hard. Next month, my family will travel to Egypt. I hope we will have fun. I think it will be sunny. Maybe I will learn to swim. In the future, I will be a doctor. What will you do?",
+"terms": [
+{"id": "23-1", "english": "Will", "arabic": "سوف"},
+{"id": "23-2", "english": "Tomorrow", "arabic": "غداً"},
+{"id": "23-3", "english": "Next week", "arabic": "الأسبوع القادم"},
+{"id": "23-4", "english": "Next month", "arabic": "الشهر القادم"},
+{"id": "23-5", "english": "Next year", "arabic": "السنة القادمة"},
+{"id": "23-6", "english": "Plan", "arabic": "خطة"},
+{"id": "23-7", "english": "Hope", "arabic": "أمل"},
+{"id": "23-8", "english": "Think", "arabic": "يعتقد"},
+{"id": "23-9", "english": "Maybe", "arabic": "ربما"},
+{"id": "23-10", "english": "Future", "arabic": "مستقبل"}
+]
+},
+"24": {
+"title": "Prepositions of Place",
+"content": "The book is on the table. My pencil is in the bag. The cat is under the chair. The school is next to the park. I sit between Omar and Lina. The garden is behind the house. The car is in front of the building. The clock is above the door. My room is below my parent's room. The library is near my home.",
+"terms": [
+{"id": "24-1", "english": "In", "arabic": "في (داخل)"},
+{"id": "24-2", "english": "On", "arabic": "على"},
+{"id": "24-3", "english": "Under", "arabic": "تحت"},
+{"id": "24-4", "english": "Next to", "arabic": "بجانب"},
+{"id": "24-5", "english": "Between", "arabic": "بين"},
+{"id": "24-6", "english": "Behind", "arabic": "خلف"},
+{"id": "24-7", "english": "In front of", "arabic": "أمام"},
+{"id": "24-8", "english": "Above", "arabic": "فوق"},
+{"id": "24-9", "english": "Below", "arabic": "أسفل"},
+{"id": "24-10", "english": "Near", "arabic": "قريب من"}
+]
+},
+"25": {
+"title": "Linking Words",
+"content": "I like apples and oranges. I want to go out, but it is raining. Do you want tea or coffee? I am happy because it is my birthday. I was tired, so I went to bed early. First, I wake up. Then, I have breakfast. After school, I play with friends. I wash my hands before eating. I also like reading.",
+"terms": [
+{"id": "25-1", "english": "And", "arabic": "و"},
+{"id": "25-2", "english": "But", "arabic": "لكن"},
+{"id": "25-3", "english": "Or", "arabic": "أو"},
+{"id": "25-4", "english": "Because", "arabic": "لأن"},
+{"id": "25-5", "english": "So", "arabic": "لذلك"},
+{"id": "25-6", "english": "Then", "arabic": "ثم"},
+{"id": "25-7", "english": "First", "arabic": "أولاً"},
+{"id": "25-8", "english": "After", "arabic": "بعد"},
+{"id": "25-9", "english": "Before", "arabic": "قبل"},
+{"id": "25-10", "english": "Also", "arabic": "أيضاً"}
+]
+},
+"26": {
+"title": "Adam’s Introduction",
+"content": "Hello! My name is Adam. I am a student. I am twenty years old. I live in a small house in a big city. Every day, I wake up early. I see the sun in the sky. I have a cat. The cat is white and very cute. I like coffee and bread for breakfast. I am happy today. My life is simple but good. I want to learn English well. This is my first step. A teacher helps me every morning. The school is near my home. I walk to the classroom. It is a sunny day. I open my book and start to read. Learning is fun for me and I feel great.",
+"terms": [
+{"id": "26-1", "english": "Student", "arabic": "طالب"},
+{"id": "26-2", "english": "House", "arabic": "منزل"},
+{"id": "26-3", "english": "City", "arabic": "مدينة"},
+{"id": "26-4", "english": "Early", "arabic": "باكراً"},
+{"id": "26-5", "english": "Sun", "arabic": "شمس"},
+{"id": "26-6", "english": "Sky", "arabic": "سماء"},
+{"id": "26-7", "english": "White", "arabic": "أبيض"},
+{"id": "26-8", "english": "Cute", "arabic": "لطيف"},
+{"id": "26-9", "english": "Coffee", "arabic": "قهوة"},
+{"id": "26-10", "english": "Bread", "arabic": "خبز"},
+{"id": "26-11", "english": "Breakfast", "arabic": "فطور"},
+{"id": "26-12", "english": "Simple", "arabic": "بسيط"},
+{"id": "26-13", "english": "Teacher", "arabic": "معلم"},
+{"id": "26-14", "english": "Near", "arabic": "قريب"},
+{"id": "26-15", "english": "Classroom", "arabic": "فصل"},
+{"id": "26-16", "english": "Sunny", "arabic": "مشمس"}
+]
+},
+"27": {
+"title": "Adam and His Friend",
+"content": "Adam has a best friend. His name is Omar. Omar is a tall boy. He wears a blue shirt and black pants. They meet in the park every afternoon. The park has green grass and many trees. Adam and Omar sit on a wooden bench. They talk about football and films. Omar has a bicycle. It is fast and new. Sometimes, they eat an apple or an orange. Omar is very kind. He helps Adam with his homework. They laugh a lot together. Friendship is important. A bird sings on a branch. The air is fresh. They feel lucky to be friends. It is a beautiful afternoon for both of them in the city.",
+"terms": [
+{"id": "27-1", "english": "Friend", "arabic": "صديق"},
+{"id": "27-2", "english": "Tall", "arabic": "طويل"},
+{"id": "27-3", "english": "Shirt", "arabic": "قميص"},
+{"id": "27-4", "english": "Pants", "arabic": "بنطال"},
+{"id": "27-5", "english": "Park", "arabic": "منتزه"},
+{"id": "27-6", "english": "Afternoon", "arabic": "بعد الظهيرة"},
+{"id": "27-7", "english": "Grass", "arabic": "عشب"},
+{"id": "27-8", "english": "Trees", "arabic": "أشجار"},
+{"id": "27-9", "english": "Wooden", "arabic": "خشبي"},
+{"id": "27-10", "english": "Bench", "arabic": "مقعد"},
+{"id": "27-11", "english": "Bicycle", "arabic": "دراجة"},
+{"id": "27-12", "english": "Fast", "arabic": "سريع"},
+{"id": "27-13", "english": "Apple", "arabic": "تفاحة"},
+{"id": "27-14", "english": "Orange", "arabic": "برتقالة"},
+{"id": "27-15", "english": "Kind", "arabic": "لطيف"},
+{"id": "27-16", "english": "Homework", "arabic": "واجب"},
+{"id": "27-17", "english": "Together", "arabic": "معاً"},
+{"id": "27-18", "english": "Important", "arabic": "مهم"}
+]
+},
+"28": {
+"title": "Adam’s Morning Routine",
+"content": "Every morning, Adam follows a routine. He gets out of bed at seven o'clock. First, he goes to the bathroom to wash his face. He uses cold water and soap. Then, he brushes his teeth with a small toothbrush. Adam goes to the kitchen. He sees his mother, Sara. She makes tea in a large pot. Adam helps her. He puts plates and spoons on the table. They sit down to eat. He likes eggs and cheese. After food, he puts on his shoes. He grabs his heavy bag. He says goodbye to his dog. The dog wags its tail. Adam is ready for a new day. He feels very energetic and strong now because he sleeps well.",
+"terms": [
+{"id": "28-1", "english": "Routine", "arabic": "روتين"},
+{"id": "28-2", "english": "Bed", "arabic": "سرير"},
+{"id": "28-3", "english": "Bathroom", "arabic": "حمام"},
+{"id": "28-4", "english": "Face", "arabic": "وجه"},
+{"id": "28-5", "english": "Cold", "arabic": "بارد"},
+{"id": "28-6", "english": "Soap", "arabic": "صابون"},
+{"id": "28-7", "english": "Teeth", "arabic": "أسنان"},
+{"id": "28-8", "english": "Toothbrush", "arabic": "فرشاة أسنان"},
+{"id": "28-9", "english": "Kitchen", "arabic": "مطبخ"},
+{"id": "28-10", "english": "Tea", "arabic": "شاي"},
+{"id": "28-11", "english": "Pot", "arabic": "إبريق"},
+{"id": "28-12", "english": "Plates", "arabic": "أطباق"},
+{"id": "28-13", "english": "Spoons", "arabic": "ملاعق"},
+{"id": "28-14", "english": "Table", "arabic": "طاولة"},
+{"id": "28-15", "english": "Cheese", "arabic": "جبنة"},
+{"id": "28-16", "english": "Shoes", "arabic": "حذاء"},
+{"id": "28-17", "english": "Heavy", "arabic": "ثقيل"},
+{"id": "28-18", "english": "Energetic", "arabic": "نشيط"}
+]
+},
+"29": {
+"title": "Adam at School",
+"content": "Adam arrives at school at eight. He enters the building and finds his desk. The classroom is big. There is a wide blackboard on the wall. The teacher writes English words with white chalk. Adam has a red pen and a yellow pencil. He uses an eraser to fix mistakes. Today, they learn about animals. A lion is strong. An elephant is huge. Adam takes notes in his notebook. He listens to the lesson carefully. During the break, he talks to Lina. Lina is a new girl. She is smart and friendly. They share a sandwich and water. The school bell rings loudly. It is time for the next class. Adam loves his school very much.",
+"terms": [
+{"id": "29-1", "english": "Building", "arabic": "مبنى"},
+{"id": "29-2", "english": "Desk", "arabic": "مكتب"},
+{"id": "29-3", "english": "Blackboard", "arabic": "سبورة"},
+{"id": "29-4", "english": "Wall", "arabic": "جدار"},
+{"id": "29-5", "english": "Chalk", "arabic": "طبشور"},
+{"id": "29-6", "english": "Pen", "arabic": "قلم حبر"},
+{"id": "29-7", "english": "Pencil", "arabic": "قلم رصاص"},
+{"id": "29-8", "english": "Eraser", "arabic": "ممحاة"},
+{"id": "29-9", "english": "Lion", "arabic": "أسد"},
+{"id": "29-10", "english": "Elephant", "arabic": "فيل"},
+{"id": "29-11", "english": "Notebook", "arabic": "دفتر"},
+{"id": "29-12", "english": "Lesson", "arabic": "درس"},
+{"id": "29-13", "english": "Carefully", "arabic": "بعناية"},
+{"id": "29-14", "english": "Break", "arabic": "استراحة"},
+{"id": "29-15", "english": "Smart", "arabic": "ذكي"},
+{"id": "29-16", "english": "Bell", "arabic": "جرس"}
+]
+},
+"30": {
+"title": "Adam at the Café",
+"content": "Adam goes to a small café near the library. The café is quiet and warm. He sits near the window. A waiter comes to the table. The waiter says, 'Hello, what do you want today?' Adam looks at the menu. He wants a glass of juice and a piece of chocolate cake. The cake is delicious. Adam watches the cars and people on the street. He sees a man with a big umbrella. He also sees a woman with a small bag. Adam opens his laptop to finish some work. He types slowly. The café smells like roasted beans. He feels relaxed. It is a good place to think. He pays the money and leaves a small tip. He walks home slowly and happily.",
+"terms": [
+{"id": "30-1", "english": "Library", "arabic": "مكتبة"},
+{"id": "30-2", "english": "Quiet", "arabic": "هادئ"},
+{"id": "30-3", "english": "Window", "arabic": "نافذة"},
+{"id": "30-4", "english": "Waiter", "arabic": "نادل"},
+{"id": "30-5", "english": "Menu", "arabic": "قائمة طعام"},
+{"id": "30-6", "english": "Glass", "arabic": "كوب"},
+{"id": "30-7", "english": "Juice", "arabic": "عصير"},
+{"id": "30-8", "english": "Delicious", "arabic": "لذيذ"},
+{"id": "30-9", "english": "Street", "arabic": "شارع"},
+{"id": "30-10", "english": "Umbrella", "arabic": "مظلة"},
+{"id": "30-11", "english": "Laptop", "arabic": "حاسوب محمول"},
+{"id": "30-12", "english": "Roasted", "arabic": "محمص"},
+{"id": "30-13", "english": "Beans", "arabic": "حبوب"},
+{"id": "30-14", "english": "Relaxed", "arabic": "مسترخ"},
+{"id": "30-15", "english": "Money", "arabic": "نقود"},
+{"id": "30-16", "english": "Tip", "arabic": "بقشيش"}
+]
+},
   "328": {
     "title": "Digital Citizenship and Online Safety",
     "content": "In an era where our personal and professional lives are increasingly lived online, the concept of 'digital citizenship' has become more important than ever. Being a good digital citizen involves using technology responsibly, respectfully, and critically. As social media platforms continue to influence public opinion, it is crucial for individuals to develop strong media literacy skills to identify misinformation and 'fake news.' If we teach children about online etiquette and safety at a young age, they will be better prepared to navigate the complexities of the internet. One of the greatest risks in the digital world is cybercrime, which includes identity theft, phishing, and hacking. To protect sensitive information, experts recommend using multi-factor authentication and strong, unique passwords for every account. Furthermore, understanding the concept of a 'digital footprint' is essential; everything we post online leaves a permanent trace that can be seen by future employers or university admissions officers. Adam recently attended a webinar about cybersecurity and learned how to identify suspicious emails that often contain malicious attachments. He realized that a simple click on a dangerous link could compromise his entire network. Consequently, he has become more cautious about sharing personal details on public forums. Another important aspect of digital citizenship is combating cyberbullying. Protecting vulnerable users and promoting a culture of kindness is a shared responsibility of all internet users. Despite the convenience of being constantly connected, it is also important to practice 'digital detox' to maintain mental health and avoid screen addiction. By finding a balance between our virtual and physical lives, we can enjoy the benefits of technology without losing our sense of real-world connection and well-being.",
