@@ -1,5 +1,7 @@
 class App {
     constructor() {
+        this.currentAudio = null; // كائن الصوت الحالي
+        this.audioPlaybackRate = 1.0; // السرعة الافتراضية
         this.placementStep = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
