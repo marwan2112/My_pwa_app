@@ -148,8 +148,151 @@ window.lessonsData = {
       {"id": "1-10", "english": "Thank you", "arabic": "شكراً لك"}
     ]
   },
-  // ... باقي الدروس (2 إلى 328) بنفس المحتوى الأصلي ...
-  // تم حذف الجزء الأوسط للاختصار، ولكن في الملف النهائي سيكون كاملاً
+"2": {
+"title": "Numbers 1-10",
+"content": "Let's learn numbers! One, two, three, four, five. Six, seven, eight, nine, ten. I have two cats. She has three books. He is ten years old. How many apples? Five apples.",
+"terms": [
+{"id": "2-1", "english": "One", "arabic": "واحد"},
+{"id": "2-2", "english": "Two", "arabic": "اثنان"},
+{"id": "2-3", "english": "Three", "arabic": "ثلاثة"},
+{"id": "2-4", "english": "Four", "arabic": "أربعة"},
+{"id": "2-5", "english": "Five", "arabic": "خمسة"},
+{"id": "2-6", "english": "Six", "arabic": "ستة"},
+{"id": "2-7", "english": "Seven", "arabic": "سبعة"},
+{"id": "2-8", "english": "Eight", "arabic": "ثمانية"},
+{"id": "2-9", "english": "Nine", "arabic": "تسعة"},
+{"id": "2-10", "english": "Ten", "arabic": "عشرة"}
+]
+},
+"3": {
+"title": "Colors",
+"content": "The sky is blue. The sun is yellow. Grass is green. An apple is red. An orange is orange. My bag is black. My shoes are brown. I like pink flowers. The cat is white. What is your favorite color?",
+"terms": [
+{"id": "3-1", "english": "Red", "arabic": "أحمر"},
+{"id": "3-2", "english": "Blue", "arabic": "أزرق"},
+{"id": "3-3", "english": "Yellow", "arabic": "أصفر"},
+{"id": "3-4", "english": "Green", "arabic": "أخضر"},
+{"id": "3-5", "english": "Orange", "arabic": "برتقالي"},
+{"id": "3-6", "english": "Purple", "arabic": "أرجواني"},
+{"id": "3-7", "english": "Pink", "arabic": "وردي"},
+{"id": "3-8", "english": "Brown", "arabic": "بني"},
+{"id": "3-9", "english": "Black", "arabic": "أسود"},
+{"id": "3-10", "english": "White", "arabic": "أبيض"}
+]
+},
+"4": {
+"title": "Family Members",
+"content": "This is my family. My mother is Sara. My father is Ali. I have one brother and one sister. My brother is Omar. My sister is Lina. My grandmother and grandfather are kind. My uncle and aunt live in Cairo. My cousins are nice. I love my family.",
+"terms": [
+{"id": "4-1", "english": "Mother", "arabic": "أم"},
+{"id": "4-2", "english": "Father", "arabic": "أب"},
+{"id": "4-3", "english": "Brother", "arabic": "أخ"},
+{"id": "4-4", "english": "Sister", "arabic": "أخت"},
+{"id": "4-5", "english": "Grandmother", "arabic": "جدة"},
+{"id": "4-6", "english": "Grandfather", "arabic": "جد"},
+{"id": "4-7", "english": "Uncle", "arabic": "عم/خال"},
+{"id": "4-8", "english": "Aunt", "arabic": "عمة/خالة"},
+{"id": "4-9", "english": "Cousin", "arabic": "ابن عم/خال"},
+{"id": "4-10", "english": "Family", "arabic": "عائلة"}
+]
+},
+"5": {
+"title": "Things at Home",
+"content": "Look at my house. There is a table and four chairs in the kitchen. The door is brown. The window is big. In my bedroom, I have a bed and a lamp. The sofa is in the living room. The fridge and oven are in the kitchen. The cupboard is full of plates.",
+"terms": [
+{"id": "5-1", "english": "Table", "arabic": "طاولة"},
+{"id": "5-2", "english": "Chair", "arabic": "كرسي"},
+{"id": "5-3", "english": "Door", "arabic": "باب"},
+{"id": "5-4", "english": "Window", "arabic": "نافذة"},
+{"id": "5-5", "english": "Bed", "arabic": "سرير"},
+{"id": "5-6", "english": "Lamp", "arabic": "مصباح"},
+{"id": "5-7", "english": "Sofa", "arabic": "أريكة"},
+{"id": "5-8", "english": "Fridge", "arabic": "ثلاجة"},
+{"id": "5-9", "english": "Oven", "arabic": "فرن"},
+{"id": "5-10", "english": "Cupboard", "arabic": "خزانة"}
+]
+},
+"6": {
+"title": "Days and Months",
+"content": "There are seven days in a week. Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday. Friday is a holiday. My birthday is in January. School starts in September. Winter is in December, January, February. What day is it today?",
+"terms": [
+{"id": "6-1", "english": "Monday", "arabic": "الاثنين"},
+{"id": "6-2", "english": "Tuesday", "arabic": "الثلاثاء"},
+{"id": "6-3", "english": "Wednesday", "arabic": "الأربعاء"},
+{"id": "6-4", "english": "Thursday", "arabic": "الخميس"},
+{"id": "6-5", "english": "Friday", "arabic": "الجمعة"},
+{"id": "6-6", "english": "Saturday", "arabic": "السبت"},
+{"id": "6-7", "english": "Sunday", "arabic": "الأحد"},
+{"id": "6-8", "english": "January", "arabic": "يناير"},
+{"id": "6-9", "english": "February", "arabic": "فبراير"},
+{"id": "6-10", "english": "March", "arabic": "مارس"}
+]
+},
+"7": {
+"title": "Feelings",
+"content": "How are you today? I am happy because it is sunny. My friend is sad because he is sick. When I am hungry, I eat food. After playing, I am tired. In winter, I feel cold. In summer, I feel hot. I am excited for the party! Don't be scared of the dark.",
+"terms": [
+{"id": "7-1", "english": "Happy", "arabic": "سعيد"},
+{"id": "7-2", "english": "Sad", "arabic": "حزين"},
+{"id": "7-3", "english": "Angry", "arabic": "غاضب"},
+{"id": "7-4", "english": "Tired", "arabic": "متعب"},
+{"id": "7-5", "english": "Hungry", "arabic": "جائع"},
+{"id": "7-6", "english": "Thirsty", "arabic": "عطشان"},
+{"id": "7-7", "english": "Cold", "arabic": "بارد (يشعر بالبرد)"},
+{"id": "7-8", "english": "Hot", "arabic": "حار (يشعر بالحر)"},
+{"id": "7-9", "english": "Scared", "arabic": "خائف"},
+{"id": "7-10", "english": "Excited", "arabic": "متحمس"}
+]
+},
+"8": {
+"title": "Clothes",
+"content": "What are you wearing today? I am wearing a blue shirt and black pants. My sister is wearing a red dress. In winter, I wear a coat and a hat. I put on socks and shoes before going out. He has a new T-shirt. She likes her pink skirt.",
+"terms": [
+{"id": "8-1", "english": "Shirt", "arabic": "قميص"},
+{"id": "8-2", "english": "T-shirt", "arabic": "تيشيرت"},
+{"id": "8-3", "english": "Pants", "arabic": "بنطال"},
+{"id": "8-4", "english": "Dress", "arabic": "فستان"},
+{"id": "8-5", "english": "Skirt", "arabic": "تنورة"},
+{"id": "8-6", "english": "Jacket", "arabic": "جاكيت"},
+{"id": "8-7", "english": "Coat", "arabic": "معطف"},
+{"id": "8-8", "english": "Hat", "arabic": "قبعة"},
+{"id": "8-9", "english": "Shoes", "arabic": "حذاء"},
+{"id": "8-10", "english": "Socks", "arabic": "جوارب"}
+]
+},
+"9": {
+"title": "Animals",
+"content": "I have a pet dog. His name is Max. My friend has a cat. Birds fly in the sky. Fish swim in water. On the farm, there are cows, horses, and sheep. Chickens lay eggs. Ducks swim in the pond. Rabbits are small and cute. What is your favorite animal?",
+"terms": [
+{"id": "9-1", "english": "Dog", "arabic": "كلب"},
+{"id": "9-2", "english": "Cat", "arabic": "قطة"},
+{"id": "9-3", "english": "Bird", "arabic": "طائر"},
+{"id": "9-4", "english": "Fish", "arabic": "سمكة"},
+{"id": "9-5", "english": "Cow", "arabic": "بقرة"},
+{"id": "9-6", "english": "Horse", "arabic": "حصان"},
+{"id": "9-7", "english": "Sheep", "arabic": "خروف"},
+{"id": "9-8", "english": "Chicken", "arabic": "دجاجة"},
+{"id": "9-9", "english": "Duck", "arabic": "بطة"},
+{"id": "9-10", "english": "Rabbit", "arabic": "أرنب"}
+]
+},
+"10": {
+"title": "Food and Drink",
+"content": "For breakfast, I eat bread and cheese. I drink tea or milk. For lunch, we have rice with chicken and vegetables. I like pasta with meat. For dinner, I eat fish and salad. I drink water when I am thirsty. Juice is sweet. Fruit is healthy. What do you like to eat?",
+"terms": [
+{"id": "10-1", "english": "Rice", "arabic": "أرز"},
+{"id": "10-2", "english": "Pasta", "arabic": "معكرونة"},
+{"id": "10-3", "english": "Meat", "arabic": "لحم"},
+{"id": "10-4", "english": "Chicken", "arabic": "دجاج (لحم)"},
+{"id": "10-5", "english": "Vegetables", "arabic": "خضروات"},
+{"id": "10-6", "english": "Fruit", "arabic": "فاكهة"},
+{"id": "10-7", "english": "Water", "arabic": "ماء"},
+{"id": "10-8", "english": "Juice", "arabic": "عصير"},
+{"id": "10-9", "english": "Milk", "arabic": "حليب"},
+{"id": "10-10", "english": "Tea", "arabic": "شاي"}
+]
+},
+
   "328": {
     "title": "Digital Citizenship and Online Safety",
     "content": "In an era where our personal and professional lives are increasingly lived online, the concept of 'digital citizenship' has become more important than ever. Being a good digital citizen involves using technology responsibly, respectfully, and critically. As social media platforms continue to influence public opinion, it is crucial for individuals to develop strong media literacy skills to identify misinformation and 'fake news.' If we teach children about online etiquette and safety at a young age, they will be better prepared to navigate the complexities of the internet. One of the greatest risks in the digital world is cybercrime, which includes identity theft, phishing, and hacking. To protect sensitive information, experts recommend using multi-factor authentication and strong, unique passwords for every account. Furthermore, understanding the concept of a 'digital footprint' is essential; everything we post online leaves a permanent trace that can be seen by future employers or university admissions officers. Adam recently attended a webinar about cybersecurity and learned how to identify suspicious emails that often contain malicious attachments. He realized that a simple click on a dangerous link could compromise his entire network. Consequently, he has become more cautious about sharing personal details on public forums. Another important aspect of digital citizenship is combating cyberbullying. Protecting vulnerable users and promoting a culture of kindness is a shared responsibility of all internet users. Despite the convenience of being constantly connected, it is also important to practice 'digital detox' to maintain mental health and avoid screen addiction. By finding a balance between our virtual and physical lives, we can enjoy the benefits of technology without losing our sense of real-world connection and well-being.",
