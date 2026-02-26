@@ -2,6 +2,7 @@ class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
         this.audioPlaybackRate = 1.0; // السرعة الافتراضية
+        this.availableSpeeds = [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0]; // السرعات المتاحة
         this.placementStep = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
@@ -52,6 +53,7 @@ class App {
         this.levelTestScore = 0;
         this.levelTestAnswers = []; // سجل الإجابات لكل سؤال
         this.levelTestUnlockedLessons = []; // الدروس التي سيتم فتحها بعد الاختبار
+        this.levelTestFirstLockedLesson = null; // أول درس مقفل بعد الاختبار
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -334,7 +336,13 @@ class App {
 
     playAudio(src) {
         if (this.currentAudio) {
-            this.currentAudio.pause();
+            // إذا كان نفس الملف، فقط شغله من مكانه
+            if (this.currentAudio.src.endsWith(src)) {
+                this.currentAudio.play();
+                return;
+            } else {
+                this.currentAudio.pause();
+            }
         }
         this.currentAudio = new Audio(src);
         this.currentAudio.playbackRate = this.audioPlaybackRate;
@@ -347,12 +355,6 @@ class App {
         }
     }
 
-    resumeAudio() {
-        if (this.currentAudio) {
-            this.currentAudio.play();
-        }
-    }
-
     stopAudio() {
         if (this.currentAudio) {
             this.currentAudio.pause();
@@ -361,9 +363,28 @@ class App {
     }
 
     setAudioSpeed(rate) {
-        this.audioPlaybackRate = rate;
-        if (this.currentAudio) {
-            this.currentAudio.playbackRate = rate;
+        if (rate >= 0.5 && rate <= 3.0) {
+            this.audioPlaybackRate = rate;
+            if (this.currentAudio) {
+                this.currentAudio.playbackRate = rate;
+            }
+            this.render(); // لتحديث العرض
+        }
+    }
+
+    // دالة لزيادة السرعة إلى القيمة الأعلى التالية في القائمة
+    speedUp() {
+        const currentIndex = this.availableSpeeds.indexOf(this.audioPlaybackRate);
+        if (currentIndex < this.availableSpeeds.length - 1) {
+            this.setAudioSpeed(this.availableSpeeds[currentIndex + 1]);
+        }
+    }
+
+    // دالة لخفض السرعة إلى القيمة الأدنى التالية
+    speedDown() {
+        const currentIndex = this.availableSpeeds.indexOf(this.audioPlaybackRate);
+        if (currentIndex > 0) {
+            this.setAudioSpeed(this.availableSpeeds[currentIndex - 1]);
         }
     }
 
@@ -827,6 +848,8 @@ class App {
     prepareLevelTest(levelId) {
         // levelId: مثلاً 'beginner' يقابل مستويات A1, A2; 'intermediate' -> B1, B2; 'advanced' -> C1, C2
         this.levelTestLevel = levelId;
+        
+        // تحديد الدروس الخاصة بهذا المستوى بناءً على levelId
         let lessonIds = [];
         if (levelId === 'beginner') {
             // نفترض أن دروس المبتدئ هي ids 1-10 (حسب data)
@@ -943,6 +966,15 @@ class App {
         }
         this.saveData();
 
+        // تحديد أول درس مقفل (لم يفتح) من قائمة الدروس الخاصة بهذا المستوى
+        let lessonIds = [];
+        if (this.levelTestLevel === 'beginner') lessonIds = ['1','2','3','4','5','6','7','8','9','10'];
+        else if (this.levelTestLevel === 'intermediate') lessonIds = ['11','12','13','14','15','16','17','18','19','20'];
+        else if (this.levelTestLevel === 'advanced') lessonIds = ['21','22','23','24','25','26','27','28','29','30'];
+
+        const firstLocked = lessonIds.find(id => !this.unlockedLessons.includes(id));
+        this.levelTestFirstLockedLesson = firstLocked || null; // إذا كان الكل مفتوحًا، يكون null
+
         // عرض النتيجة
         this.currentPage = 'level_test_result';
         this.render();
@@ -1001,11 +1033,11 @@ class App {
                     this.stopAudio();
                     break;
                 case 'speedUp':
-                    this.setAudioSpeed(this.audioPlaybackRate + 0.25);
+                    this.speedUp();
                     this.render();
                     break;
                 case 'speedDown':
-                    this.setAudioSpeed(Math.max(0.5, this.audioPlaybackRate - 0.25));
+                    this.speedDown();
                     this.render();
                     break;
 
@@ -1414,7 +1446,7 @@ class App {
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
 
-                <!-- أزرار الاختبار الشامل للمستويات -->
+                <!-- أزرار الاختبار الشامل للمستويات - ستكون داخل المستوى نفسه ولكننا نضعها هنا للوصول السريع -->
                 <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
                     <button class="hero-btn" data-action="startLevelTest" data-param="beginner" style="background:#10b981;">🌟 اختبار المبتدئ (100 سؤال)</button>
                     <button class="hero-btn" data-action="startLevelTest" data-param="intermediate" style="background:#f59e0b;">🔥 اختبار المتوسط (100 سؤال)</button>
@@ -1504,7 +1536,12 @@ class App {
                         const isOk = (list[0].id == l.id || this.unlockedLessons.includes(String(l.id))); 
                         return `<div class="feature-card" data-action="selLesson" data-param="${l.id}" style="${isOk?'':'opacity:0.6;'}"><h3>${isOk?'':'🔒 '}${l.title}</h3></div>`; 
                     }).join('')}
-                </div></main>`;
+                </div>
+                <!-- زر الاختبار الشامل لهذا المستوى -->
+                <div style="margin-top:20px; text-align:center;">
+                    <button class="hero-btn" data-action="startLevelTest" data-param="${this.selectedLevel === 'A1' || this.selectedLevel === 'A2' ? 'beginner' : this.selectedLevel === 'B1' || this.selectedLevel === 'B2' ? 'intermediate' : 'advanced'}" style="background:#8b5cf6;">📊 اختبار شامل للمستوى</button>
+                </div>
+            </main>`;
         }
 
         if (this.currentPage === 'custom_lessons_view') {
@@ -1546,7 +1583,7 @@ class App {
                         <button class="hero-btn" data-action="pauseAudio" style="background:#f59e0b; padding: 5px 10px;">⏸️ إيقاف مؤقت</button>
                         <button class="hero-btn" data-action="stopAudio" style="background:#ef4444; padding: 5px 10px;">⏹️ إيقاف</button>
                         <button class="hero-btn" data-action="speedDown" style="background:#8b5cf6; padding: 5px 10px;">🐢</button>
-                        <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(1)}x</span>
+                        <span style="background:#fff; padding: 5px 10px; border-radius: 5px;">${this.audioPlaybackRate.toFixed(2)}x</span>
                         <button class="hero-btn" data-action="speedUp" style="background:#8b5cf6; padding: 5px 10px;">🐇</button>
                     </div>
                 </div>
@@ -1711,13 +1748,6 @@ class App {
                 return `<div class="reading-card"><p>جاري تحضير النتائج...</p></div>`;
             }
             const q = this.levelTestQuestions[this.levelTestIndex];
-            // تحضير الخيارات: نستخدم نفس آلية quizOptions لكن هنا نعرض الكلمة العربية ونختار من الإنجليزيات؟ في الاختبار الشامل نفترض أن السؤال يعرض العربية ويختار الإنجليزية.
-            // لتوحيد الأسلوب، سنعرض السؤال بالعربية (q.arabic) والخيارات: q.english و 3 كلمات إنجليزية عشوائية من بقية الكلمات.
-            // نحتاج لتحضير الخيارات. نبني مصفوفة من الكلمات الإنجليزية المتاحة (من نفس المستوى) ونختار 3 عشوائياً غير الصحيحة.
-            // لجعل الأمر بسيطاً، سنستخدم نفس آلية quizOptions لكن مع عرض العربية.
-            // هذا يتطلب بعض التعديل. لكن لتجنب التعقيد، سأستخدم هنا عرضاً بسيطاً: أربعة أزرار تحوي الكلمات الإنجليزية.
-            // يمكن تحسين ذلك لاحقاً.
-
             // توليد 3 خيارات خاطئة من بقية الكلمات
             const otherTerms = this.levelTestQuestions.filter((_, i) => i !== this.levelTestIndex);
             const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
@@ -1750,15 +1780,22 @@ class App {
             const totalQuestions = this.levelTestQuestions.length;
             const score = this.levelTestScore;
             const percentage = (score / totalQuestions * 100).toFixed(1);
-            const passedLessons = this.levelTestUnlockedLessons.length; // لكننا لم نخزنها بشكل منفصل، يمكن حسابها من الـ answers
-            // نحتاج لعرض النتيجة والدروس المفتوحة. سأبسطها.
+            
+            // عرض الدروس المفتوحة وأول درس مقفل
+            let message = '';
+            if (this.levelTestFirstLockedLesson) {
+                message = `✅ تم فتح الدروس التي حققت فيها 75% أو أكثر. ابدأ من الدرس ${this.levelTestFirstLockedLesson}.`;
+            } else {
+                message = `🎉 تهانينا! لقد فتحت جميع دروس هذا المستوى.`;
+            }
+
             return `<div class="reading-card">
                 <h2 style="text-align:center;">🏁 نتيجة الاختبار الشامل</h2>
                 <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:20px 0; text-align:center;">
                     <h1 style="color:#1e40af; margin-bottom:5px;">${percentage}%</h1>
                     <p style="font-size:1.2rem;">الإجابات الصحيحة: ${score} من ${totalQuestions}</p>
                 </div>
-                <p style="margin-bottom:20px;">تم فتح الدروس التي حصلت فيها على 75% أو أكثر من كلماتها.</p>
+                <p style="margin-bottom:20px;">${message}</p>
                 <button class="hero-btn" data-action="goHome" style="background:#64748b;">العودة للرئيسية</button>
             </div>`;
         }
