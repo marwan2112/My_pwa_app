@@ -760,6 +760,23 @@ setAudioSpeed(rate) {
                         if (this.selectedLessonId) {
                             this.grantLessonCompletionReward(this.selectedLessonId);
                         }
+                    case 'playAudio':
+    this.playAudio(param);
+    break;
+case 'pauseAudio':
+    this.pauseAudio();
+    break;
+case 'stopAudio':
+    this.stopAudio();
+    break;
+case 'speedUp':
+    this.setAudioSpeed(this.audioPlaybackRate + 0.25);
+    this.render(); // لتحديث عرض السرعة
+    break;
+case 'speedDown':
+    this.setAudioSpeed(Math.max(0.5, this.audioPlaybackRate - 0.25));
+    this.render();
+    break;    
                     }
                     break;
 
