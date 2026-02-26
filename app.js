@@ -48,18 +48,19 @@ class App {
 
         // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
         this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
-        this.levelTestLessons = []; // قائمة الدروس في هذا المستوى
-        this.levelTestQuestions = []; // مصفوفة الأسئلة (كل سؤال يحوي الكلمة والدرس) – مرتبة حسب الدروس
-        this.levelTestIndex = 0;
-        this.levelTestScore = 0;
-        this.levelTestAnswers = []; // سجل الإجابات لكل سؤال
-        this.levelTestUnlockedLessons = []; // الدروس التي سيتم فتحها بعد الاختبار
-        this.levelTestFirstLockedLesson = null; // أول درس مقفل بعد الاختبار
-        this.levelTestCompletedLessons = {}; // لتخزين حالة كل درس أثناء الاختبار
-        this.levelTestStartLesson = 0; // الدرس الذي نبدأ منه في هذا الاختبار
-        this.levelTestEndLesson = 0; // آخر درس نغطيه في هذا الاختبار
+        this.levelTestLessons = []; // قائمة الدروس في هذا المستوى (مرتبة)
+        this.levelTestCurrentLessonIndex = 0; // فهرس الدرس الحالي في القائمة
+        this.levelTestCurrentLessonId = null; // معرف الدرس الحالي
+        this.levelTestLessonQuestions = []; // كلمات الدرس الحالي (مخلوطة عشوائياً)
+        this.levelTestRequiredCorrect = 5; // عدد الإجابات الصحيحة المطلوبة لاجتياز الدرس الحالي (يبدأ بـ 5)
+        this.levelTestCurrentCorrect = 0; // عدد الإجابات الصحيحة في الدرس الحالي
+        this.levelTestCurrentTotal = 0; // عدد الأسئلة المجاب عنها في الدرس الحالي
+        this.levelTestQuestionsBank = []; // بنك الكلمات المتبقية لكل درس (لإعادة المحاولة)
+        this.levelTestResults = []; // نتائج الدروس: { lessonId, passed, attempts }
+        this.levelTestQuestionsAnswered = 0; // إجمالي الأسئلة المجاب عنها
+        this.levelTestMaxQuestions = 100; // الحد الأقصى للأسئلة
 
-        // تحميل آخر درس تم اختباره لكل مستوى
+        // تحميل آخر درس تم اختباره لكل مستوى (سيتم استخدامه للبدء)
         this.lastTestedLesson = JSON.parse(localStorage.getItem('lastTestedLesson')) || { beginner: 0, intermediate: 0, advanced: 0 };
 
         if (document.readyState === 'loading') {
@@ -344,7 +345,6 @@ class App {
 
     playAudio(src) {
         if (this.currentAudio) {
-            // إذا كان نفس الملف ولم ينتهِ، فقط شغله
             if (this.currentAudio.src.endsWith(src) && !this.currentAudio.ended) {
                 this.currentAudio.play();
                 return;
@@ -866,52 +866,88 @@ class App {
         this.levelTestLevel = levelName;
         this.levelTestLessons = lessonIds;
 
-        // تحديد الدرس الذي نبدأ منه (آخر درس تم اختباره + 1)
-        const startLessonIndex = this.lastTestedLesson[levelName] || 0;
-        if (startLessonIndex >= lessonIds.length) {
-            alert('🎉 لقد أكملت جميع دروس هذا المستوى مسبقاً.');
-            return;
+        // نبدأ من أول درس مغلق (أو من حيث توقفنا سابقاً)
+        let startIndex = 0;
+        for (let i = 0; i < lessonIds.length; i++) {
+            if (!this.unlockedLessons.includes(lessonIds[i])) {
+                startIndex = i;
+                break;
+            }
+        }
+        // إذا كانت جميع الدروس مفتوحة، نبدأ من أول درس لم يختبر بعد (حسب lastTestedLesson)
+        if (startIndex === 0 && this.unlockedLessons.includes(lessonIds[0])) {
+            startIndex = this.lastTestedLesson[levelName] || 0;
         }
 
-        // نأخذ الدروس من startLessonIndex حتى نصل إلى 100 سؤال (5 كلمات لكل درس)
-        let allTerms = [];
-        let lessonIndex = startLessonIndex;
-        while (lessonIndex < lessonIds.length && allTerms.length < 100) {
-            const id = lessonIds[lessonIndex];
+        this.levelTestCurrentLessonIndex = startIndex;
+        this.levelTestCurrentLessonId = lessonIds[startIndex];
+        this.levelTestRequiredCorrect = 5; // ابدأ بـ 5
+        this.levelTestCurrentCorrect = 0;
+        this.levelTestCurrentTotal = 0;
+        this.levelTestQuestionsBank = {};
+        this.levelTestResults = [];
+        this.levelTestQuestionsAnswered = 0;
+
+        // تجهيز بنك الأسئلة لكل درس (كل الكلمات)
+        lessonIds.forEach(id => {
             const lesson = window.lessonsData[id];
             if (lesson && lesson.terms) {
-                // نأخذ 5 كلمات عشوائية من هذا الدرس (إذا كان الدرس يحتوي على أكثر من 5)
-                const terms = lesson.terms;
-                const shuffled = [...terms].sort(() => 0.5 - Math.random());
-                const selected = shuffled.slice(0, 5).map(t => ({ ...t, lessonId: id }));
-                allTerms.push(...selected);
+                const allWords = [...lesson.terms];
+                // إضافة الكلمات المضافة من المستخدم لهذا الدرس
+                const added = this.userVocabulary.filter(v => v.lessonId == id);
+                allWords.push(...added);
+                // خلط الكلمات
+                this.shuffleArray(allWords);
+                this.levelTestQuestionsBank[id] = allWords;
+            } else {
+                this.levelTestQuestionsBank[id] = [];
             }
-            // نضيف الكلمات المضافة من المستخدم لهذا الدرس (اختياري)
-            const added = this.userVocabulary.filter(v => v.lessonId == id);
-            if (added.length > 0) {
-                const addedShuffled = [...added].sort(() => 0.5 - Math.random());
-                const addedSelected = addedShuffled.slice(0, 5).map(t => ({ ...t, lessonId: id }));
-                allTerms.push(...addedSelected);
-            }
-            lessonIndex++;
-        }
+        });
 
-        if (allTerms.length === 0) {
-            alert('لا توجد كلمات في هذا المستوى.');
-            return;
-        }
-
-        this.levelTestQuestions = allTerms.slice(0, 100); // نأخذ أول 100
-        this.levelTestIndex = 0;
-        this.levelTestScore = 0;
-        this.levelTestAnswers = [];
-        this.levelTestUnlockedLessons = [];
-        this.levelTestCompletedLessons = {};
-        this.levelTestStartLesson = startLessonIndex;
-        this.levelTestEndLesson = lessonIndex; // آخر درس تم سحب كلمات منه (قد لا يكون مكتملاً)
+        // تحميل أول سؤال
+        this.loadNextLevelTestQuestion();
 
         this.currentPage = 'level_test';
         this.render();
+    }
+
+    loadNextLevelTestQuestion() {
+        // إذا تجاوزنا الحد الأقصى للأسئلة، ننهي الاختبار
+        if (this.levelTestQuestionsAnswered >= this.levelTestMaxQuestions) {
+            this.finishLevelTestEarly();
+            return;
+        }
+
+        const lessonId = this.levelTestCurrentLessonId;
+        if (!lessonId) {
+            this.finishLevelTestEarly();
+            return;
+        }
+
+        const bank = this.levelTestQuestionsBank[lessonId];
+        if (!bank || bank.length === 0) {
+            // لا توجد كلمات في هذا الدرس، انتقل للدرس التالي
+            this.moveToNextLesson();
+            return;
+        }
+
+        // اختر أول كلمة من البنك (مع إزالتها)
+        this.levelTestCurrentQuestion = bank.shift();
+        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس أو من دروس أخرى
+        const wrongOptions = [];
+        // نأخذ من كلمات الدرس الحالي أولاً
+        const currentBank = [...bank]; // نسخة
+        this.shuffleArray(currentBank);
+        for (let i = 0; i < 3; i++) {
+            if (currentBank.length > 0) {
+                wrongOptions.push(currentBank[i]?.arabic || '???');
+            } else {
+                wrongOptions.push('???');
+            }
+        }
+        const options = [this.levelTestCurrentQuestion.arabic, ...wrongOptions];
+        this.shuffleArray(options);
+        this.levelTestCurrentOptions = options;
     }
 
     handleLevelTestAnswer(selected, correct, btnElement) {
@@ -920,8 +956,22 @@ class App {
 
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
         this.playTone(isCorrect ? 'correct' : 'error');
-        if (isCorrect) this.levelTestScore++;
 
+        this.levelTestQuestionsAnswered++;
+        this.levelTestCurrentTotal++;
+        if (isCorrect) {
+            this.levelTestCurrentCorrect++;
+        }
+
+        // تسجيل الإجابة
+        this.levelTestAnswers.push({
+            question: this.levelTestCurrentQuestion,
+            selected: selected,
+            correct: correct,
+            isCorrect: isCorrect
+        });
+
+        // تلوين الأزرار
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
@@ -938,96 +988,92 @@ class App {
             }
         });
 
-        // تسجيل الإجابة
-        const currentQuestion = this.levelTestQuestions[this.levelTestIndex];
-        this.levelTestAnswers.push({
-            question: currentQuestion,
-            selected: selected,
-            correct: correct,
-            isCorrect: isCorrect
-        });
-
-        // تحديث إحصائيات الدرس
-        const lessonId = currentQuestion.lessonId;
-        if (!this.levelTestCompletedLessons[lessonId]) {
-            this.levelTestCompletedLessons[lessonId] = { total: 0, correct: 0 };
-        }
-        this.levelTestCompletedLessons[lessonId].total++;
-        if (isCorrect) this.levelTestCompletedLessons[lessonId].correct++;
-
         setTimeout(() => {
-            this.levelTestIndex++;
-            if (this.levelTestIndex < this.levelTestQuestions.length) {
-                // نستمر
+            // التحقق من اكتمال الدرس
+            if (this.levelTestCurrentCorrect >= this.levelTestRequiredCorrect) {
+                // اجتاز الدرس
+                if (!this.unlockedLessons.includes(this.levelTestCurrentLessonId)) {
+                    this.unlockedLessons.push(this.levelTestCurrentLessonId);
+                    this.userCoins += 20; // مكافأة
+                    this.levelTestResults.push({
+                        lessonId: this.levelTestCurrentLessonId,
+                        passed: true,
+                        attempts: this.levelTestCurrentTotal
+                    });
+                }
+                // الانتقال للدرس التالي
+                this.moveToNextLesson();
             } else {
-                // انتهى الاختبار
-                this.processLevelTestResults();
+                // لم يجتز الدرس بعد
+                // نتحقق إذا استنفذنا كلمات الدرس الحالي
+                if (this.levelTestQuestionsBank[this.levelTestCurrentLessonId].length === 0) {
+                    // نفذت الكلمات، نزيد العدد المطلوب ونضيف المزيد من الكلمات (إذا أمكن)
+                    // نضيف كلمات جديدة من نفس الدرس (إعادة تعبئة البنك من جديد)
+                    const lesson = window.lessonsData[this.levelTestCurrentLessonId];
+                    if (lesson && lesson.terms) {
+                        const allWords = [...lesson.terms];
+                        const added = this.userVocabulary.filter(v => v.lessonId == this.levelTestCurrentLessonId);
+                        allWords.push(...added);
+                        this.shuffleArray(allWords);
+                        // نخلطها ونضعها في البنك
+                        this.levelTestQuestionsBank[this.levelTestCurrentLessonId] = allWords;
+                        // نزيد العدد المطلوب بمقدار 2
+                        this.levelTestRequiredCorrect += 2;
+                        this.levelTestCurrentCorrect = 0;
+                        this.levelTestCurrentTotal = 0;
+                    } else {
+                        // لا يوجد كلمات إضافية، انتقل للدرس التالي (نادر)
+                        this.moveToNextLesson();
+                    }
+                }
+                // تحميل السؤال التالي
+                this.loadNextLevelTestQuestion();
             }
             this.isWaiting = false;
             this.render();
         }, 1200);
     }
 
-    finishLevelTestEarly() {
-        if (this.levelTestIndex > 0) {
-            this.processLevelTestResults();
-        } else {
-            alert('لم تتم الإجابة على أي سؤال بعد.');
+    moveToNextLesson() {
+        // الانتقال للدرس التالي
+        this.levelTestCurrentLessonIndex++;
+        if (this.levelTestCurrentLessonIndex >= this.levelTestLessons.length) {
+            // انتهت الدروس، ننهي الاختبار
+            this.finishLevelTestEarly();
+            return;
         }
+        this.levelTestCurrentLessonId = this.levelTestLessons[this.levelTestCurrentLessonIndex];
+        this.levelTestRequiredCorrect = 5; // إعادة تعيين للمطلوب
+        this.levelTestCurrentCorrect = 0;
+        this.levelTestCurrentTotal = 0;
+        this.loadNextLevelTestQuestion();
     }
 
-    processLevelTestResults() {
-        // حساب الدروس التي حققت نسبة ≥ 75% (4 من 5)
-        const newlyUnlocked = [];
-        let totalCoinsEarned = 0;
-        let lastPassedLessonIndex = this.levelTestStartLesson - 1; // آخر درس تم اجتيازه
-
-        // تجميع النتائج حسب الدرس
-        for (let lessonId in this.levelTestCompletedLessons) {
-            const stats = this.levelTestCompletedLessons[lessonId];
-            if (stats.correct / stats.total >= 0.75) {
-                if (!this.unlockedLessons.includes(lessonId)) {
-                    this.unlockedLessons.push(lessonId);
-                    newlyUnlocked.push(lessonId);
-                    totalCoinsEarned += 20;
-                }
-                // تحديد فهرس هذا الدرس في قائمة الدروس
-                const idx = this.levelTestLessons.indexOf(lessonId);
-                if (idx > lastPassedLessonIndex) lastPassedLessonIndex = idx;
-            }
-        }
-
-        // تحديث آخر درس تم اختباره إلى nextLesson (أول درس لم يتم اختباره بعد)
-        const nextLessonIndex = Math.max(lastPassedLessonIndex + 1, this.levelTestEndLesson);
-        this.lastTestedLesson[this.levelTestLevel] = nextLessonIndex;
+    finishLevelTestEarly() {
+        // حفظ آخر درس تم الوصول إليه
+        const lastLessonIndex = this.levelTestCurrentLessonIndex;
+        this.lastTestedLesson[this.levelTestLevel] = lastLessonIndex;
         this.saveData();
 
-        // إضافة العملات
-        if (totalCoinsEarned > 0) {
-            this.userCoins += totalCoinsEarned;
-        }
-
-        // تحديد أول درس مقفل
-        const firstLocked = this.levelTestLessons.find(id => !this.unlockedLessons.includes(id));
-        this.levelTestFirstLockedLesson = firstLocked || null;
-
-        // إعداد رسالة
+        // إعداد رسالة النتائج
+        const passedLessons = this.levelTestResults.filter(r => r.passed).map(r => r.lessonId);
         let message = '';
-        if (newlyUnlocked.length > 0) {
-            message = `✅ تم فتح الدروس: ${newlyUnlocked.join('، ')} وحصلت على ${totalCoinsEarned} لؤلؤة.`;
-            if (this.levelTestFirstLockedLesson) {
-                message += ` ابدأ من الدرس ${this.levelTestFirstLockedLesson}.`;
+        if (passedLessons.length > 0) {
+            message = `✅ تم فتح الدروس: ${passedLessons.join('، ')}.`;
+            if (this.levelTestCurrentLessonIndex < this.levelTestLessons.length) {
+                message += ` توقف عند الدرس ${this.levelTestLessons[this.levelTestCurrentLessonIndex]}.`;
             } else {
-                message += ` 🎉 لقد فتحت جميع دروس هذا المستوى!`;
+                message += ` 🎉 لقد أكملت جميع الدروس!`;
             }
         } else {
-            if (this.levelTestFirstLockedLesson) {
-                message = `لم يتم فتح أي درس جديد. استمر في الدراسة من الدرس ${this.levelTestFirstLockedLesson}.`;
+            if (this.levelTestCurrentLessonIndex < this.levelTestLessons.length) {
+                message = `لم يتم فتح أي درس. استمر من الدرس ${this.levelTestLessons[this.levelTestCurrentLessonIndex]}.`;
             } else {
-                message = `🎉 جميع دروس هذا المستوى مفتوحة بالفعل.`;
+                message = `🎉 لقد أكملت جميع الدروس مسبقاً.`;
             }
         }
 
+        this.levelTestResultMessage = message;
         this.currentPage = 'level_test_result';
         this.render();
         setTimeout(() => alert(message), 100);
@@ -1803,21 +1849,16 @@ class App {
 
         // ========== صفحة الاختبار الشامل للمستوى ==========
         if (this.currentPage === 'level_test') {
-            if (this.levelTestIndex >= this.levelTestQuestions.length) {
-                return `<div class="reading-card"><p>جاري تحضير النتائج...</p></div>`;
+            if (!this.levelTestCurrentQuestion) {
+                return `<div class="reading-card"><p>جاري تحضير الاختبار...</p></div>`;
             }
-            const q = this.levelTestQuestions[this.levelTestIndex];
-            // توليد 3 خيارات خاطئة من بقية الكلمات (يمكن تحسينها باختيار عشوائي من جميع كلمات المستوى)
-            const otherTerms = this.levelTestQuestions.filter((_, i) => i !== this.levelTestIndex);
-            const shuffled = [...otherTerms].sort(() => 0.5 - Math.random());
-            const wrongs = shuffled.slice(0, 3).map(t => t.arabic);
-            while (wrongs.length < 3) wrongs.push('???');
-            const options = [q.arabic, ...wrongs].sort(() => 0.5 - Math.random());
+            const q = this.levelTestCurrentQuestion;
+            const options = this.levelTestCurrentOptions || [];
 
             return `<div class="reading-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <span style="background:#e2e8f0; color:#475569; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">
-                        السؤال ${this.levelTestIndex + 1} / ${this.levelTestQuestions.length}
+                        السؤال ${this.levelTestQuestionsAnswered + 1} / ${this.levelTestMaxQuestions}
                     </span>
                     <button class="hero-btn" data-action="finishLevelTest" style="background:#ef4444; padding:5px 15px;">⏹️ إنهاء الاختبار</button>
                 </div>
@@ -1837,24 +1878,11 @@ class App {
 
         // ========== صفحة نتيجة الاختبار الشامل ==========
         if (this.currentPage === 'level_test_result') {
-            const totalQuestions = this.levelTestQuestions.length;
-            const score = this.levelTestScore;
-            const percentage = (score / totalQuestions * 100).toFixed(1);
-            
-            let message = '';
-            if (this.levelTestFirstLockedLesson) {
-                message = `✅ تم فتح الدروس التي حققت فيها 75% أو أكثر. ابدأ من الدرس ${this.levelTestFirstLockedLesson}.`;
-            } else {
-                message = `🎉 تهانينا! لقد فتحت جميع دروس هذا المستوى.`;
-            }
-
             return `<div class="reading-card">
                 <h2 style="text-align:center;">🏁 نتيجة الاختبار الشامل</h2>
                 <div style="background:#f0f7ff; padding:15px; border-radius:10px; margin:20px 0; text-align:center;">
-                    <h1 style="color:#1e40af; margin-bottom:5px;">${percentage}%</h1>
-                    <p style="font-size:1.2rem;">الإجابات الصحيحة: ${score} من ${totalQuestions}</p>
+                    <p style="font-size:1.2rem;">${this.levelTestResultMessage}</p>
                 </div>
-                <p style="margin-bottom:20px;">${message}</p>
                 <button class="hero-btn" data-action="goHome" style="background:#64748b;">العودة للرئيسية</button>
             </div>`;
         }
