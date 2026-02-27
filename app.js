@@ -1,4 +1,4 @@
-  class App {
+class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
         this.audioPlaybackRate = 1.0; // السرعة الافتراضية
@@ -362,15 +362,16 @@
     }
 
     playAudio(src) {
+        const fullSrc = new URL(src, window.location.href).href;
         if (this.currentAudio) {
-            if (this.currentAudio.src.endsWith(src) && !this.currentAudio.ended) {
+            if (this.currentAudio.src === fullSrc && !this.currentAudio.ended) {
                 this.currentAudio.play();
                 return;
             } else {
                 this.currentAudio.pause();
             }
         }
-        this.currentAudio = new Audio(src);
+        this.currentAudio = new Audio(fullSrc);
         this.currentAudio.playbackRate = this.audioPlaybackRate;
         this.currentAudio.play();
     }
@@ -598,7 +599,6 @@
             if (this.jumbleCurrentSentence === this.jumbleOriginalSentence) {
                 this.jumbleArabicHint = translated;
             } else {
-                // إذا تغيرت، نتجاهل الترجمة
                 console.log('Ignored translation for outdated sentence');
             }
             this.render();
