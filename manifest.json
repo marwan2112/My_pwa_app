@@ -1,7 +1,7 @@
 {
   "name": "المصطلحات السياسية والقانونية",
-  "short_name": "WordWise",
-  "description": "تطبيق تعليمي تفاعلي  لتعلم اللغة الانجليزبة ",
+  "short_name": "المصطلحات",
+  "description": "تطبيق تعليمي تفاعلي للمصطلحات السياسية والقانونية",
   "start_url": "/wordwise/",
   "scope": "/wordwise/",
   "display": "standalone",
