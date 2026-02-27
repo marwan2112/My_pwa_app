@@ -28,7 +28,7 @@ class App {
         this.jumbleCorrect = false;
         this.jumbleHintUsed = false;
         this.jumbleHistory = []; // سجل الجمل المستخدمة
-        this.jumbleUnlocked = false; // هل تم فتح التمرين بالعملات
+        this.jumbleUnlocked = {}; // تخزين حالة فتح الترتيب لكل درس
 
         // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
@@ -37,7 +37,7 @@ class App {
         this.listeningAnswered = false;
         this.listeningTimer = null;
         this.listeningErrorTimer = null;
-        this.listeningUnlocked = false; // لتحديد إذا كان قد دفع للدخول لهذا الدرس
+        this.listeningUnlocked = {}; // تخزين حالة فتح الاستماع لكل درس
 
         // متغيرات خاصة بتمرين الكتابة (Spelling)
         this.spellingRemaining = [];
@@ -45,6 +45,7 @@ class App {
         this.spellingAnswered = false;
         this.spellingUserAnswer = '';
         this.spellingResult = null; // 'correct', 'wrong', null
+        this.spellingUnlocked = {}; // تخزين حالة فتح الكتابة لكل درس
 
         // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
         this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
@@ -64,6 +65,12 @@ class App {
 
         // تحميل آخر درس تم اختباره لكل مستوى (سيتم استخدامه للبدء)
         this.lastTestedLesson = JSON.parse(localStorage.getItem('lastTestedLesson')) || { beginner: 0, intermediate: 0, advanced: 0 };
+
+        // تحميل حالة فتح التمارين
+        const savedUnlocked = JSON.parse(localStorage.getItem('unlockedExercises')) || {};
+        this.jumbleUnlocked = savedUnlocked.jumble || {};
+        this.listeningUnlocked = savedUnlocked.listening || {};
+        this.spellingUnlocked = savedUnlocked.spelling || {};
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -279,6 +286,14 @@ class App {
         if (this.userData) localStorage.setItem('userAccount', JSON.stringify(this.userData));
         localStorage.setItem('userCoins', JSON.stringify(this.userCoins));
         localStorage.setItem('lastTestedLesson', JSON.stringify(this.lastTestedLesson));
+        
+        // حفظ حالة فتح التمارين
+        const unlockedExercises = {
+            jumble: this.jumbleUnlocked,
+            listening: this.listeningUnlocked,
+            spelling: this.spellingUnlocked
+        };
+        localStorage.setItem('unlockedExercises', JSON.stringify(unlockedExercises));
     }
 
     speak(text) {
@@ -750,12 +765,13 @@ class App {
         }
     }
 
-    unlockListening() {
-        if (this.listeningUnlocked) return true;
+    // دالة لفتح اختبار الاستماع بالعملات (مرة واحدة لكل درس)
+    unlockListening(lessonId) {
+        if (this.listeningUnlocked[lessonId]) return true; // مفتوح بالفعل
         if (this.userCoins >= 50) {
             if (confirm('هل تريد فتح اختبار الاستماع لهذا الدرس باستخدام 50 لؤلؤة؟')) {
                 this.userCoins -= 50;
-                this.listeningUnlocked = true;
+                this.listeningUnlocked[lessonId] = true;
                 this.saveData();
                 this.prepareListeningQuiz();
                 this.render();
@@ -769,14 +785,35 @@ class App {
         }
     }
 
-    unlockJumble() {
-        if (this.jumbleUnlocked) return true;
+    // دالة لفتح الترتيب بالعملات (مرة واحدة لكل درس)
+    unlockJumble(lessonId) {
+        if (this.jumbleUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
             if (confirm('هل تريد فتح تمرين ترتيب الجمل لهذا الدرس باستخدام 50 لؤلؤة؟')) {
                 this.userCoins -= 50;
-                this.jumbleUnlocked = true;
+                this.jumbleUnlocked[lessonId] = true;
                 this.saveData();
                 this.prepareJumble();
+                this.render();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            alert(`❌ ليس لديك لآلئ كافية! تحتاج 50 لؤلؤة. رصيدك الحالي: ${this.userCoins}`);
+            return false;
+        }
+    }
+
+    // دالة لفتح الكتابة بالعملات (مرة واحدة لكل درس)
+    unlockSpelling(lessonId) {
+        if (this.spellingUnlocked[lessonId]) return true;
+        if (this.userCoins >= 50) {
+            if (confirm('هل تريد فتح تمرين الكتابة لهذا الدرس باستخدام 50 لؤلؤة؟')) {
+                this.userCoins -= 50;
+                this.spellingUnlocked[lessonId] = true;
+                this.saveData();
+                this.prepareSpelling();
                 this.render();
                 return true;
             } else {
@@ -1179,9 +1216,8 @@ class App {
                         this.currentPage = 'reading'; 
                         this.isUnlockTest = false;
 
-                        this.listeningUnlocked = false;
-                        this.jumbleUnlocked = false;
-                        this.jumbleHistory = [];
+                        // لا نقوم بإعادة تعيين حالة الدفع عند كل دخول
+                        this.jumbleHistory = []; // إعادة تعيين تاريخ الجمل لكل درس جديد
                         this.spellingRemaining = [];
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
@@ -1195,19 +1231,24 @@ class App {
 
                 case 'setPage':
                     if (param === 'listening' && this.selectedLessonId) {
-                        if (!this.listeningUnlocked) {
-                            if (!this.unlockListening()) return;
+                        // التحقق من حالة الفتح
+                        if (!this.listeningUnlocked[this.selectedLessonId]) {
+                            if (!this.unlockListening(this.selectedLessonId)) return;
                         } else {
                             this.prepareListeningQuiz();
                         }
                     } else if (param === 'jumble' && this.selectedLessonId) {
-                        if (!this.jumbleUnlocked) {
-                            if (!this.unlockJumble()) return;
+                        if (!this.jumbleUnlocked[this.selectedLessonId]) {
+                            if (!this.unlockJumble(this.selectedLessonId)) return;
                         } else {
                             this.prepareJumble();
                         }
                     } else if (param === 'spelling' && this.selectedLessonId) {
-                        this.prepareSpelling();
+                        if (!this.spellingUnlocked[this.selectedLessonId]) {
+                            if (!this.unlockSpelling(this.selectedLessonId)) return;
+                        } else {
+                            this.prepareSpelling();
+                        }
                     } else if (param === 'quiz' && this.selectedLessonId) {
                         this.prepareQuiz(window.lessonsData[this.selectedLessonId].terms, false);
                     }
@@ -1549,8 +1590,9 @@ class App {
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
                 
-                <!-- تم إزالة أزرار الاختبار الشامل من الصفحة الرئيسية حسب الطلب -->
+                <!-- أزرار الاختبار الشامل تم إزالتها من الصفحة الرئيسية حسب الطلب -->
                 
+                <!-- زر تسجيل الخروج بحجم أكبر ولون أحمر -->
                 <button data-action="logout" class="logout-btn" style="margin-top: 20px; background: #dc2626; color: white; padding: 14px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; width: 100%; border: none; cursor: pointer;">تسجيل الخروج</button>
             </main>`;
         }
@@ -1768,12 +1810,12 @@ class App {
 
         // ========== صفحة إعادة ترتيب الجمل ==========
         if (this.currentPage === 'jumble') {
-            if (!this.jumbleUnlocked) {
+            if (!this.jumbleUnlocked[this.selectedLessonId]) {
                 return `<div class="reading-card" style="text-align: center;">
                     <h3>🔤 ترتيب الجمل</h3>
-                    <p>لفتح هذا التمرين تحتاج 50 💎 لؤلؤة.</p>
+                    <p>لفتح هذا التمرين تحتاج 50 💎 لؤلؤة (مرة واحدة فقط للدرس).</p>
                     <p>رصيدك الحالي: ${this.userCoins} 💎</p>
-                    <button class="hero-btn" onclick="appInstance.unlockJumble()" style="background: #8b5cf6;">فتح (50 💎)</button>
+                    <button class="hero-btn" onclick="appInstance.unlockJumble('${this.selectedLessonId}')" style="background: #8b5cf6;">فتح (50 💎)</button>
                 </div>`;
             }
             return `<div class="reading-card">
@@ -1801,12 +1843,12 @@ class App {
 
         // ========== صفحة اختبار الاستماع ==========
         if (this.currentPage === 'listening') {
-            if (!this.listeningUnlocked) {
+            if (!this.listeningUnlocked[this.selectedLessonId]) {
                 return `<div class="reading-card" style="text-align: center;">
                     <h3>🎧 اختبار الاستماع</h3>
-                    <p>لفتح هذا الاختبار تحتاج 50 💎 لؤلؤة.</p>
+                    <p>لفتح هذا الاختبار تحتاج 50 💎 لؤلؤة (مرة واحدة فقط للدرس).</p>
                     <p>رصيدك الحالي: ${this.userCoins} 💎</p>
-                    <button class="hero-btn" onclick="appInstance.unlockListening()" style="background: #8b5cf6;">فتح (50 💎)</button>
+                    <button class="hero-btn" onclick="appInstance.unlockListening('${this.selectedLessonId}')" style="background: #8b5cf6;">فتح (50 💎)</button>
                 </div>`;
             }
             if (!this.listeningCurrent) {
@@ -1827,6 +1869,14 @@ class App {
 
         // ========== صفحة تمرين الكتابة (Spelling) ==========
         if (this.currentPage === 'spelling') {
+            if (!this.spellingUnlocked[this.selectedLessonId]) {
+                return `<div class="reading-card" style="text-align: center;">
+                    <h3>✍️ تمرين الكتابة</h3>
+                    <p>لفتح هذا التمرين تحتاج 50 💎 لؤلؤة (مرة واحدة فقط للدرس).</p>
+                    <p>رصيدك الحالي: ${this.userCoins} 💎</p>
+                    <button class="hero-btn" onclick="appInstance.unlockSpelling('${this.selectedLessonId}')" style="background: #8b5cf6;">فتح (50 💎)</button>
+                </div>`;
+            }
             if (!this.spellingCurrent) {
                 return `<div class="reading-card"><p>لا توجد كلمات متاحة. حاول مرة أخرى.</p></div>`;
             }
