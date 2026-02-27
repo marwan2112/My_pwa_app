@@ -9,6 +9,7 @@ class App {
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
         this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمساعدة
+        this.jumbleCurrentSentence = ''; // لتتبع الجملة التي طلبت الترجمة لها
 
         // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [] };
@@ -588,11 +589,23 @@ class App {
             this.jumbleHistory.push(this.jumbleOriginalSentence);
         }
 
+        // حفظ الجملة الحالية للتحقق من الترجمة
+        this.jumbleCurrentSentence = this.jumbleOriginalSentence;
+
+        // ترجمة الجملة إلى العربية للمساعدة
         this.translateText(this.jumbleOriginalSentence).then(translated => {
-            this.jumbleArabicHint = translated;
+            // التحقق من أن الجملة لم تتغير أثناء الترجمة
+            if (this.jumbleCurrentSentence === this.jumbleOriginalSentence) {
+                this.jumbleArabicHint = translated;
+            } else {
+                // إذا تغيرت، نتجاهل الترجمة
+                console.log('Ignored translation for outdated sentence');
+            }
             this.render();
         }).catch(() => {
-            this.jumbleArabicHint = '';
+            if (this.jumbleCurrentSentence === this.jumbleOriginalSentence) {
+                this.jumbleArabicHint = '';
+            }
             this.render();
         });
 
