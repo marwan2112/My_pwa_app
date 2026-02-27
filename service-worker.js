@@ -1,11 +1,11 @@
 const CACHE_NAME = 'wordwise-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/data.js',
-  '/wordwise_logo.png',
+  '/wordwise/',
+  '/wordwise/index.html',
+  '/wordwise/styles.css',
+  '/wordwise/app.js',
+  '/wordwise/data.js',
+  '/wordwise/wordwise_logo.png',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap'
 ];
 
