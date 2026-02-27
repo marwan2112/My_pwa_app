@@ -59,6 +59,8 @@ class App {
         this.levelTestResults = []; // نتائج الدروس: { lessonId, passed, attempts }
         this.levelTestQuestionsAnswered = 0; // إجمالي الأسئلة المجاب عنها
         this.levelTestMaxQuestions = 100; // الحد الأقصى للأسئلة
+        this.levelTestCurrentQuestion = null;
+        this.levelTestCurrentOptions = [];
 
         // تحميل آخر درس تم اختباره لكل مستوى (سيتم استخدامه للبدء)
         this.lastTestedLesson = JSON.parse(localStorage.getItem('lastTestedLesson')) || { beginner: 0, intermediate: 0, advanced: 0 };
@@ -845,12 +847,10 @@ class App {
 
     // ================== دوال الاختبار الشامل للمستوى (معدلة) ==================
     prepareLevelTest(levelParam) {
-        // levelParam يمكن أن يكون 'beginner', 'intermediate', 'advanced' أو معرف مستوى مثل 'A1'
         let lessonIds = [];
         let levelName = '';
 
         if (levelParam === 'beginner' || levelParam === 'A1' || levelParam === 'A2') {
-            // نفترض أن دروس المبتدئ هي 1-60
             lessonIds = Array.from({ length: 60 }, (_, i) => (i + 1).toString());
             levelName = 'beginner';
         } else if (levelParam === 'intermediate' || levelParam === 'B1' || levelParam === 'B2') {
@@ -866,7 +866,7 @@ class App {
         this.levelTestLevel = levelName;
         this.levelTestLessons = lessonIds;
 
-        // نبدأ من أول درس مغلق (أو من حيث توقفنا سابقاً)
+        // نبدأ من أول درس مغلق
         let startIndex = 0;
         for (let i = 0; i < lessonIds.length; i++) {
             if (!this.unlockedLessons.includes(lessonIds[i])) {
@@ -874,28 +874,31 @@ class App {
                 break;
             }
         }
-        // إذا كانت جميع الدروس مفتوحة، نبدأ من أول درس لم يختبر بعد (حسب lastTestedLesson)
+        // إذا كانت جميع الدروس مفتوحة، نبدأ من آخر درس تم اختباره
         if (startIndex === 0 && this.unlockedLessons.includes(lessonIds[0])) {
             startIndex = this.lastTestedLesson[levelName] || 0;
+            if (startIndex >= lessonIds.length) startIndex = 0; // تجاوز الحد
         }
 
         this.levelTestCurrentLessonIndex = startIndex;
         this.levelTestCurrentLessonId = lessonIds[startIndex];
-        this.levelTestRequiredCorrect = 5; // ابدأ بـ 5
+        this.levelTestRequiredCorrect = 5;
         this.levelTestCurrentCorrect = 0;
         this.levelTestCurrentTotal = 0;
         this.levelTestQuestionsBank = {};
         this.levelTestResults = [];
         this.levelTestQuestionsAnswered = 0;
+        this.levelTestCurrentQuestion = null;
 
-        // تجهيز بنك الأسئلة لكل درس (كل الكلمات)
+        // تجهيز بنك الأسئلة
         lessonIds.forEach(id => {
             const lesson = window.lessonsData[id];
             if (lesson && lesson.terms) {
-                const allWords = [...lesson.terms];
-                // إضافة الكلمات المضافة من المستخدم لهذا الدرس
+                let allWords = [...lesson.terms];
                 const added = this.userVocabulary.filter(v => v.lessonId == id);
                 allWords.push(...added);
+                // إزالة الكلمات المخفية
+                allWords = allWords.filter(t => !this.hiddenFromCards.includes(String(t.id)));
                 this.shuffleArray(allWords);
                 this.levelTestQuestionsBank[id] = allWords;
             } else {
@@ -903,9 +906,7 @@ class App {
             }
         });
 
-        // تحميل أول سؤال
         this.loadNextLevelTestQuestion();
-
         this.currentPage = 'level_test';
         this.render();
     }
@@ -922,7 +923,8 @@ class App {
             return;
         }
 
-        const bank = this.levelTestQuestionsBank[lessonId];
+        let bank = this.levelTestQuestionsBank[lessonId];
+        // إذا نفذت الكلمات، حاول إعادة تعبئة البنك من جديد (لكن بعد خلط جديد) - هذا يحدث في حالة إعادة المحاولة
         if (!bank || bank.length === 0) {
             // لا توجد كلمات في هذا الدرس، انتقل للدرس التالي
             this.moveToNextLesson();
@@ -931,14 +933,14 @@ class App {
 
         // اختر أول كلمة من البنك (مع إزالتها)
         this.levelTestCurrentQuestion = bank.shift();
-        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس (أو من دروس أخرى)
+        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس (أو من أي مكان آخر)
         const wrongOptions = [];
         // نأخذ من كلمات الدرس الحالي أولاً
-        const currentBank = [...bank]; // نسخة
-        this.shuffleArray(currentBank);
+        const tempBank = [...bank]; // نسخة
+        this.shuffleArray(tempBank);
         for (let i = 0; i < 3; i++) {
-            if (currentBank.length > 0) {
-                wrongOptions.push(currentBank[i]?.arabic || '???');
+            if (tempBank.length > 0) {
+                wrongOptions.push(tempBank[i]?.arabic || '???');
             } else {
                 wrongOptions.push('???');
             }
@@ -962,6 +964,7 @@ class App {
         }
 
         // تسجيل الإجابة
+        if (!this.levelTestAnswers) this.levelTestAnswers = [];
         this.levelTestAnswers.push({
             question: this.levelTestCurrentQuestion,
             selected: selected,
@@ -1008,16 +1011,17 @@ class App {
                     // نفذت الكلمات، نزيد العدد المطلوب ونضيف المزيد من الكلمات (إذا أمكن)
                     const lesson = window.lessonsData[this.levelTestCurrentLessonId];
                     if (lesson && lesson.terms) {
-                        const allWords = [...lesson.terms];
+                        let allWords = [...lesson.terms];
                         const added = this.userVocabulary.filter(v => v.lessonId == this.levelTestCurrentLessonId);
                         allWords.push(...added);
+                        allWords = allWords.filter(t => !this.hiddenFromCards.includes(String(t.id)));
                         this.shuffleArray(allWords);
                         this.levelTestQuestionsBank[this.levelTestCurrentLessonId] = allWords;
                         this.levelTestRequiredCorrect += 2;
                         this.levelTestCurrentCorrect = 0;
                         this.levelTestCurrentTotal = 0;
                     } else {
-                        // لا يوجد كلمات إضافية، انتقل للدرس التالي (نادر)
+                        // لا يوجد كلمات إضافية، انتقل للدرس التالي
                         this.moveToNextLesson();
                         this.isWaiting = false;
                         this.render();
@@ -1035,12 +1039,11 @@ class App {
     moveToNextLesson() {
         this.levelTestCurrentLessonIndex++;
         if (this.levelTestCurrentLessonIndex >= this.levelTestLessons.length) {
-            // انتهت الدروس، ننهي الاختبار
             this.finishLevelTestEarly();
             return;
         }
         this.levelTestCurrentLessonId = this.levelTestLessons[this.levelTestCurrentLessonIndex];
-        this.levelTestRequiredCorrect = 5; // إعادة تعيين للمطلوب
+        this.levelTestRequiredCorrect = 5;
         this.levelTestCurrentCorrect = 0;
         this.levelTestCurrentTotal = 0;
         this.loadNextLevelTestQuestion();
