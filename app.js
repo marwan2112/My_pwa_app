@@ -1548,15 +1548,10 @@ class App {
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
-
-                <!-- أزرار الاختبار الشامل في الصفحة الرئيسية (احتياطي) -->
-                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <button class="hero-btn" data-action="startLevelTest" data-param="beginner" style="background:#10b981;">🌟 اختبار المبتدئ (100 سؤال)</button>
-                    <button class="hero-btn" data-action="startLevelTest" data-param="intermediate" style="background:#f59e0b;">🔥 اختبار المتوسط (100 سؤال)</button>
-                    <button class="hero-btn" data-action="startLevelTest" data-param="advanced" style="background:#ef4444;">⚡ اختبار المتقدم (100 سؤال)</button>
-                </div>
                 
-                <button data-action="logout" class="logout-btn" style="margin-top: 20px;">تسجيل الخروج</button>
+                <!-- تم إزالة أزرار الاختبار الشامل من الصفحة الرئيسية حسب الطلب -->
+                
+                <button data-action="logout" class="logout-btn" style="margin-top: 20px; background: #dc2626; color: white; padding: 14px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; width: 100%; border: none; cursor: pointer;">تسجيل الخروج</button>
             </main>`;
         }
 
