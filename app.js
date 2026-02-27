@@ -1,4 +1,4 @@
-class App {
+  class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
         this.audioPlaybackRate = 1.0; // السرعة الافتراضية
