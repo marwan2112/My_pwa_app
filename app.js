@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -852,15 +853,20 @@ class App {
         let levelName = '';
 
         if (levelParam === 'beginner') {
-            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 1).toString());
             levelName = 'beginner';
+            lessonIds = window.lessonsList['beginner'] ? window.lessonsList['beginner'].map(l => l.id) : [];
         } else if (levelParam === 'intermediate') {
-            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 61).toString());
             levelName = 'intermediate';
+            lessonIds = window.lessonsList['intermediate'] ? window.lessonsList['intermediate'].map(l => l.id) : [];
         } else if (levelParam === 'advanced') {
-            lessonIds = Array.from({ length: 60 }, (_, i) => (i + 121).toString());
             levelName = 'advanced';
+            lessonIds = window.lessonsList['advanced'] ? window.lessonsList['advanced'].map(l => l.id) : [];
         } else {
+            return;
+        }
+
+        if (lessonIds.length === 0) {
+            alert('لا توجد دروس في هذا المستوى.');
             return;
         }
 
