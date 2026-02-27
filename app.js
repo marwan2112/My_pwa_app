@@ -55,7 +55,7 @@ class App {
         this.levelTestRequiredCorrect = 5; // عدد الإجابات الصحيحة المطلوبة لاجتياز الدرس الحالي (يبدأ بـ 5)
         this.levelTestCurrentCorrect = 0; // عدد الإجابات الصحيحة في الدرس الحالي
         this.levelTestCurrentTotal = 0; // عدد الأسئلة المجاب عنها في الدرس الحالي
-        this.levelTestQuestionsBank = []; // بنك الكلمات المتبقية لكل درس (لإعادة المحاولة)
+        this.levelTestQuestionsBank = {}; // بنك الكلمات المتبقية لكل درس (لإعادة المحاولة)
         this.levelTestResults = []; // نتائج الدروس: { lessonId, passed, attempts }
         this.levelTestQuestionsAnswered = 0; // إجمالي الأسئلة المجاب عنها
         this.levelTestMaxQuestions = 100; // الحد الأقصى للأسئلة
@@ -896,7 +896,6 @@ class App {
                 // إضافة الكلمات المضافة من المستخدم لهذا الدرس
                 const added = this.userVocabulary.filter(v => v.lessonId == id);
                 allWords.push(...added);
-                // خلط الكلمات
                 this.shuffleArray(allWords);
                 this.levelTestQuestionsBank[id] = allWords;
             } else {
@@ -912,7 +911,6 @@ class App {
     }
 
     loadNextLevelTestQuestion() {
-        // إذا تجاوزنا الحد الأقصى للأسئلة، ننهي الاختبار
         if (this.levelTestQuestionsAnswered >= this.levelTestMaxQuestions) {
             this.finishLevelTestEarly();
             return;
@@ -933,7 +931,7 @@ class App {
 
         // اختر أول كلمة من البنك (مع إزالتها)
         this.levelTestCurrentQuestion = bank.shift();
-        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس أو من دروس أخرى
+        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس (أو من دروس أخرى)
         const wrongOptions = [];
         // نأخذ من كلمات الدرس الحالي أولاً
         const currentBank = [...bank]; // نسخة
@@ -1008,22 +1006,22 @@ class App {
                 // نتحقق إذا استنفذنا كلمات الدرس الحالي
                 if (this.levelTestQuestionsBank[this.levelTestCurrentLessonId].length === 0) {
                     // نفذت الكلمات، نزيد العدد المطلوب ونضيف المزيد من الكلمات (إذا أمكن)
-                    // نضيف كلمات جديدة من نفس الدرس (إعادة تعبئة البنك من جديد)
                     const lesson = window.lessonsData[this.levelTestCurrentLessonId];
                     if (lesson && lesson.terms) {
                         const allWords = [...lesson.terms];
                         const added = this.userVocabulary.filter(v => v.lessonId == this.levelTestCurrentLessonId);
                         allWords.push(...added);
                         this.shuffleArray(allWords);
-                        // نخلطها ونضعها في البنك
                         this.levelTestQuestionsBank[this.levelTestCurrentLessonId] = allWords;
-                        // نزيد العدد المطلوب بمقدار 2
                         this.levelTestRequiredCorrect += 2;
                         this.levelTestCurrentCorrect = 0;
                         this.levelTestCurrentTotal = 0;
                     } else {
                         // لا يوجد كلمات إضافية، انتقل للدرس التالي (نادر)
                         this.moveToNextLesson();
+                        this.isWaiting = false;
+                        this.render();
+                        return;
                     }
                 }
                 // تحميل السؤال التالي
@@ -1035,7 +1033,6 @@ class App {
     }
 
     moveToNextLesson() {
-        // الانتقال للدرس التالي
         this.levelTestCurrentLessonIndex++;
         if (this.levelTestCurrentLessonIndex >= this.levelTestLessons.length) {
             // انتهت الدروس، ننهي الاختبار
