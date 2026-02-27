@@ -1,40 +1,23 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0, viewport-fit=cover">
-    <meta name="theme-color" content="#1e40af">
-    <meta name="description" content="WordWise - حكمة الكلمات">
-    <title>WordWise - حكمة الكلمات</title>
-
-    <!-- هذا السطر ضروري لحل مشكلة المسار -->
-    <base href="/wordwise/">
-
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="wordwise_logo.png">
-    <link rel="apple-touch-icon" href="wordwise_logo.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="app"></div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="data.js"></script>
-    <script src="app.js"></script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('Service Worker registration failed:', err));
-            });
-        }
-    </script>
-</body>
-</html>
+{
+  "name": "WordWise",
+  "short_name": "WordWise",
+  "description": "كن حكيماً في اختيار كلماتك",
+  "start_url": "/wordwise/",
+  "scope": "/wordwise/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#1e40af",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "wordwise_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "wordwise_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
