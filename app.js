@@ -847,16 +847,17 @@ class App {
 
     // ================== دوال الاختبار الشامل للمستوى (معدلة) ==================
     prepareLevelTest(levelParam) {
+        // levelParam يمكن أن يكون 'beginner', 'intermediate', 'advanced' 
         let lessonIds = [];
         let levelName = '';
 
-        if (levelParam === 'beginner' || levelParam === 'A1' || levelParam === 'A2') {
+        if (levelParam === 'beginner') {
             lessonIds = Array.from({ length: 60 }, (_, i) => (i + 1).toString());
             levelName = 'beginner';
-        } else if (levelParam === 'intermediate' || levelParam === 'B1' || levelParam === 'B2') {
+        } else if (levelParam === 'intermediate') {
             lessonIds = Array.from({ length: 60 }, (_, i) => (i + 61).toString());
             levelName = 'intermediate';
-        } else if (levelParam === 'advanced' || levelParam === 'C1' || levelParam === 'C2') {
+        } else if (levelParam === 'advanced') {
             lessonIds = Array.from({ length: 60 }, (_, i) => (i + 121).toString());
             levelName = 'advanced';
         } else {
@@ -1626,11 +1627,11 @@ class App {
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
-            // تحديد المستوى المناسب للاختبار الشامل
+            // تحديد المستوى المناسب للاختبار الشامل - حسب المعرفات الجديدة
             let testLevelParam = '';
-            if (this.selectedLevel === 'A1' || this.selectedLevel === 'A2') testLevelParam = 'beginner';
-            else if (this.selectedLevel === 'B1' || this.selectedLevel === 'B2') testLevelParam = 'intermediate';
-            else if (this.selectedLevel === 'C1' || this.selectedLevel === 'C2') testLevelParam = 'advanced';
+            if (this.selectedLevel === 'beginner') testLevelParam = 'beginner';
+            else if (this.selectedLevel === 'intermediate') testLevelParam = 'intermediate';
+            else if (this.selectedLevel === 'advanced') testLevelParam = 'advanced';
 
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
