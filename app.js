@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -20,6 +21,7 @@ class App {
 
         // نظام العملات (اللآلئ)
         this.userCoins = JSON.parse(localStorage.getItem('userCoins')) || 0;
+        this.showCoinModal = false; // للتحكم في إظهار نافذة العملات
 
         // متغيرات خاصة بميزة إعادة ترتيب الجمل
         this.jumbleOriginalSentence = '';
@@ -80,13 +82,8 @@ class App {
         this.newWordsAddedCount = JSON.parse(localStorage.getItem('newWordsAddedCount')) || 0; // عدد الكلمات الجديدة المضافة
         this.adWatchedCount = JSON.parse(localStorage.getItem('adWatchedCount')) || 0; // عدد الإعلانات التي تمت مشاهدتها (لكسب 50 لؤلؤة)
 
-        // معلومات الحساب البنكي (مثال، يمكن تغييرها)
-        this.bankAccount = {
-            bankName: "بنك الإمارات دبي الوطني",
-            accountNumber: "AE123456789012345678901",
-            iban: "AE580310000012345678901",
-            holderName: "WordWise FZ-LLC"
-        };
+        // معلومات الشراء (بدون عرض IBAN)
+        this.purchaseRequests = JSON.parse(localStorage.getItem('purchaseRequests')) || [];
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -306,6 +303,65 @@ class App {
                 font-size: 0.9rem;
                 margin: 10px 0;
             }
+            /* أنماط النافذة المنبثقة للعملات */
+            .coin-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .coin-modal {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                max-width: 350px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            }
+            [data-theme="dark"] .coin-modal {
+                background: #1e1e1e;
+                color: white;
+            }
+            .coin-option {
+                background: #f5f5f5;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+            [data-theme="dark"] .coin-option {
+                background: #2d2d2d;
+            }
+            .coin-option:hover {
+                transform: scale(1.02);
+            }
+            .close-btn {
+                float: left;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0 5px;
+            }
+            /* أنماط نموذج طلب الشراء */
+            .purchase-form {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            .purchase-form input {
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -328,29 +384,18 @@ class App {
         };
         localStorage.setItem('unlockedExercises', JSON.stringify(unlockedExercises));
 
-        // حفظ عدادات الإعلانات
+        // حفظ عدادات الإعلانات وطلبات الشراء
         localStorage.setItem('newWordsAddedCount', JSON.stringify(this.newWordsAddedCount));
         localStorage.setItem('adWatchedCount', JSON.stringify(this.adWatchedCount));
+        localStorage.setItem('purchaseRequests', JSON.stringify(this.purchaseRequests));
     }
 
     // دالة لعرض إعلان (وهمية، ستستدعي موب ادد)
     showAd(type, callback) {
-        // type: 'video', 'image', 'rewarded'
-        // في التطبيق الفعلي، نستدعي SDK موب ادد هنا
         console.log(`📺 عرض إعلان من نوع ${type}`);
-        // محاكاة إعلان
-        if (type === 'rewarded') {
-            // إعلان بمكافأة
-            setTimeout(() => {
-                if (callback) callback(true);
-            }, 2000);
-        } else {
-            // إعلان عادي
-            setTimeout(() => {
-                if (callback) callback(true);
-            }, 2000);
-        }
-        // عرض رسالة للمستخدم (يمكن استخدام alert مؤقتاً)
+        setTimeout(() => {
+            if (callback) callback(true);
+        }, 2000);
         alert(`جارٍ عرض الإعلان...`);
     }
 
@@ -375,12 +420,42 @@ class App {
         });
     }
 
-    // شراء 500 لؤلؤة مقابل 1 دولار
-    buyCoins() {
-        if (confirm(`شراء 500 لؤلؤة مقابل 1 دولار؟\n\nيرجى تحويل المبلغ إلى:\nالمصرف: ${this.bankAccount.bankName}\nرقم الحساب: ${this.bankAccount.accountNumber}\nIBAN: ${this.bankAccount.iban}\nاسم المستفيد: ${this.bankAccount.holderName}\n\nبعد التحويل، ستتم إضافة اللؤلؤ يدوياً.`)) {
-            // هنا يمكن فتح نموذج لإدخال تفاصيل التحويل أو مجرد رسالة تأكيد
-            alert('شكراً لك! سيتم إضافة اللؤلؤ بعد تأكيد الدفع.');
+    // طلب شراء 300 لؤلؤة (بدون عرض معلومات بنكية)
+    requestPurchase() {
+        // فتح نافذة منبثقة لجمع بيانات المستخدم للتواصل
+        this.showPurchaseForm = true;
+        this.render();
+    }
+
+    submitPurchaseRequest() {
+        const name = document.getElementById('purchaseName').value;
+        const email = document.getElementById('purchaseEmail').value;
+        const phone = document.getElementById('purchasePhone').value;
+        if (!name || !email || !phone) {
+            alert('الرجاء إدخال جميع البيانات');
+            return;
         }
+        // حفظ الطلب
+        this.purchaseRequests.push({
+            name,
+            email,
+            phone,
+            coins: 300,
+            date: new Date().toISOString(),
+            status: 'pending'
+        });
+        this.saveData();
+        alert('✅ تم إرسال طلبك بنجاح. سيتم التواصل معك قريباً لإتمام عملية الدفع.');
+        this.showPurchaseForm = false;
+        this.showCoinModal = false;
+        this.render();
+    }
+
+    // إظهار/إخفاء نافذة العملات
+    toggleCoinModal() {
+        this.showCoinModal = !this.showCoinModal;
+        this.showPurchaseForm = false; // إخفاء نموذج الشراء إذا كان مفتوحاً
+        this.render();
     }
 
     speak(text) {
@@ -654,13 +729,10 @@ class App {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
-        // الحصول على قائمة الكلمات الإنجليزية من البطاقات
         const termWords = lesson.terms.map(t => t.english.toLowerCase());
 
-        // تقسيم النص إلى جمل
         const sentences = lesson.content.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
         
-        // تصفية الجمل ذات الطول 3-7 كلمات والتي تحتوي على كلمة واحدة على الأقل من البطاقات
         const usefulSentences = sentences.filter(s => {
             const words = s.split(/\s+/).length;
             if (words < 3 || words > 7) return false;
@@ -674,7 +746,6 @@ class App {
         });
 
         if (availableSentences.length === 0) {
-            // إذا لم نجد، نبني جملة من الكلمات
             const words = lesson.terms.slice(0, 4).map(t => t.english);
             this.jumbleOriginalSentence = words.join(' ');
         } else {
@@ -688,10 +759,8 @@ class App {
             this.jumbleHistory.push(this.jumbleOriginalSentence);
         }
 
-        // حفظ الجملة الحالية للتحقق من الترجمة
         this.jumbleCurrentSentence = this.jumbleOriginalSentence;
 
-        // ترجمة الجملة إلى العربية للمساعدة
         this.translateText(this.jumbleOriginalSentence).then(translated => {
             if (this.jumbleCurrentSentence === this.jumbleOriginalSentence) {
                 this.jumbleArabicHint = translated;
@@ -764,10 +833,7 @@ class App {
 
     handleJumbleHint() {
         if (this.jumbleChecked) return;
-        // إذا لم يتم استخدام التلميح بعد، ننقل الكلمة الأولى من الأسفل إلى الأعلى
-        // إذا كان التلميح مستخدماً بالفعل، نضيف كلمة أخرى
         if (!this.jumbleHintUsed) {
-            // أول تلميح: ننقل أول كلمة
             const firstWord = this.jumbleOriginalSentence.split(/\s+/)[0];
             if (firstWord && !this.jumbleUserAnswer.includes(firstWord)) {
                 const index = this.jumbleWords.indexOf(firstWord);
@@ -778,7 +844,6 @@ class App {
             }
             this.jumbleHintUsed = true;
         } else {
-            // التلميحات اللاحقة: ننقل كلمة أخرى من الجملة الأصلية غير موجودة في الإجابة
             const originalWords = this.jumbleOriginalSentence.split(/\s+/);
             for (let word of originalWords) {
                 if (!this.jumbleUserAnswer.includes(word) && this.jumbleWords.includes(word)) {
@@ -793,7 +858,6 @@ class App {
     }
 
     handleJumbleNext() {
-        // زيادة العداد لعرض إعلان بعد 10 مرات
         this.jumbleNextCount++;
         if (this.jumbleNextCount % 10 === 0) {
             this.showAd('image');
@@ -1016,7 +1080,6 @@ class App {
 
     // ================== دوال الاختبار الشامل للمستوى ==================
     prepareLevelTest(levelParam) {
-        // levelParam يمكن أن يكون 'beginner', 'intermediate', 'advanced' 
         let lessonIds = [];
         let levelName = '';
 
@@ -1041,7 +1104,6 @@ class App {
         this.levelTestLevel = levelName;
         this.levelTestLessons = lessonIds;
 
-        // نبدأ من أول درس مغلق
         let startIndex = 0;
         for (let i = 0; i < lessonIds.length; i++) {
             if (!this.unlockedLessons.includes(lessonIds[i])) {
@@ -1049,10 +1111,9 @@ class App {
                 break;
             }
         }
-        // إذا كانت جميع الدروس مفتوحة، نبدأ من آخر درس تم اختباره
         if (startIndex === 0 && this.unlockedLessons.includes(lessonIds[0])) {
             startIndex = this.lastTestedLesson[levelName] || 0;
-            if (startIndex >= lessonIds.length) startIndex = 0; // تجاوز الحد
+            if (startIndex >= lessonIds.length) startIndex = 0;
         }
 
         this.levelTestCurrentLessonIndex = startIndex;
@@ -1065,14 +1126,12 @@ class App {
         this.levelTestQuestionsAnswered = 0;
         this.levelTestCurrentQuestion = null;
 
-        // تجهيز بنك الأسئلة
         lessonIds.forEach(id => {
             const lesson = window.lessonsData[id];
             if (lesson && lesson.terms) {
                 let allWords = [...lesson.terms];
                 const added = this.userVocabulary.filter(v => v.lessonId == id);
                 allWords.push(...added);
-                // إزالة الكلمات المخفية
                 allWords = allWords.filter(t => !this.hiddenFromCards.includes(String(t.id)));
                 this.shuffleArray(allWords);
                 this.levelTestQuestionsBank[id] = allWords;
@@ -1233,7 +1292,6 @@ class App {
 
         this.levelTestResultMessage = message;
 
-        // عرض إعلان فيديو قبل عرض النتيجة
         this.showAd('video', () => {
             this.currentPage = 'level_test_result';
             this.render();
@@ -1442,7 +1500,6 @@ class App {
                             this.currentCardIndex = 0;
                             this.saveData(); this.render();
                         }, 600);
-                        // عرض إعلان صورة بعد إعادة الجمع
                         this.showAd('image');
                     }
                     return;
@@ -1523,8 +1580,14 @@ class App {
                 case 'watchAds':
                     this.watchAdsForCoins();
                     break;
-                case 'buyCoins':
-                    this.buyCoins();
+                case 'requestPurchase':
+                    this.requestPurchase();
+                    break;
+                case 'toggleCoinModal':
+                    this.toggleCoinModal();
+                    break;
+                case 'submitPurchase':
+                    this.submitPurchaseRequest();
                     break;
             }
             this.render();
@@ -1562,7 +1625,7 @@ class App {
             document.getElementById('newArb').value = '';
             this.newWordsAddedCount++;
             if (this.newWordsAddedCount % 10 === 0) {
-                this.showAd('video'); // إعلان فيديو بعد 10 كلمات جديدة
+                this.showAd('video');
             }
             this.render();
         }
@@ -1635,6 +1698,53 @@ class App {
         const allTerms = lesson ? [...lesson.terms, ...added] : [];
         
         app.innerHTML = this.getHeader() + `<div id="view">${this.getView(lesson, allTerms)}</div>`;
+        
+        // إضافة النافذة المنبثقة للعملات إذا كانت showCoinModal = true
+        if (this.showCoinModal) {
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'coin-modal-overlay';
+            modalDiv.onclick = (e) => {
+                if (e.target === modalDiv) this.toggleCoinModal();
+            };
+            let modalContent = '';
+            if (this.showPurchaseForm) {
+                // عرض نموذج طلب الشراء
+                modalContent = `
+                    <div class="coin-modal">
+                        <span class="close-btn" onclick="appInstance.toggleCoinModal()">&times;</span>
+                        <h3 style="text-align:center; margin-bottom:20px;">💰 طلب شراء 300 لؤلؤة</h3>
+                        <p style="text-align:center; margin-bottom:15px;">مقابل 1 دولار أمريكي</p>
+                        <div class="purchase-form">
+                            <input type="text" id="purchaseName" placeholder="الاسم الكامل" />
+                            <input type="email" id="purchaseEmail" placeholder="البريد الإلكتروني" />
+                            <input type="tel" id="purchasePhone" placeholder="رقم الهاتف" />
+                            <button class="hero-btn" data-action="submitPurchase" style="background:#10b981;">إرسال الطلب</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                modalContent = `
+                    <div class="coin-modal">
+                        <span class="close-btn" onclick="appInstance.toggleCoinModal()">&times;</span>
+                        <h3 style="text-align:center; margin-bottom:20px;">💰 خيارات العملات</h3>
+                        <div class="coin-option" onclick="appInstance.watchAdsForCoins()">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:1.2rem;">👁️ مشاهدة 3 إعلانات</span>
+                                <span style="background:#ffd700; padding:5px 10px; border-radius:20px;">+50</span>
+                            </div>
+                        </div>
+                        <div class="coin-option" onclick="appInstance.requestPurchase()">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:1.2rem;">💳 شراء 300 لؤلؤة</span>
+                                <span style="background:#ffd700; padding:5px 10px; border-radius:20px;">1$</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            modalDiv.innerHTML = modalContent;
+            app.appendChild(modalDiv);
+        }
     }
 
     getHeader() {
@@ -1661,8 +1771,9 @@ class App {
             <button data-action="toggleTheme" style="background:none; border:none; font-size:1.3rem; cursor:pointer; padding:5px;">
                 ${this.theme === 'light' ? '🌙' : '☀️'}
             </button>
-            <div style="background: #ffd700; color: #000; padding: 5px 10px; border-radius: 20px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+            <div style="background: #ffd700; color: #000; padding: 5px 10px; border-radius: 20px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor:pointer;" data-action="toggleCoinModal">
                 <span>💎</span> ${this.userCoins}
+                <span style="font-size:1.2rem;">➕</span>
             </div>
         </div>
     </div>
@@ -1721,19 +1832,6 @@ class App {
                 <div class="features-grid">
                     ${window.levels.map(l => `<div class="feature-card" data-action="selLevel" data-param="${l.id}"><h3>${l.icon} ${l.name}</h3></div>`).join('')}
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
-                </div>
-                
-                <!-- قسم العملات والإعلانات -->
-                <div class="reading-card" style="margin-top:20px;">
-                    <h3 style="margin-bottom:15px;">💰 رصيدك: ${this.userCoins} لؤلؤة</h3>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-                        <button class="hero-btn" data-action="watchAds" style="background:#10b981; flex:1;">👁️ مشاهدة 3 إعلانات (50💎)</button>
-                        <button class="hero-btn" data-action="buyCoins" style="background:#8b5cf6; flex:1;">💳 شراء 500💎 (1$)</button>
-                    </div>
-                    <div class="bank-info">
-                        <p>💳 للشراء يرجى التحويل إلى:</p>
-                        <p>${this.bankAccount.bankName}<br>رقم الحساب: ${this.bankAccount.accountNumber}<br>IBAN: ${this.bankAccount.iban}<br>المستفيد: ${this.bankAccount.holderName}</p>
-                    </div>
                 </div>
                 
                 <!-- زر تسجيل الخروج بحجم أكبر ولون أحمر -->
