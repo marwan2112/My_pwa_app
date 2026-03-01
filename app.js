@@ -30,6 +30,7 @@ class App {
         this.jumbleHintUsed = false;
         this.jumbleHistory = []; // سجل الجمل المستخدمة
         this.jumbleUnlocked = {}; // تخزين حالة فتح الترتيب لكل درس
+        this.jumbleNextCount = 0; // عداد الضغط على التالي في الترتيب
 
         // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
@@ -39,6 +40,7 @@ class App {
         this.listeningTimer = null;
         this.listeningErrorTimer = null;
         this.listeningUnlocked = {}; // تخزين حالة فتح الاستماع لكل درس
+        this.listeningNextCount = 0; // عداد الضغط على التالي في الاستماع
 
         // متغيرات خاصة بتمرين الكتابة (Spelling)
         this.spellingRemaining = [];
@@ -47,6 +49,7 @@ class App {
         this.spellingUserAnswer = '';
         this.spellingResult = null; // 'correct', 'wrong', null
         this.spellingUnlocked = {}; // تخزين حالة فتح الكتابة لكل درس
+        this.spellingNextCount = 0; // عداد الضغط على التالي في الكتابة
 
         // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
         this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
@@ -72,6 +75,18 @@ class App {
         this.jumbleUnlocked = savedUnlocked.jumble || {};
         this.listeningUnlocked = savedUnlocked.listening || {};
         this.spellingUnlocked = savedUnlocked.spelling || {};
+
+        // متغيرات الإعلانات والشراء
+        this.newWordsAddedCount = JSON.parse(localStorage.getItem('newWordsAddedCount')) || 0; // عدد الكلمات الجديدة المضافة
+        this.adWatchedCount = JSON.parse(localStorage.getItem('adWatchedCount')) || 0; // عدد الإعلانات التي تمت مشاهدتها (لكسب 50 لؤلؤة)
+
+        // معلومات الحساب البنكي (مثال، يمكن تغييرها)
+        this.bankAccount = {
+            bankName: "بنك الإمارات دبي الوطني",
+            accountNumber: "AE123456789012345678901",
+            iban: "AE580310000012345678901",
+            holderName: "WordWise FZ-LLC"
+        };
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -274,6 +289,23 @@ class App {
             .wrong-feedback {
                 color: #ef4444;
             }
+            
+            /* أنماط الإعلانات والشراء */
+            .ad-container {
+                margin: 20px 0;
+                padding: 15px;
+                background: #f0f0f0;
+                border-radius: 10px;
+                text-align: center;
+                border: 1px dashed #ffd700;
+            }
+            .bank-info {
+                background: #e3f2fd;
+                padding: 15px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                margin: 10px 0;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -295,6 +327,60 @@ class App {
             spelling: this.spellingUnlocked
         };
         localStorage.setItem('unlockedExercises', JSON.stringify(unlockedExercises));
+
+        // حفظ عدادات الإعلانات
+        localStorage.setItem('newWordsAddedCount', JSON.stringify(this.newWordsAddedCount));
+        localStorage.setItem('adWatchedCount', JSON.stringify(this.adWatchedCount));
+    }
+
+    // دالة لعرض إعلان (وهمية، ستستدعي موب ادد)
+    showAd(type, callback) {
+        // type: 'video', 'image', 'rewarded'
+        // في التطبيق الفعلي، نستدعي SDK موب ادد هنا
+        console.log(`📺 عرض إعلان من نوع ${type}`);
+        // محاكاة إعلان
+        if (type === 'rewarded') {
+            // إعلان بمكافأة
+            setTimeout(() => {
+                if (callback) callback(true);
+            }, 2000);
+        } else {
+            // إعلان عادي
+            setTimeout(() => {
+                if (callback) callback(true);
+            }, 2000);
+        }
+        // عرض رسالة للمستخدم (يمكن استخدام alert مؤقتاً)
+        alert(`جارٍ عرض الإعلان...`);
+    }
+
+    // مشاهدة 3 إعلانات لكسب 50 لؤلؤة
+    watchAdsForCoins() {
+        if (this.adWatchedCount >= 3) {
+            alert('لقد استنفدت حصتك اليومية من مشاهدة الإعلانات. حاول غداً!');
+            return;
+        }
+        this.showAd('rewarded', (success) => {
+            if (success) {
+                this.adWatchedCount++;
+                if (this.adWatchedCount === 3) {
+                    this.userCoins += 50;
+                    alert(`🎉 تهانينا! حصلت على 50 لؤلؤة.`);
+                    this.saveData();
+                    this.render();
+                } else {
+                    alert(`✅ تمت مشاهدة الإعلان ${this.adWatchedCount}/3`);
+                }
+            }
+        });
+    }
+
+    // شراء 500 لؤلؤة مقابل 1 دولار
+    buyCoins() {
+        if (confirm(`شراء 500 لؤلؤة مقابل 1 دولار؟\n\nيرجى تحويل المبلغ إلى:\nالمصرف: ${this.bankAccount.bankName}\nرقم الحساب: ${this.bankAccount.accountNumber}\nIBAN: ${this.bankAccount.iban}\nاسم المستفيد: ${this.bankAccount.holderName}\n\nبعد التحويل، ستتم إضافة اللؤلؤ يدوياً.`)) {
+            // هنا يمكن فتح نموذج لإدخال تفاصيل التحويل أو مجرد رسالة تأكيد
+            alert('شكراً لك! سيتم إضافة اللؤلؤ بعد تأكيد الدفع.');
+        }
     }
 
     speak(text) {
@@ -323,7 +409,6 @@ class App {
         } catch (e) {}
     }
 
-    // دالة جديدة للترجمة بدون الحاجة لعنصر DOM
     async translateText(text) {
         if (!text) return '';
         try {
@@ -569,14 +654,27 @@ class App {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
+        // الحصول على قائمة الكلمات الإنجليزية من البطاقات
+        const termWords = lesson.terms.map(t => t.english.toLowerCase());
+
+        // تقسيم النص إلى جمل
         const sentences = lesson.content.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
+        
+        // تصفية الجمل ذات الطول 3-7 كلمات والتي تحتوي على كلمة واحدة على الأقل من البطاقات
         const usefulSentences = sentences.filter(s => {
+            const words = s.split(/\s+/).length;
+            if (words < 3 || words > 7) return false;
+            const lower = s.toLowerCase();
+            return termWords.some(word => lower.includes(word));
+        });
+
+        let availableSentences = usefulSentences.length > 0 ? usefulSentences : sentences.filter(s => {
             const words = s.split(/\s+/).length;
             return words >= 3 && words <= 7;
         });
 
-        let availableSentences = usefulSentences.length > 0 ? usefulSentences : sentences;
         if (availableSentences.length === 0) {
+            // إذا لم نجد، نبني جملة من الكلمات
             const words = lesson.terms.slice(0, 4).map(t => t.english);
             this.jumbleOriginalSentence = words.join(' ');
         } else {
@@ -595,11 +693,8 @@ class App {
 
         // ترجمة الجملة إلى العربية للمساعدة
         this.translateText(this.jumbleOriginalSentence).then(translated => {
-            // التحقق من أن الجملة لم تتغير أثناء الترجمة
             if (this.jumbleCurrentSentence === this.jumbleOriginalSentence) {
                 this.jumbleArabicHint = translated;
-            } else {
-                console.log('Ignored translation for outdated sentence');
             }
             this.render();
         }).catch(() => {
@@ -669,20 +764,40 @@ class App {
 
     handleJumbleHint() {
         if (this.jumbleChecked) return;
-        if (this.jumbleHintUsed) return;
-        this.jumbleHintUsed = true;
-        const firstWord = this.jumbleOriginalSentence.split(/\s+/)[0];
-        if (firstWord && !this.jumbleUserAnswer.includes(firstWord)) {
-            const index = this.jumbleWords.indexOf(firstWord);
-            if (index !== -1) {
-                this.jumbleWords.splice(index, 1);
-                this.jumbleUserAnswer.push(firstWord);
+        // إذا لم يتم استخدام التلميح بعد، ننقل الكلمة الأولى من الأسفل إلى الأعلى
+        // إذا كان التلميح مستخدماً بالفعل، نضيف كلمة أخرى
+        if (!this.jumbleHintUsed) {
+            // أول تلميح: ننقل أول كلمة
+            const firstWord = this.jumbleOriginalSentence.split(/\s+/)[0];
+            if (firstWord && !this.jumbleUserAnswer.includes(firstWord)) {
+                const index = this.jumbleWords.indexOf(firstWord);
+                if (index !== -1) {
+                    this.jumbleWords.splice(index, 1);
+                    this.jumbleUserAnswer.push(firstWord);
+                }
+            }
+            this.jumbleHintUsed = true;
+        } else {
+            // التلميحات اللاحقة: ننقل كلمة أخرى من الجملة الأصلية غير موجودة في الإجابة
+            const originalWords = this.jumbleOriginalSentence.split(/\s+/);
+            for (let word of originalWords) {
+                if (!this.jumbleUserAnswer.includes(word) && this.jumbleWords.includes(word)) {
+                    const index = this.jumbleWords.indexOf(word);
+                    this.jumbleWords.splice(index, 1);
+                    this.jumbleUserAnswer.push(word);
+                    break;
+                }
             }
         }
         this.render();
     }
 
     handleJumbleNext() {
+        // زيادة العداد لعرض إعلان بعد 10 مرات
+        this.jumbleNextCount++;
+        if (this.jumbleNextCount % 10 === 0) {
+            this.showAd('image');
+        }
         this.prepareJumble();
         this.render();
     }
@@ -780,7 +895,7 @@ class App {
 
     // دالة لفتح اختبار الاستماع بالعملات (مرة واحدة لكل درس)
     unlockListening(lessonId) {
-        if (this.listeningUnlocked[lessonId]) return true; // مفتوح بالفعل
+        if (this.listeningUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
             if (confirm('هل تريد فتح اختبار الاستماع لهذا الدرس باستخدام 50 لؤلؤة؟')) {
                 this.userCoins -= 50;
@@ -798,7 +913,7 @@ class App {
         }
     }
 
-    // دالة لفتح الترتيب بالعملات (مرة واحدة لكل درس)
+    // دالة لفتح الترتيب بالعملات
     unlockJumble(lessonId) {
         if (this.jumbleUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
@@ -818,7 +933,7 @@ class App {
         }
     }
 
-    // دالة لفتح الكتابة بالعملات (مرة واحدة لكل درس)
+    // دالة لفتح الكتابة بالعملات
     unlockSpelling(lessonId) {
         if (this.spellingUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
@@ -886,6 +1001,10 @@ class App {
             alert('🎉 تهانينا! أكملت جميع الكلمات.');
             this.currentPage = 'reading';
         } else {
+            this.spellingNextCount++;
+            if (this.spellingNextCount % 10 === 0) {
+                this.showAd('image');
+            }
             this.prepareSpelling();
         }
         this.render();
@@ -895,7 +1014,7 @@ class App {
         this.spellingUserAnswer = e.target.value;
     }
 
-    // ================== دوال الاختبار الشامل للمستوى (معدلة) ==================
+    // ================== دوال الاختبار الشامل للمستوى ==================
     prepareLevelTest(levelParam) {
         // levelParam يمكن أن يكون 'beginner', 'intermediate', 'advanced' 
         let lessonIds = [];
@@ -980,19 +1099,14 @@ class App {
         }
 
         let bank = this.levelTestQuestionsBank[lessonId];
-        // إذا نفذت الكلمات، حاول إعادة تعبئة البنك من جديد (لكن بعد خلط جديد) - هذا يحدث في حالة إعادة المحاولة
         if (!bank || bank.length === 0) {
-            // لا توجد كلمات في هذا الدرس، انتقل للدرس التالي
             this.moveToNextLesson();
             return;
         }
 
-        // اختر أول كلمة من البنك (مع إزالتها)
         this.levelTestCurrentQuestion = bank.shift();
-        // تحضير الخيارات: نأخذ 3 خيارات خاطئة من بنك هذا الدرس (أو من أي مكان آخر)
         const wrongOptions = [];
-        // نأخذ من كلمات الدرس الحالي أولاً
-        const tempBank = [...bank]; // نسخة
+        const tempBank = [...bank];
         this.shuffleArray(tempBank);
         for (let i = 0; i < 3; i++) {
             if (tempBank.length > 0) {
@@ -1019,7 +1133,6 @@ class App {
             this.levelTestCurrentCorrect++;
         }
 
-        // تسجيل الإجابة
         if (!this.levelTestAnswers) this.levelTestAnswers = [];
         this.levelTestAnswers.push({
             question: this.levelTestCurrentQuestion,
@@ -1028,7 +1141,6 @@ class App {
             isCorrect: isCorrect
         });
 
-        // تلوين الأزرار
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
@@ -1046,25 +1158,19 @@ class App {
         });
 
         setTimeout(() => {
-            // التحقق من اكتمال الدرس
             if (this.levelTestCurrentCorrect >= this.levelTestRequiredCorrect) {
-                // اجتاز الدرس
                 if (!this.unlockedLessons.includes(this.levelTestCurrentLessonId)) {
                     this.unlockedLessons.push(this.levelTestCurrentLessonId);
-                    this.userCoins += 20; // مكافأة
+                    this.userCoins += 20;
                     this.levelTestResults.push({
                         lessonId: this.levelTestCurrentLessonId,
                         passed: true,
                         attempts: this.levelTestCurrentTotal
                     });
                 }
-                // الانتقال للدرس التالي
                 this.moveToNextLesson();
             } else {
-                // لم يجتز الدرس بعد
-                // نتحقق إذا استنفذنا كلمات الدرس الحالي
                 if (this.levelTestQuestionsBank[this.levelTestCurrentLessonId].length === 0) {
-                    // نفذت الكلمات، نزيد العدد المطلوب ونضيف المزيد من الكلمات (إذا أمكن)
                     const lesson = window.lessonsData[this.levelTestCurrentLessonId];
                     if (lesson && lesson.terms) {
                         let allWords = [...lesson.terms];
@@ -1077,14 +1183,12 @@ class App {
                         this.levelTestCurrentCorrect = 0;
                         this.levelTestCurrentTotal = 0;
                     } else {
-                        // لا يوجد كلمات إضافية، انتقل للدرس التالي
                         this.moveToNextLesson();
                         this.isWaiting = false;
                         this.render();
                         return;
                     }
                 }
-                // تحميل السؤال التالي
                 this.loadNextLevelTestQuestion();
             }
             this.isWaiting = false;
@@ -1106,12 +1210,10 @@ class App {
     }
 
     finishLevelTestEarly() {
-        // حفظ آخر درس تم الوصول إليه
         const lastLessonIndex = this.levelTestCurrentLessonIndex;
         this.lastTestedLesson[this.levelTestLevel] = lastLessonIndex;
         this.saveData();
 
-        // إعداد رسالة النتائج
         const passedLessons = this.levelTestResults.filter(r => r.passed).map(r => r.lessonId);
         let message = '';
         if (passedLessons.length > 0) {
@@ -1130,9 +1232,13 @@ class App {
         }
 
         this.levelTestResultMessage = message;
-        this.currentPage = 'level_test_result';
-        this.render();
-        setTimeout(() => alert(message), 100);
+
+        // عرض إعلان فيديو قبل عرض النتيجة
+        this.showAd('video', () => {
+            this.currentPage = 'level_test_result';
+            this.render();
+            setTimeout(() => alert(message), 100);
+        });
     }
 
     // ================== دوال أخرى ==================
@@ -1229,8 +1335,7 @@ class App {
                         this.currentPage = 'reading'; 
                         this.isUnlockTest = false;
 
-                        // لا نقوم بإعادة تعيين حالة الدفع عند كل دخول
-                        this.jumbleHistory = []; // إعادة تعيين تاريخ الجمل لكل درس جديد
+                        this.jumbleHistory = [];
                         this.spellingRemaining = [];
                     } else {
                         const curIdx = list.findIndex(l => l.id == param);
@@ -1244,7 +1349,6 @@ class App {
 
                 case 'setPage':
                     if (param === 'listening' && this.selectedLessonId) {
-                        // التحقق من حالة الفتح
                         if (!this.listeningUnlocked[this.selectedLessonId]) {
                             if (!this.unlockListening(this.selectedLessonId)) return;
                         } else {
@@ -1328,15 +1432,19 @@ class App {
 
                 case 'restartCards': 
                     const cardShuffle = document.querySelector('.flashcard-container');
-                    if(cardShuffle) cardShuffle.classList.add('shuffle-anim-card');
-                    setTimeout(() => {
-                        if(param === 'all') {
-                            const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t => String(t.id));
-                            this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
-                        }
-                        this.currentCardIndex = 0;
-                        this.saveData(); this.render();
-                    }, 600);
+                    if(cardShuffle) {
+                        cardShuffle.classList.add('shuffle-anim-card');
+                        setTimeout(() => {
+                            if(param === 'all') {
+                                const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t => String(t.id));
+                                this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
+                            }
+                            this.currentCardIndex = 0;
+                            this.saveData(); this.render();
+                        }, 600);
+                        // عرض إعلان صورة بعد إعادة الجمع
+                        this.showAd('image');
+                    }
                     return;
 
                 case 'addNewWord':
@@ -1410,6 +1518,14 @@ class App {
                 case 'finishLevelTest':
                     this.finishLevelTestEarly();
                     break;
+
+                // أحداث جديدة للعملات والإعلانات
+                case 'watchAds':
+                    this.watchAdsForCoins();
+                    break;
+                case 'buyCoins':
+                    this.buyCoins();
+                    break;
             }
             this.render();
         });
@@ -1444,6 +1560,10 @@ class App {
             this.saveData();
             document.getElementById('newEng').value = '';
             document.getElementById('newArb').value = '';
+            this.newWordsAddedCount++;
+            if (this.newWordsAddedCount % 10 === 0) {
+                this.showAd('video'); // إعلان فيديو بعد 10 كلمات جديدة
+            }
             this.render();
         }
     }
@@ -1603,7 +1723,18 @@ class App {
                     ${Object.keys(this.customLessons).length > 0 ? `<div class="feature-card" data-action="selLevel" data-param="custom_list" style="border:1px solid #f97316;"><h3>📂 نصوصي</h3></div>` : ''}
                 </div>
                 
-                <!-- أزرار الاختبار الشامل تم إزالتها من الصفحة الرئيسية حسب الطلب -->
+                <!-- قسم العملات والإعلانات -->
+                <div class="reading-card" style="margin-top:20px;">
+                    <h3 style="margin-bottom:15px;">💰 رصيدك: ${this.userCoins} لؤلؤة</h3>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                        <button class="hero-btn" data-action="watchAds" style="background:#10b981; flex:1;">👁️ مشاهدة 3 إعلانات (50💎)</button>
+                        <button class="hero-btn" data-action="buyCoins" style="background:#8b5cf6; flex:1;">💳 شراء 500💎 (1$)</button>
+                    </div>
+                    <div class="bank-info">
+                        <p>💳 للشراء يرجى التحويل إلى:</p>
+                        <p>${this.bankAccount.bankName}<br>رقم الحساب: ${this.bankAccount.accountNumber}<br>IBAN: ${this.bankAccount.iban}<br>المستفيد: ${this.bankAccount.holderName}</p>
+                    </div>
+                </div>
                 
                 <!-- زر تسجيل الخروج بحجم أكبر ولون أحمر -->
                 <button data-action="logout" class="logout-btn" style="margin-top: 20px; background: #dc2626; color: white; padding: 14px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 10px; width: 100%; border: none; cursor: pointer;">تسجيل الخروج</button>
@@ -1682,7 +1813,6 @@ class App {
 
         if (this.currentPage === 'lessons') {
             const list = window.lessonsList[this.selectedLevel] || [];
-            // تحديد المستوى المناسب للاختبار الشامل - حسب المعرفات الجديدة
             let testLevelParam = '';
             if (this.selectedLevel === 'beginner') testLevelParam = 'beginner';
             else if (this.selectedLevel === 'intermediate') testLevelParam = 'intermediate';
@@ -1690,7 +1820,6 @@ class App {
 
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
-                <!-- زر الاختبار الشامل يظهر قبل قائمة الدروس -->
                 ${testLevelParam ? `
                 <div style="margin-bottom:20px; text-align:center;">
                     <button class="hero-btn" data-action="startLevelTest" data-param="${testLevelParam}" style="background:#8b5cf6;">📊 اختبار المستوى الشامل (100 سؤال)</button>
