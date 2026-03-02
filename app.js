@@ -1922,28 +1922,28 @@ class App {
                         cardShuffle.classList.add('shuffle-anim-card');
                         setTimeout(() => {
                             if (param === 'all' && this.selectedLessonId) {
-                                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس
-                                const lesson = window.lessonsData[this.selectedLessonId];
-                                const allLessonWordIds = [];
-
-                                // إضافة كلمات الدرس الأصلية
-                                if (lesson && lesson.terms && lesson.terms.length > 0) {
-                                    allLessonWordIds.push(...lesson.terms.map(t => String(t.id)));
+                                const lessonId = this.selectedLessonId;
+                                const lesson = window.lessonsData[lessonId];
+                                
+                                // جمع معرفات كلمات الدرس الأصلية
+                                const originalIds = lesson && lesson.terms ? lesson.terms.map(t => String(t.id)) : [];
+                                
+                                // جمع معرفات كلمات المستخدم لهذا الدرس
+                                const userWordIds = this.userVocabulary
+                                    .filter(v => v.lessonId == lessonId)
+                                    .map(v => String(v.id));
+                                
+                                // دمج المعرفات
+                                const allIds = [...originalIds, ...userWordIds];
+                                
+                                if (allIds.length > 0) {
+                                    // إزالة هذه المعرفات من masteredWords
+                                    this.masteredWords = this.masteredWords.filter(id => !allIds.includes(id));
                                 }
-
-                                // إضافة كلمات المستخدم المضافة لهذا الدرس
-                                const userWordsForLesson = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
-                                if (userWordsForLesson.length > 0) {
-                                    allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
-                                }
-
-                                // إزالة هذه المعرفات من masteredWords (إعادة ضبط الإتقان)
-                                if (allLessonWordIds.length > 0) {
-                                    this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
-                                }
+                                
+                                this.currentCardIndex = 0;
+                                this.saveData();
                             }
-                            this.currentCardIndex = 0;
-                            this.saveData();
                             this.render();
                         }, 600);
                         this.showAd('image');
