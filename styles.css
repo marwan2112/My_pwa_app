@@ -1,4 +1,4 @@
- /* 1. الإعدادات العامة والخطوط */
+/* 1. الإعدادات العامة والخطوط */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 :root {
     --bg-main: #f1f5f9;
@@ -52,11 +52,11 @@ body {
     padding: 0; 
     box-sizing: border-box; 
     font-family: 'Cairo', sans-serif; 
-    -webkit-tap-highlight-color: transparent; /* يمنع الوميض عند اللمس في سفاري */
+    -webkit-tap-highlight-color: transparent;
 }
 
 html {
-    scroll-behavior: smooth; /* لسلاسة العودة لموقع الدرس */
+    scroll-behavior: smooth;
 }
 
 body { 
@@ -71,11 +71,11 @@ body {
 .header { 
     background: #1e40af; 
     color: white; 
-    padding: 0.6rem 1rem; /* تقليل السماكة لتوفير مساحة */
+    padding: 0.6rem 1rem;
     position: sticky; 
     top: 0; 
     z-index: 1000; 
-    box-shadow: none !important; /* تم إلغاء الظل بالكامل */
+    box-shadow: none !important;
     border-bottom: 2px solid rgba(0,0,0,0.1);
 }
 
@@ -114,7 +114,7 @@ body {
 /* 3. الحاوية الرئيسية */
 .main-content { 
     max-width: 800px; 
-    margin: 0.5rem auto; /* تقليل المسافة العلوية لعرض أكبر للنص */
+    margin: 0.5rem auto;
     padding: 0.5rem; 
 }
 
@@ -151,9 +151,9 @@ body {
     justify-content: center; 
     background: white; 
     border-radius: 24px; 
-    box-shadow: none !important; /* إزالة ظل الكروت */
+    box-shadow: none !important;
     padding: 30px;
-    border: 3px solid #e2e8f0; /* زيادة سماكة الحدود لتعريف العنصر */
+    border: 3px solid #e2e8f0;
 }
 
 .flashcard-front h1, .flashcard-back h1 {
@@ -169,29 +169,59 @@ body {
     color: #0f172a;
 }
 
-/* 5. تصميم الاختبار (Quiz) */
+/* 5. تصميم الاختبار (Quiz) - المعدل لحل المشكلتين */
+.quiz-options {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    max-width: 500px !important;
+    width: 100% !important;
+    margin: 20px auto !important;
+}
+
 .quiz-opt-btn { 
-    width: 100%; 
-    padding: 18px; 
-    margin-bottom: 12px; 
-    border: 2px solid #e2e8f0; 
-    background: white; 
-    border-radius: 16px; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-    font-weight: 600;
-    transition: all 0.2s ease;
-    text-align: right;
-    box-shadow: none !important; /* إخفاء ظل أزرار الاختيارات */
+    width: 100% !important; 
+    padding: 18px !important; 
+    border: 2px solid #e2e8f0 !important; 
+    background: white !important; 
+    border-radius: 16px !important; 
+    cursor: pointer !important; 
+    font-size: 1.2rem !important; 
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    margin: 0 !important; /* إلغاء margin-bottom */
 }
 
 .quiz-opt-btn:hover:not(:disabled) {
-    border-color: #1e40af;
-    background: #f0f9ff;
-    box-shadow: none !important;
+    border-color: #1e40af !important;
+    background: #f0f9ff !important;
 }
 
-/* ألوان النتيجة في الاختبار */
+/* ألوان الإجابات للاختبار الشامل */
+.correct-answer {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-color: #059669 !important;
+    box-shadow: 0 0 10px #10b981 !important;
+}
+
+.wrong-answer {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-color: #b91c1c !important;
+    box-shadow: 0 0 10px #ef4444 !important;
+}
+
+.other-option {
+    background-color: #6b7280 !important;
+    color: #e5e7eb !important;
+    border-color: #4b5563 !important;
+    opacity: 0.8;
+}
+
+/* ألوان النتيجة في الاختبار العادي (تبقى كما هي) */
 .correct-flash { 
     background-color: #22c55e !important; 
     color: white !important; 
@@ -227,7 +257,7 @@ body {
     text-align: center; 
     cursor: pointer; 
     transition: 0.3s; 
-    box-shadow: none !important; /* إزالة ظل بطاقات الدروس */
+    box-shadow: none !important;
     border: 2px solid #e2e8f0;
     position: relative;
 }
@@ -238,12 +268,11 @@ body {
     border-color: #1e40af;
 }
 
-/* حل مشكلة ظهور الترقيم على اليسار للدروس الإنجليزية */
 .feature-card h3 { 
     color: #1e40af; 
     font-size: 1.3rem; 
-    direction: ltr; /* يضمن ظهور "1. " على اليسار */
-    unicode-bidi: plaintext; /* يحافظ على اتجاه الأرقام مع النصوص المختلطة */
+    direction: ltr;
+    unicode-bidi: plaintext;
     display: block;
     width: 100%;
 }
@@ -263,27 +292,26 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: none !important; /* إزالة ظل الأزرار الرئيسية */
+    box-shadow: none !important;
 }
 
 .hero-btn:active { transform: scale(0.98); box-shadow: none !important; }
 
-/* 8. النص القرائي - تم تعديله لعرض أكبر جزء ممكن */
+/* 8. النص القرائي */
 .reading-card { 
     background: white; 
-    padding: 1.2rem; /* تقليل الحشو من 2.5rem لتوفير مساحة */
+    padding: 1.2rem;
     border-radius: 15px; 
     box-shadow: none !important; 
     border: 2px solid #e2e8f0;
     margin-bottom: 10px;
     direction: ltr;         
     text-align: left;       
-    line-height: 1.5; /* تضييق المسافة بين الأسطر قليلاً */
-    max-height: 60vh; /* جعل النص يأخذ حتى 60% من طول الشاشة */
+    line-height: 1.5;
+    max-height: 60vh;
     overflow-y: auto; 
 }
 
-/* تحسين منطقة الإدخال لتكون مضغوطة ولا تأخذ مساحة كبيرة */
 .reading-card + .reading-card {
     padding: 0.8rem;
     background: #f8fafc;
@@ -312,13 +340,11 @@ body {
     padding: 10px;
     border-radius: 12px;
     margin-top: 10px;
-    box-shadow: none !important; /* إزالة ظل أدوات التحكم */
+    box-shadow: none !important;
     border: 2px solid #e2e8f0;
 }
 
-/* 11. مؤثرات الأنيميشن الجديدة (تم تصحيحها) */
-
-/* أنيميشن الحفظ - الطيران للأعلى */
+/* 11. مؤثرات الأنيميشن */
 .master-anim {
     animation: masterFly 0.6s forwards cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
@@ -328,7 +354,6 @@ body {
     100% { transform: translateY(-500px) scale(0) rotate(20deg); opacity: 0; background: #10b981; }
 }
 
-/* أنيميشن الحذف - السقوط للأسفل */
 .delete-anim {
     animation: deleteDrop 0.6s forwards ease-in;
     pointer-events: none;
@@ -338,7 +363,6 @@ body {
     100% { transform: translateY(500px) scale(0) rotate(-20deg); opacity: 0; background: #ef4444; }
 }
 
-/* انزلاق التالي والسابق */
 .slide-next { animation: slideNext 0.4s forwards; }
 .slide-prev { animation: slidePrev 0.4s forwards; }
 
@@ -349,7 +373,6 @@ body {
     100% { transform: translateX(-100%); opacity: 0; }
 }
 
-/* تأثير تكرار المتبقي - يطبق على "البطاقة" عند إعادة الترتيب */
 .shuffle-anim-card {
     animation: shuffle 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
@@ -359,58 +382,4 @@ body {
     25% { transform: scale(0.9) rotate(-5deg); }
     75% { transform: scale(1.1) rotate(5deg); }
     100% { transform: scale(1); }
-}
-
-addThemeStyles() {
-    const styleId = 'theme-dynamic-styles';
-    if (document.getElementById(styleId)) return;
-    const style = document.createElement('style');
-    style.id = styleId;
-    style.textContent = `
-        [data-theme="dark"] body {
-            background-color: #121212 !important;
-            color: #ffffff !important;
-        }
-        [data-theme="dark"] .header {
-            background-color: #1e1e1e !important;
-            border-bottom: 1px solid #333 !important;
-        }
-        /* باقي الأنماط كما هي */
-        
-        /* أنماط جديدة للوجو والاسم */
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-        .logo-container img {
-            height: 40px;
-            width: auto;
-            transition: transform 0.3s;
-        }
-        .logo-container:hover img {
-            transform: scale(1.05);
-        }
-        .logo-container h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        [data-theme="dark"] .logo-container h2 {
-            background: linear-gradient(135deg, #ffd700, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    `;
-    document.head.appendChild(style);
 }
