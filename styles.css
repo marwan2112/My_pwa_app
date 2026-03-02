@@ -169,7 +169,7 @@ body {
     color: #0f172a;
 }
 
-/* 5. تصميم الاختبار (Quiz) - المعدل لحل المشكلتين */
+/* 5. تصميم الاختبار (Quiz) - نسخة موحدة ومعدلة */
 .quiz-options {
     display: flex !important;
     flex-direction: column !important;
@@ -179,19 +179,26 @@ body {
     margin: 20px auto !important;
 }
 
-.quiz-opt-btn { 
-    width: 100% !important; 
-    padding: 18px !important; 
-    border: 2px solid #e2e8f0 !important; 
-    background: white !important; 
-    border-radius: 16px !important; 
-    cursor: pointer !important; 
-    font-size: 1.2rem !important; 
+.quiz-opt-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 18px 20px !important;
+    border: 2px solid #e2e8f0 !important;
+    background: white !important;
+    color: #1e293b !important;
+    border-radius: 16px !important;
+    cursor: pointer !important;
+    font-size: 1.2rem !important;
     font-weight: 600 !important;
     transition: all 0.2s ease !important;
     text-align: center !important;
     box-shadow: none !important;
-    margin: 0 !important; /* إلغاء margin-bottom */
+    margin: 0 !important;
+    min-height: 70px !important;
+    line-height: 1.4 !important;
+    word-break: break-word !important;
 }
 
 .quiz-opt-btn:hover:not(:disabled) {
@@ -199,7 +206,7 @@ body {
     background: #f0f9ff !important;
 }
 
-/* ألوان الإجابات للاختبار الشامل */
+/* ألوان الإجابات للاختبار الشامل (وأي اختبار آخر) */
 .correct-answer {
     background-color: #10b981 !important;
     color: white !important;
@@ -221,26 +228,36 @@ body {
     opacity: 0.8;
 }
 
-/* ألوان النتيجة في الاختبار العادي (تبقى كما هي) */
+/* ألوان النتيجة في الاختبار العادي (إذا استخدمت correct-flash/wrong-flash) */
 .correct-flash { 
     background-color: #22c55e !important; 
     color: white !important; 
     border-color: #16a34a !important; 
     animation: pulse 0.5s;
-    box-shadow: none !important;
 }
 
 .wrong-flash { 
     background-color: #ef4444 !important; 
     color: white !important; 
     border-color: #dc2626 !important; 
-    box-shadow: none !important;
 }
 
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.02); }
     100% { transform: scale(1); }
+}
+
+/* للشاشات الصغيرة (جوال) تقليل padding قليلاً لتوفير مساحة */
+@media (max-width: 600px) {
+    .quiz-opt-btn {
+        padding: 14px !important;
+        font-size: 1rem !important;
+        min-height: 60px !important;
+    }
+    .quiz-options {
+        gap: 10px !important;
+    }
 }
 
 /* 6. شبكة المستويات والدروس */
