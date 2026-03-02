@@ -1,4 +1,4 @@
-```javascript
+```java
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
