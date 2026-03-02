@@ -1943,8 +1943,8 @@ class App {
                                 
                                 this.currentCardIndex = 0;
                                 this.saveData();
+                                this.render();
                             }
-                            this.render();
                         }, 600);
                         this.showAd('image');
                     }
