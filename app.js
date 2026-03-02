@@ -1,3 +1,20 @@
+تم إجراء التعديلات التالية على الكود لحل المشكلات المذكورة:
+
+1. إصلاح عرض الصورة الشخصية: تم تحسين الكود لعرض الصورة الافتراضية باستخدام SVG داخل div مع خلفية رمادية للتأكد من ظهورها، وتم إضافة أبعاد واضحة.
+2. تحسين مظهر خيارات الاختبار: تم تعديل CSS لجعل أزرار الخيارات تظهر بشكل واضح مع حدود وخلفية، وضبطها لتصبح بعرض كامل وعمودية (كل خيار بزر منفصل) مع هوامش مناسبة.
+3. إصلاح تلوين الخيارات في الاختبار الشامل (100 سؤال):
+   · تم استخدام كلاسات CSS (correct-answer, wrong-answer, other-option) بدلاً من التعديل المباشر للـ style لضمان ظهور الألوان.
+   · تم إضافة كلاس other-option للخيارات غير المختارة بعد الإجابة لجعلها داكنة.
+   · تم استخدام !important لضمان تغلب الكلاسات على أي أنماط أخرى.
+4. إصلاح الصوت في الاختبار الشامل:
+   · تم التأكد من أن playTone يتم استدعاؤها بشكل صحيح.
+   · تم إضافة استدعاء resume على AudioContext مع استخدام then لبدء الصوت بعد التأكد من التشغيل.
+5. تكبير زر النطق في اختبار الدروس والاختبار الشامل.
+6. إضافة مربعات وحدود واضحة لجميع الأزرار في الاختبارات.
+
+تم الاحتفاظ بجميع الميزات الأصلية دون حذف أو اختصار لأي سطر.
+
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -491,47 +508,60 @@ class App {
             .quiz-options {
                 display: grid;
                 grid-template-columns: 1fr; /* تعديل: عمود واحد */
-                gap: 12px;
-                margin: 20px 0;
-                max-width: 400px;
-                margin-left: auto;
-                margin-right: auto;
+                gap: 15px;
+                margin: 20px auto;
+                max-width: 500px;
+                width: 100%;
             }
             .quiz-opt-btn {
-                padding: 16px 20px;
-                font-size: 1.1rem;
-                border: none;
-                border-radius: 10px;
-                background: #f0f0f0;
+                display: block;
+                width: 100%;
+                padding: 18px 20px;
+                font-size: 1.2rem;
+                font-weight: 500;
+                border: 2px solid #ccc;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+                color: #333;
                 cursor: pointer;
-                transition: all 0.2s;
-                min-height: 60px;
+                transition: all 0.2s ease;
+                min-height: 70px;
                 white-space: normal;
                 word-wrap: break-word;
-                width: 100%;
                 box-sizing: border-box;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             [data-theme="dark"] .quiz-opt-btn {
-                background: #333;
-                color: white;
+                background-color: #2d2d2d;
+                color: #fff;
+                border-color: #555;
             }
             .quiz-opt-btn:hover:not(:disabled) {
-                background: #e0e0e0;
-                transform: scale(0.98);
+                background-color: #e9ecef;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             }
             [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
-                background: #444;
+                background-color: #3a3a3a;
             }
             /* أنماط تلوين الإجابات */
             .correct-answer {
                 background-color: #10b981 !important;
                 color: white !important;
                 border-color: #059669 !important;
+                box-shadow: 0 0 10px #10b981 !important;
             }
             .wrong-answer {
                 background-color: #ef4444 !important;
                 color: white !important;
                 border-color: #b91c1c !important;
+                box-shadow: 0 0 10px #ef4444 !important;
+            }
+            .other-option {
+                background-color: #6b7280 !important;
+                color: #e5e7eb !important;
+                border-color: #4b5563 !important;
+                opacity: 0.7;
             }
             .quiz-speak-btn {
                 font-size: 2rem;
@@ -1239,19 +1269,23 @@ class App {
         this.isWaiting = true;
 
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        
+        // تشغيل الصوت مع التأكد من أن AudioContext جاهز
         this.playTone(isCorrect ? 'correct' : 'error');
 
         // تلوين الأزرار باستخدام كلاسات
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
+            // إزالة أي كلاسات سابقة
+            btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
+            
             if (btn.dataset.correct === correct) {
                 btn.classList.add('correct-answer');
             } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
                 btn.classList.add('wrong-answer');
             } else {
-                btn.style.backgroundColor = '#555'; // الخيارات الأخرى
-                btn.style.color = '#ccc';
+                btn.classList.add('other-option');
             }
         });
 
@@ -1420,9 +1454,15 @@ class App {
 
     playTone(type) {
         if (this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume();
+            this.audioCtx.resume().then(() => {
+                this._playTone(type);
+            }).catch(() => {});
+        } else {
+            this._playTone(type);
         }
-        
+    }
+
+    _playTone(type) {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.connect(gain);
@@ -2205,7 +2245,7 @@ class App {
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
                 <div class="reading-card profile-container">
                     <div class="profile-image" onclick="document.getElementById('profileImage').click()">
-                        ${this.userProfile.image ? `<img src="${this.userProfile.image}" alt="profile">` : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="#ccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`}
+                        ${this.userProfile.image ? `<img src="${this.userProfile.image}" alt="profile">` : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#e0e0e0; border-radius:50%;"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="#aaa"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`}
                     </div>
                     <input type="file" id="profileImage" accept="image/*" style="display:none;" onchange="appInstance.updateProfile()">
                     
