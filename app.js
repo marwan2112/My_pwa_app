@@ -490,13 +490,16 @@ class App {
             /* أنماط الخيارات في الاختبار */
             .quiz-options {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: 10px;
+                grid-template-columns: 1fr; /* تعديل: عمود واحد */
+                gap: 12px;
                 margin: 20px 0;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
             }
             .quiz-opt-btn {
-                padding: 15px;
-                font-size: 1rem;
+                padding: 16px 20px;
+                font-size: 1.1rem;
                 border: none;
                 border-radius: 10px;
                 background: #f0f0f0;
@@ -505,6 +508,8 @@ class App {
                 min-height: 60px;
                 white-space: normal;
                 word-wrap: break-word;
+                width: 100%;
+                box-sizing: border-box;
             }
             [data-theme="dark"] .quiz-opt-btn {
                 background: #333;
@@ -516,6 +521,36 @@ class App {
             }
             [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
                 background: #444;
+            }
+            /* أنماط تلوين الإجابات */
+            .correct-answer {
+                background-color: #10b981 !important;
+                color: white !important;
+                border-color: #059669 !important;
+            }
+            .wrong-answer {
+                background-color: #ef4444 !important;
+                color: white !important;
+                border-color: #b91c1c !important;
+            }
+            .quiz-speak-btn {
+                font-size: 2rem;
+                padding: 15px;
+                background: #6366f1;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 70px;
+                height: 70px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                margin: 10px auto;
+                transition: 0.2s;
+            }
+            .quiz-speak-btn:hover {
+                transform: scale(1.1);
             }
             
             /* أنماط النوافذ المنبثقة للنتائج */
@@ -1206,16 +1241,14 @@ class App {
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
         this.playTone(isCorrect ? 'correct' : 'error');
 
-        // تلوين الأزرار
+        // تلوين الأزرار باستخدام كلاسات
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
             if (btn.dataset.correct === correct) {
-                btn.style.backgroundColor = '#10b981'; // أخضر للصحيح
-                btn.style.color = 'white';
+                btn.classList.add('correct-answer');
             } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
-                btn.style.backgroundColor = '#ef4444'; // أحمر للخاطئ المختار
-                btn.style.color = 'white';
+                btn.classList.add('wrong-answer');
             } else {
                 btn.style.backgroundColor = '#555'; // الخيارات الأخرى
                 btn.style.color = '#ccc';
@@ -2172,7 +2205,7 @@ class App {
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
                 <div class="reading-card profile-container">
                     <div class="profile-image" onclick="document.getElementById('profileImage').click()">
-                        ${this.userProfile.image ? `<img src="${this.userProfile.image}" alt="profile">` : `<img src="${defaultImage}" alt="default">`}
+                        ${this.userProfile.image ? `<img src="${this.userProfile.image}" alt="profile">` : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="#ccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`}
                     </div>
                     <input type="file" id="profileImage" accept="image/*" style="display:none;" onchange="appInstance.updateProfile()">
                     
@@ -2425,7 +2458,7 @@ class App {
             return `<div class="reading-card quiz-box">
                 <div class="quiz-info">السؤال ${this.quizIndex+1}/${this.quizQuestions.length}</div>
                 <h2>${q.english}</h2>
-                <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}">🔊</button>
+                <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}" style="font-size:2rem; padding:15px; background:#6366f1; color:white; border:none; border-radius:50%; width:70px; height:70px; display:inline-flex; align-items:center; justify-content:center; margin:10px auto;">🔊</button>
                 <div class="quiz-options">
                     ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
                 </div>
@@ -2538,6 +2571,10 @@ class App {
                     <button class="hero-btn" data-action="finishLevelTest" style="background:#ef4444; padding:5px 15px;">⏹️ إنهاء الاختبار</button>
                 </div>
                 <h2 style="margin-bottom:30px; text-align:center; font-size:2rem;">${q.english}</h2>
+                <!-- زر النطق للاختبار الشامل -->
+                <div style="text-align: center; margin: 10px 0;">
+                    <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}" style="font-size:2rem; padding:15px; background:#6366f1; color:white; border:none; border-radius:50%; width:70px; height:70px; display:inline-flex; align-items:center; justify-content:center;">🔊</button>
+                </div>
                 <div class="quiz-options">
                     ${options.map(opt => `
                         <button class="quiz-opt-btn" 
