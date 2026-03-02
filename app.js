@@ -1917,6 +1917,7 @@ class App {
                     return;
 
                 case 'restartCards':
+                    console.log('🔄 Restart cards clicked, param:', param);
                     const cardShuffle = document.querySelector('.flashcard-container');
                     if (cardShuffle) {
                         cardShuffle.classList.add('shuffle-anim-card');
@@ -1927,22 +1928,30 @@ class App {
                                 
                                 // جمع معرفات كلمات الدرس الأصلية
                                 const originalIds = lesson && lesson.terms ? lesson.terms.map(t => String(t.id)) : [];
+                                console.log('Original IDs:', originalIds);
                                 
                                 // جمع معرفات كلمات المستخدم لهذا الدرس
                                 const userWordIds = this.userVocabulary
                                     .filter(v => v.lessonId == lessonId)
                                     .map(v => String(v.id));
+                                console.log('User word IDs:', userWordIds);
                                 
                                 // دمج المعرفات
                                 const allIds = [...originalIds, ...userWordIds];
+                                console.log('All IDs to remove from masteredWords:', allIds);
                                 
                                 if (allIds.length > 0) {
                                     // إزالة هذه المعرفات من masteredWords
+                                    const beforeLength = this.masteredWords.length;
                                     this.masteredWords = this.masteredWords.filter(id => !allIds.includes(id));
+                                    console.log(`✅ Removed ${beforeLength - this.masteredWords.length} words from masteredWords. New masteredWords:`, this.masteredWords);
+                                } else {
+                                    console.log('⚠️ No IDs found for this lesson.');
                                 }
                                 
                                 this.currentCardIndex = 0;
                                 this.saveData();
+                                console.log('✅ Data saved. Rendering...');
                                 this.render();
                             }
                         }, 600);
