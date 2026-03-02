@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -144,7 +145,7 @@ class App {
     }
 
     init() {
-        // إضافة CSS للوضع الليلي والتعديلات
+        // إضافة CSS للوضع الليلي
         this.addThemeStyles();
 
         document.documentElement.setAttribute('data-theme', this.theme);
@@ -191,7 +192,7 @@ class App {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            /* أنماط الوضع الليلي */
+            /* أنماط الوضع الليلي فقط - بدون تكرار لأنماط الخيارات */
             [data-theme="dark"] body {
                 background-color: #121212 !important;
                 color: #ffffff !important;
@@ -241,7 +242,7 @@ class App {
                 background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             }
             
-            /* أنماط جديدة للوجو والاسم */
+            /* أنماط الهيدر واللوجو */
             .header-content {
                 display: flex;
                 justify-content: space-between;
@@ -486,88 +487,6 @@ class App {
                 background: linear-gradient(90deg, #ffd700, #ffa500);
                 border-radius: 5px;
                 transition: width 0.3s;
-            }
-            
-            /* أنماط الخيارات في الاختبار (معدلة لحل المشكلات) */
-            .quiz-options {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 15px !important;
-                max-width: 500px !important;
-                width: 100% !important;
-                margin: 20px auto !important;
-                height: auto !important;
-            }
-            .quiz-opt-btn {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: 100% !important;
-                padding: 18px 20px !important;
-                font-size: 1.2rem !important;
-                border: 2px solid #ccc !important;
-                border-radius: 12px !important;
-                background-color: #f8f9fa !important;
-                color: #333 !important;
-                cursor: pointer !important;
-                transition: all 0.2s ease !important;
-                min-height: 70px !important;
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                box-sizing: border-box !important;
-                text-align: center !important;
-                margin: 0 !important;
-            }
-            [data-theme="dark"] .quiz-opt-btn {
-                background-color: #2d2d2d !important;
-                color: #fff !important;
-                border-color: #555 !important;
-            }
-            .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #e9ecef !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
-            }
-            [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #3a3a3a !important;
-            }
-            /* ألوان الإجابات للاختبار الشامل */
-            .correct-answer {
-                background-color: #10b981 !important;
-                color: white !important;
-                border-color: #059669 !important;
-                box-shadow: 0 0 10px #10b981 !important;
-            }
-            .wrong-answer {
-                background-color: #ef4444 !important;
-                color: white !important;
-                border-color: #b91c1c !important;
-                box-shadow: 0 0 10px #ef4444 !important;
-            }
-            .other-option {
-                background-color: #6b7280 !important;
-                color: #e5e7eb !important;
-                border-color: #4b5563 !important;
-                opacity: 0.8;
-            }
-            .quiz-speak-btn {
-                font-size: 2rem !important;
-                padding: 15px !important;
-                background: #6366f1 !important;
-                color: white !important;
-                border: none !important;
-                border-radius: 50% !important;
-                width: 70px !important;
-                height: 70px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                cursor: pointer !important;
-                margin: 10px auto !important;
-                transition: 0.2s !important;
-            }
-            .quiz-speak-btn:hover {
-                transform: scale(1.1) !important;
             }
             
             /* أنماط النوافذ المنبثقة للنتائج */
@@ -1217,6 +1136,28 @@ class App {
         this.render();
     }
 
+    // دالة مساعدة لجمع كل كلمات المستوى (للاستخدام في توليد الخيارات)
+    getAllLevelWords() {
+        if (!this.levelTestLevel) return [];
+        const lessonIds = this.levelTestLessons || [];
+        let allWords = [];
+        lessonIds.forEach(id => {
+            const lesson = window.lessonsData[id];
+            if (lesson && lesson.terms) {
+                allWords = allWords.concat(lesson.terms);
+            }
+            // إضافة الكلمات المضافة من المستخدم
+            const added = this.userVocabulary.filter(v => v.lessonId == id);
+            allWords = allWords.concat(added);
+        });
+        // إزالة الكلمات المخفية والمتقنة
+        allWords = allWords.filter(t => !this.hiddenFromCards.includes(String(t.id)) && !this.masteredWords.includes(String(t.id)));
+        // إزالة التكرار (حسب id)
+        const unique = {};
+        allWords.forEach(w => unique[w.id] = w);
+        return Object.values(unique);
+    }
+
     loadNextLevelTestQuestion() {
         if (this.levelTestQuestionsAnswered >= this.levelTestMaxQuestions) {
             this.finishLevelTestEarly();
@@ -1236,16 +1177,40 @@ class App {
         }
 
         this.levelTestCurrentQuestion = bank.shift();
-        const wrongOptions = [];
-        const tempBank = [...bank];
-        this.shuffleArray(tempBank);
+
+        // جمع الخيارات الخاطئة
+        let wrongOptions = [];
+        
+        // 1. من بنك الدرس الحالي (بعد إزالة السؤال الحالي)
+        const currentLessonWords = [...bank]; // نسخة من البنك المتبقي
+        this.shuffleArray(currentLessonWords);
         for (let i = 0; i < 3; i++) {
-            if (tempBank.length > 0) {
-                wrongOptions.push(tempBank[i]?.arabic || '???');
+            if (currentLessonWords.length > i) {
+                wrongOptions.push(currentLessonWords[i].arabic);
             } else {
-                wrongOptions.push('???');
+                break;
             }
         }
+
+        // 2. إذا لم يكتمل العدد، نستخدم كلمات من جميع دروس المستوى (عدا السؤال الحالي)
+        if (wrongOptions.length < 3) {
+            const allLevelWords = this.getAllLevelWords().filter(w => w.id !== this.levelTestCurrentQuestion.id);
+            this.shuffleArray(allLevelWords);
+            for (let i = 0; i < 3 - wrongOptions.length; i++) {
+                if (allLevelWords.length > i) {
+                    wrongOptions.push(allLevelWords[i].arabic);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // 3. إذا ما زال العدد ناقصاً، نضيف '???'
+        while (wrongOptions.length < 3) {
+            wrongOptions.push('???');
+        }
+
+        // تكوين الخيارات النهائية (صحيح + 3 خاطئة) وخلطها
         const options = [this.levelTestCurrentQuestion.arabic, ...wrongOptions];
         this.shuffleArray(options);
         this.levelTestCurrentOptions = options;
@@ -1257,14 +1222,12 @@ class App {
 
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
         
-        // تشغيل الصوت
         this.playTone(isCorrect ? 'correct' : 'error');
 
         // تلوين الأزرار باستخدام كلاسات
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
-            // إزالة أي كلاسات سابقة
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
             
             if (btn.dataset.correct === correct) {
@@ -1296,7 +1259,7 @@ class App {
                 if (!this.unlockedLessons.includes(this.levelTestCurrentLessonId)) {
                     this.unlockedLessons.push(this.levelTestCurrentLessonId);
                     this.levelTestUnlockedCount++;
-                    this.userCoins += 20;
+                    this.userCoins += 20; // مكافأة لكل درس يُفتح
                     this.levelTestCoinsEarned += 20;
                     this.levelTestResults.push({
                         lessonId: this.levelTestCurrentLessonId,
@@ -1368,6 +1331,7 @@ class App {
             }
         }
 
+        // إضافة اللؤلؤ المكتسب
         if (this.levelTestCoinsEarned > 0) {
             message += `\nحصلت على ${this.levelTestCoinsEarned} لؤلؤة إضافية.`;
         }
