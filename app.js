@@ -1921,19 +1921,28 @@ class App {
     if (cardShuffle) {
         cardShuffle.classList.add('shuffle-anim-card');
         setTimeout(() => {
-            if (param === 'all') {
-                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس (الأصلية + كلمات المستخدم)
+            if (param === 'all' && this.selectedLessonId) {
+                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس
                 const lesson = window.lessonsData[this.selectedLessonId];
                 const allLessonWordIds = [];
-                if (lesson && lesson.terms) {
+
+                // إضافة كلمات الدرس الأصلية
+                if (lesson && lesson.terms && lesson.terms.length > 0) {
                     allLessonWordIds.push(...lesson.terms.map(t => String(t.id)));
                 }
-                // إضافة كلمات المستخدم الخاصة بهذا الدرس
+
+                // إضافة كلمات المستخدم المضافة لهذا الدرس
                 const userWordsForLesson = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
-                allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
-                
+                if (userWordsForLesson.length > 0) {
+                    allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
+                }
+
                 // إزالة هذه المعرفات من masteredWords (إعادة ضبط الإتقان)
-                this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
+                if (allLessonWordIds.length > 0) {
+                    this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
+                }
+
+                console.log('✅ تم إعادة ضبط الكلمات:', allLessonWordIds);
             }
             this.currentCardIndex = 0;
             this.saveData();
