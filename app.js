@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -144,7 +145,7 @@ class App {
     }
 
     init() {
-        // إضافة CSS للوضع الليلي
+        // إضافة CSS للوضع الليلي والتعديلات
         this.addThemeStyles();
 
         document.documentElement.setAttribute('data-theme', this.theme);
@@ -488,7 +489,7 @@ class App {
                 transition: width 0.3s;
             }
             
-            /* أنماط الخيارات في الاختبار (معدلة) */
+            /* أنماط الخيارات في الاختبار (معدلة لحل المشكلات) */
             .quiz-options {
                 display: flex !important;
                 flex-direction: column !important;
@@ -531,7 +532,7 @@ class App {
             [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
                 background-color: #3a3a3a !important;
             }
-            /* ألوان الإجابات */
+            /* ألوان الإجابات للاختبار الشامل */
             .correct-answer {
                 background-color: #10b981 !important;
                 color: white !important;
@@ -1257,7 +1258,7 @@ class App {
 
         const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
         
-        // تشغيل الصوت مع التأكد من أن AudioContext جاهز
+        // تشغيل الصوت
         this.playTone(isCorrect ? 'correct' : 'error');
 
         // تلوين الأزرار باستخدام كلاسات
@@ -1296,7 +1297,7 @@ class App {
                 if (!this.unlockedLessons.includes(this.levelTestCurrentLessonId)) {
                     this.unlockedLessons.push(this.levelTestCurrentLessonId);
                     this.levelTestUnlockedCount++;
-                    this.userCoins += 20; // مكافأة لكل درس يُفتح
+                    this.userCoins += 20;
                     this.levelTestCoinsEarned += 20;
                     this.levelTestResults.push({
                         lessonId: this.levelTestCurrentLessonId,
@@ -1368,7 +1369,6 @@ class App {
             }
         }
 
-        // إضافة اللؤلؤ المكتسب
         if (this.levelTestCoinsEarned > 0) {
             message += `\nحصلت على ${this.levelTestCoinsEarned} لؤلؤة إضافية.`;
         }
@@ -2225,7 +2225,7 @@ class App {
             const englishLevel = this.getEnglishLevel();
             const totalLessons = this.unlockedLessons.length;
             const totalMastered = this.masteredWords.length;
-            const progressPercent = (totalLessons / 100) * 100; // نسبة تقدم مبسطة
+            const progressPercent = (totalLessons / 100) * 100;
 
             return `<main class="main-content">
                 <button class="hero-btn" data-action="goHome" style="margin-bottom:15px; background:#64748b;">← رجوع</button>
