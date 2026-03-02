@@ -1917,21 +1917,31 @@ class App {
                     return;
 
                 case 'restartCards':
-                    const cardShuffle = document.querySelector('.flashcard-container');
-                    if (cardShuffle) {
-                        cardShuffle.classList.add('shuffle-anim-card');
-                        setTimeout(() => {
-                            if (param === 'all') {
-                                const lessonWords = window.lessonsData[this.selectedLessonId].terms.map(t => String(t.id));
-                                this.masteredWords = this.masteredWords.filter(id => !lessonWords.includes(id));
-                            }
-                            this.currentCardIndex = 0;
-                            this.saveData(); this.render();
-                        }, 600);
-                        this.showAd('image');
-                    }
-                    return;
-
+    const cardShuffle = document.querySelector('.flashcard-container');
+    if (cardShuffle) {
+        cardShuffle.classList.add('shuffle-anim-card');
+        setTimeout(() => {
+            if (param === 'all') {
+                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس (الأصلية + كلمات المستخدم)
+                const lesson = window.lessonsData[this.selectedLessonId];
+                const allLessonWordIds = [];
+                if (lesson && lesson.terms) {
+                    allLessonWordIds.push(...lesson.terms.map(t => String(t.id)));
+                }
+                // إضافة كلمات المستخدم الخاصة بهذا الدرس
+                const userWordsForLesson = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
+                allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
+                
+                // إزالة هذه المعرفات من masteredWords (إعادة ضبط الإتقان)
+                this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
+            }
+            this.currentCardIndex = 0;
+            this.saveData();
+            this.render();
+        }, 600);
+        this.showAd('image');
+    }
+    return;
                 case 'addNewWord':
                     this.handleNewWord();
                     break;
