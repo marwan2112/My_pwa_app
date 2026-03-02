@@ -144,7 +144,7 @@ class App {
     }
 
     init() {
-        // إضافة CSS للوضع الليلي والتعديلات
+        // إضافة CSS للوضع الليلي
         this.addThemeStyles();
 
         document.documentElement.setAttribute('data-theme', this.theme);
@@ -191,7 +191,6 @@ class App {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            /* أنماط الوضع الليلي */
             [data-theme="dark"] body {
                 background-color: #121212 !important;
                 color: #ffffff !important;
@@ -209,6 +208,7 @@ class App {
                 background-color: #1e1e1e !important;
                 color: #ffffff !important;
                 border-color: #444 !important;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.5) !important;
             }
             [data-theme="dark"] .hero-btn,
             [data-theme="dark"] .quiz-opt-btn,
@@ -227,93 +227,208 @@ class App {
                 color: #fff !important;
                 border-color: #555 !important;
             }
-
-            /* تحسين عرض خيارات الاختبار */
-            .quiz-options {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 12px !important;
-                margin: 20px auto !important;
-                max-width: 500px !important;
-                width: 100% !important;
-                height: auto !important;
-            }
-            .quiz-opt-btn {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: 100% !important;
-                padding: 18px 20px !important;
-                font-size: 1.2rem !important;
-                font-weight: 600 !important;
-                border: 2px solid #ccc !important;
-                border-radius: 12px !important;
-                background-color: #f8f9fa !important;
-                color: #333 !important;
-                cursor: pointer !important;
-                transition: all 0.2s ease !important;
-                min-height: 70px !important;
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                box-sizing: border-box !important;
-                text-align: center !important;
-                margin-bottom: 0 !important; /* إلغاء margin-bottom لتجنب التداخل مع gap */
-            }
-            [data-theme="dark"] .quiz-opt-btn {
+            [data-theme="dark"] .flashcard-front,
+            [data-theme="dark"] .flashcard-back {
                 background-color: #2d2d2d !important;
                 color: #fff !important;
-                border-color: #555 !important;
             }
-            .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #e9ecef !important;
-                transform: translateY(-2px) !important;
+            [data-theme="dark"] .logout-btn {
+                background-color: #4a4a4a !important;
+                color: #fff !important;
             }
-            [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #3a3a3a !important;
+            [data-theme="dark"] .welcome-banner {
+                background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             }
-
-            /* ألوان الإجابات */
-            .correct-answer {
-                background-color: #10b981 !important;
-                color: white !important;
-                border-color: #059669 !important;
-                box-shadow: 0 0 10px #10b981 !important;
-            }
-            .wrong-answer {
-                background-color: #ef4444 !important;
-                color: white !important;
-                border-color: #b91c1c !important;
-                box-shadow: 0 0 10px #ef4444 !important;
-            }
-            .other-option {
-                background-color: #6b7280 !important;
-                color: #e5e7eb !important;
-                border-color: #4b5563 !important;
-                opacity: 0.8;
-            }
-
-            /* زر النطق */
-            .quiz-speak-btn {
-                font-size: 2rem;
-                padding: 15px;
-                background: #6366f1;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 70px;
-                height: 70px;
-                display: inline-flex;
+            
+            /* أنماط جديدة للوجو والاسم */
+            .header-content {
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                margin: 10px auto;
-                transition: 0.2s;
+                padding: 10px 20px;
             }
-            .quiz-speak-btn:hover {
-                transform: scale(1.1);
+            .logo-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+            }
+            .logo-container img {
+                height: 40px;
+                width: auto;
+                transition: transform 0.3s;
+            }
+            .logo-container:hover img {
+                transform: scale(1.05);
+            }
+            .logo-container h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: linear-gradient(135deg, #1e40af, #3b82f6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            [data-theme="dark"] .logo-container h2 {
+                background: linear-gradient(135deg, #ffd700, #fbbf24);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            /* أنماط صفحة Auth */
+            .auth-container {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .auth-container img {
+                height: 100px;
+                width: auto;
+                margin-bottom: 15px;
+            }
+            .auth-container h1 {
+                font-size: 2.5rem;
+                margin: 0;
+                color: #1e40af;
+            }
+            .auth-container p {
+                font-size: 1.2rem;
+                color: #64748b;
+            }
+            [data-theme="dark"] .auth-container h1 {
+                color: #ffd700;
+            }
+            [data-theme="dark"] .auth-container p {
+                color: #ccc;
+            }
+            .auth-card {
+                max-width: 400px;
+                margin: 0 auto;
             }
 
-            /* أنماط الصورة الشخصية */
+            /* أنماط تمرين الكتابة */
+            .spelling-input {
+                width: 100%;
+                padding: 15px;
+                font-size: 1.2rem;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                margin: 20px 0;
+                direction: ltr;
+                text-align: left;
+            }
+            .spelling-feedback {
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+            .correct-feedback {
+                color: #10b981;
+            }
+            .wrong-feedback {
+                color: #ef4444;
+            }
+            
+            /* أنماط الإعلانات والشراء */
+            .ad-container {
+                margin: 20px 0;
+                padding: 15px;
+                background: #f0f0f0;
+                border-radius: 10px;
+                text-align: center;
+                border: 1px dashed #ffd700;
+            }
+            .bank-info {
+                background: #e3f2fd;
+                padding: 15px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                margin: 10px 0;
+            }
+            /* أنماط النافذة المنبثقة للعملات */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                max-width: 400px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                animation: slideUp 0.3s;
+                position: relative;
+            }
+            [data-theme="dark"] .modal-content {
+                background: #1e1e1e;
+                color: white;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .modal-header h3 {
+                margin: 0;
+            }
+            .close-btn {
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0 5px;
+                color: #999;
+                transition: color 0.2s;
+            }
+            .close-btn:hover {
+                color: #333;
+            }
+            [data-theme="dark"] .close-btn:hover {
+                color: white;
+            }
+            .coin-option {
+                background: #f5f5f5;
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                border: 1px solid #e0e0e0;
+            }
+            [data-theme="dark"] .coin-option {
+                background: #2d2d2d;
+                border-color: #444;
+            }
+            .coin-option:hover {
+                transform: scale(1.02);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            
+            /* أنماط صفحة الملف الشخصي */
+            .profile-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
             .profile-image {
                 width: 120px;
                 height: 120px;
@@ -336,9 +451,145 @@ class App {
                 height: 70px;
                 fill: #aaa;
             }
-
-            /* باقي الأنماط (محتفظ بها من الكود الأصلي) */
-            /* يمكن إضافة أي أنماط إضافية هنا */
+            .profile-info {
+                width: 100%;
+                background: #f9f9f9;
+                border-radius: 12px;
+                padding: 15px;
+                margin: 5px 0;
+            }
+            [data-theme="dark"] .profile-info {
+                background: #2d2d2d;
+            }
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+            [data-theme="dark"] .info-row {
+                border-bottom-color: #444;
+            }
+            .info-row:last-child {
+                border-bottom: none;
+            }
+            .progress-bar-container {
+                width: 100%;
+                height: 10px;
+                background: #e0e0e0;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #ffd700, #ffa500);
+                border-radius: 5px;
+                transition: width 0.3s;
+            }
+            
+            /* أنماط الخيارات في الاختبار */
+            .quiz-options {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin: 20px auto;
+                max-width: 500px;
+                width: 100%;
+                height: auto;
+            }
+            .quiz-opt-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                padding: 18px 20px;
+                font-size: 1.2rem;
+                font-weight: 500;
+                border: 2px solid #ccc;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+                color: #333;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-height: 70px;
+                white-space: normal;
+                word-wrap: break-word;
+                box-sizing: border-box;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            [data-theme="dark"] .quiz-opt-btn {
+                background-color: #2d2d2d;
+                color: #fff;
+                border-color: #555;
+            }
+            .quiz-opt-btn:hover:not(:disabled) {
+                background-color: #e9ecef;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+            [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
+                background-color: #3a3a3a;
+            }
+            /* أنماط تلوين الإجابات */
+            .correct-answer {
+                background-color: #10b981 !important;
+                color: white !important;
+                border-color: #059669 !important;
+                box-shadow: 0 0 10px #10b981 !important;
+            }
+            .wrong-answer {
+                background-color: #ef4444 !important;
+                color: white !important;
+                border-color: #b91c1c !important;
+                box-shadow: 0 0 10px #ef4444 !important;
+            }
+            .other-option {
+                background-color: #6b7280 !important;
+                color: #e5e7eb !important;
+                border-color: #4b5563 !important;
+                opacity: 0.8;
+            }
+            .quiz-speak-btn {
+                font-size: 2rem;
+                padding: 15px;
+                background: #6366f1;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 70px;
+                height: 70px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                margin: 10px auto;
+                transition: 0.2s;
+            }
+            .quiz-speak-btn:hover {
+                transform: scale(1.1);
+            }
+            
+            /* أنماط النوافذ المنبثقة للنتائج */
+            .result-modal {
+                text-align: center;
+            }
+            .result-icon {
+                font-size: 4rem;
+                margin-bottom: 15px;
+            }
+            .result-message {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+            }
+            
+            /* أنماط خيار فتح الدرس */
+            .unlock-choice {
+                display: flex;
+                gap: 15px;
+                flex-direction: column;
+                margin: 20px 0;
+            }
         `;
         document.head.appendChild(style);
     }
