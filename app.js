@@ -437,16 +437,17 @@ class App {
                 gap: 15px;
             }
             .profile-image {
-                width: 120px;
-                height: 120px;
+                width: 150px;
+                height: 150px;
                 border-radius: 50%;
                 background: #e0e0e0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 overflow: hidden;
-                border: 3px solid #ffd700;
+                border: 4px solid #ffd700;
                 cursor: pointer;
+                margin: 10px auto;
             }
             .profile-image img {
                 width: 100%;
@@ -513,6 +514,59 @@ class App {
                 gap: 15px;
                 flex-direction: column;
                 margin: 20px 0;
+            }
+
+            /* أنماط الأوسمة */
+            .badges-container {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin: 15px 0;
+                padding: 10px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 12px;
+                cursor: pointer;
+            }
+            .badge-item {
+                font-size: 2rem;
+                transition: transform 0.2s;
+            }
+            .badge-item:hover {
+                transform: scale(1.1);
+            }
+            .badges-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 10px;
+            }
+            .badge-modal-item {
+                text-align: center;
+                padding: 15px;
+                border-radius: 12px;
+                background: #f5f5f5;
+                transition: 0.2s;
+            }
+            [data-theme="dark"] .badge-modal-item {
+                background: #2d2d2d;
+            }
+            .badge-modal-item.earned {
+                background: #ffd700;
+                color: #000;
+                font-weight: bold;
+            }
+            .badge-modal-item:not(.earned) {
+                opacity: 0.4;
+                filter: grayscale(1);
+            }
+            .badge-modal-item .badge-icon {
+                font-size: 3rem;
+                display: block;
+                margin-bottom: 5px;
+            }
+            .badge-modal-item .badge-name {
+                font-size: 1rem;
+                font-weight: bold;
             }
         `;
         document.head.appendChild(style);
@@ -704,7 +758,12 @@ class App {
         const newPassword = document.getElementById('profilePassword')?.value;
         const imageFile = document.getElementById('profileImage')?.files[0];
 
-        if (newName) this.userProfile.name = newName;
+        if (newName) {
+            this.userProfile.name = newName;
+            if (this.userData) {
+                this.userData.name = newName; // تحديث اسم المستخدم في userData أيضاً
+            }
+        }
         if (newAge) this.userProfile.age = newAge;
         if (newPassword && this.userData) {
             this.userData.pass = newPassword;
@@ -1226,7 +1285,7 @@ class App {
         this.levelTestCurrentOptions = options;
     }
 
-    // دالة handleLevelTestAnswer المعدلة (باستخدام trim)
+    // دالة handleLevelTestAnswer المعدلة (باستخدام trim وتصحيح التلوين)
     handleLevelTestAnswer(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
@@ -1241,13 +1300,16 @@ class App {
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
             const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
-            if (btnCorrect === correctTrim) {
+            
+            if (btnParam === correctTrim) {
+                // هذا هو الزر الصحيح
                 btn.classList.add('correct-answer');
-            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
+            } else if (btnParam === selectedTrim && !isCorrect) {
+                // هذا هو الزر الذي اختاره المستخدم وكان خطأ
                 btn.classList.add('wrong-answer');
             } else {
+                // باقي الأزرار
                 btn.classList.add('other-option');
             }
         });
@@ -1536,7 +1598,7 @@ class App {
         return selected;
     }
 
-    // دالة handlePlacement المعدلة (باستخدام trim)
+    // دالة handlePlacement المعدلة (باستخدام trim وتصحيح التلوين)
     handlePlacement(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
@@ -1552,11 +1614,11 @@ class App {
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
             const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
-            if (btnCorrect === correctTrim) {
+            
+            if (btnParam === correctTrim) {
                 btn.classList.add('correct-answer');
-            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
+            } else if (btnParam === selectedTrim && !isCorrect) {
                 btn.classList.add('wrong-answer');
             } else {
                 btn.classList.add('other-option');
@@ -1637,7 +1699,7 @@ class App {
         this.quizOptions = [currentQ.arabic, ...wrongs].sort(() => 0.5 - Math.random());
     }
 
-    // دالة handleAnswer المعدلة (باستخدام trim)
+    // دالة handleAnswer المعدلة (باستخدام trim وتصحيح التلوين)
     handleAnswer(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
@@ -1655,11 +1717,11 @@ class App {
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
             const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
-            if (btnCorrect === correctTrim) {
+            
+            if (btnParam === correctTrim) {
                 btn.classList.add('correct-answer');
-            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
+            } else if (btnParam === selectedTrim && !isCorrect) {
                 btn.classList.add('wrong-answer');
             } else {
                 btn.classList.add('other-option');
@@ -2073,9 +2135,12 @@ class App {
     // دالة مساعدة لعرض الأوسمة في الصفحة الرئيسية
     getBadgesDisplay() {
         const earnedBadges = this.userStats.badges || [];
+        const badgeNames = { '🥉': 'برونزي', '🥈': 'فضي', '🥇': 'ذهبي', '👑': 'ماسي' };
+        
         if (earnedBadges.length > 0) {
+            // عرض جميع الأوسمة التي حصل عليها المستخدم
             return `<div class="badges-container" onclick="appInstance.showBadgesModal()">
-                ${earnedBadges.map(b => `<span class="badge-item">${b}</span>`).join('')}
+                ${earnedBadges.map(b => `<span class="badge-item" title="${badgeNames[b]}">${b}</span>`).join('')}
             </div>`;
         } else {
             return `<div class="badges-container" onclick="appInstance.showBadgesModal()" style="justify-content:center; color:#aaa; cursor:pointer;">
@@ -2084,13 +2149,13 @@ class App {
         }
     }
 
-    // دالة عرض الأوسمة في نافذة منبثقة
+    // دالة عرض الأوسمة في نافذة منبثقة (مع أسماء الأوسمة فقط)
     showBadgesModal() {
         const allBadges = [
-            { icon: '🥉', name: 'برونزي', condition: '10 دروس و100 كلمة' },
-            { icon: '🥈', name: 'فضي', condition: '20 درس و500 كلمة' },
-            { icon: '🥇', name: 'ذهبي', condition: '50 درس و1500 كلمة' },
-            { icon: '👑', name: 'ماسي', condition: '100 درس و3000 كلمة' }
+            { icon: '🥉', name: 'برونزي' },
+            { icon: '🥈', name: 'فضي' },
+            { icon: '🥇', name: 'ذهبي' },
+            { icon: '👑', name: 'ماسي' }
         ];
         const earnedBadges = this.userStats.badges || [];
         
@@ -2101,7 +2166,6 @@ class App {
                 <div class="badge-modal-item ${isEarned ? 'earned' : ''}">
                     <span class="badge-icon">${badge.icon}</span>
                     <span class="badge-name">${badge.name}</span>
-                    <small>${badge.condition}</small>
                 </div>
             `;
         });
@@ -2230,7 +2294,7 @@ class App {
             return `<main class="main-content">
                 <div class="reading-card welcome-banner" style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border: none; padding: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin:0;">مرحباً، ${this.userData.name} 👋</h3>
+                        <h3 style="margin:0;">مرحباً، ${this.userData?.name || 'مستخدم'} 👋</h3>
                         <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">
                             ⭐ مستوى ${this.userStats.level}
                         </div>
