@@ -1917,40 +1917,39 @@ class App {
                     return;
 
                 case 'restartCards':
-    const cardShuffle = document.querySelector('.flashcard-container');
-    if (cardShuffle) {
-        cardShuffle.classList.add('shuffle-anim-card');
-        setTimeout(() => {
-            if (param === 'all' && this.selectedLessonId) {
-                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس
-                const lesson = window.lessonsData[this.selectedLessonId];
-                const allLessonWordIds = [];
+                    const cardShuffle = document.querySelector('.flashcard-container');
+                    if (cardShuffle) {
+                        cardShuffle.classList.add('shuffle-anim-card');
+                        setTimeout(() => {
+                            if (param === 'all' && this.selectedLessonId) {
+                                // جمع جميع معرفات الكلمات المرتبطة بهذا الدرس
+                                const lesson = window.lessonsData[this.selectedLessonId];
+                                const allLessonWordIds = [];
 
-                // إضافة كلمات الدرس الأصلية
-                if (lesson && lesson.terms && lesson.terms.length > 0) {
-                    allLessonWordIds.push(...lesson.terms.map(t => String(t.id)));
-                }
+                                // إضافة كلمات الدرس الأصلية
+                                if (lesson && lesson.terms && lesson.terms.length > 0) {
+                                    allLessonWordIds.push(...lesson.terms.map(t => String(t.id)));
+                                }
 
-                // إضافة كلمات المستخدم المضافة لهذا الدرس
-                const userWordsForLesson = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
-                if (userWordsForLesson.length > 0) {
-                    allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
-                }
+                                // إضافة كلمات المستخدم المضافة لهذا الدرس
+                                const userWordsForLesson = this.userVocabulary.filter(v => v.lessonId == this.selectedLessonId);
+                                if (userWordsForLesson.length > 0) {
+                                    allLessonWordIds.push(...userWordsForLesson.map(v => String(v.id)));
+                                }
 
-                // إزالة هذه المعرفات من masteredWords (إعادة ضبط الإتقان)
-                if (allLessonWordIds.length > 0) {
-                    this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
-                }
+                                // إزالة هذه المعرفات من masteredWords (إعادة ضبط الإتقان)
+                                if (allLessonWordIds.length > 0) {
+                                    this.masteredWords = this.masteredWords.filter(id => !allLessonWordIds.includes(id));
+                                }
+                            }
+                            this.currentCardIndex = 0;
+                            this.saveData();
+                            this.render();
+                        }, 600);
+                        this.showAd('image');
+                    }
+                    return;
 
-                console.log('✅ تم إعادة ضبط الكلمات:', allLessonWordIds);
-            }
-            this.currentCardIndex = 0;
-            this.saveData();
-            this.render();
-        }, 600);
-        this.showAd('image');
-    }
-    return;
                 case 'addNewWord':
                     this.handleNewWord();
                     break;
