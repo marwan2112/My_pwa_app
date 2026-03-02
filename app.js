@@ -1,86 +1,98 @@
+```javascript
 class App {
     constructor() {
-        this.currentAudio = null;
-        this.audioPlaybackRate = 1.0;
-        this.availableSpeeds = [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0];
+        this.currentAudio = null; // كائن الصوت الحالي
+        this.audioPlaybackRate = 1.0; // السرعة الافتراضية
+        this.availableSpeeds = [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0]; // السرعات المتاحة
         this.placementStep = 0;
         this.currentDifficulty = 'A1';
         this.placementHistory = [];
         this.placementScore = 0;
         this.theme = localStorage.getItem('theme') || 'light';
-        this.jumbleArabicHint = '';
-        this.jumbleCurrentSentence = '';
+        this.jumbleArabicHint = ''; // الترجمة العربية للجملة كمساعدة
+        this.jumbleCurrentSentence = ''; // لتتبع الجملة التي طلبت الترجمة لها
 
+        // تعريف الإحصائيات (XP والنقاط) والسجل
         this.userStats = JSON.parse(localStorage.getItem('userStats')) || { xp: 0, level: 1, badges: [], tier: 'برونزي' };
         this.placementResults = JSON.parse(localStorage.getItem('placementResults')) || [];
         this.placementFullHistory = JSON.parse(localStorage.getItem('placementFullHistory')) || [];
         this.currentPlacementDetails = [];
         this.viewingPlacementDetails = null;
 
+        // نظام العملات (اللآلئ)
         this.userCoins = JSON.parse(localStorage.getItem('userCoins')) || 0;
-        this.showCoinModal = false;
+        this.showCoinModal = false; // للتحكم في إظهار نافذة العملات
 
+        // متغيرات خاصة بميزة إعادة ترتيب الجمل
         this.jumbleOriginalSentence = '';
         this.jumbleWords = [];
         this.jumbleUserAnswer = [];
         this.jumbleChecked = false;
         this.jumbleCorrect = false;
         this.jumbleHintUsed = false;
-        this.jumbleHistory = [];
-        this.jumbleUnlocked = {};
-        this.jumbleNextCount = 0;
+        this.jumbleHistory = []; // سجل الجمل المستخدمة
+        this.jumbleUnlocked = {}; // تخزين حالة فتح الترتيب لكل درس
+        this.jumbleNextCount = 0; // عداد الضغط على التالي في الترتيب
 
+        // متغيرات خاصة بميزة الاستماع
         this.listeningRemaining = [];
         this.listeningCurrent = null;
         this.listeningOptions = [];
         this.listeningAnswered = false;
         this.listeningTimer = null;
         this.listeningErrorTimer = null;
-        this.listeningUnlocked = {};
-        this.listeningNextCount = 0;
+        this.listeningUnlocked = {}; // تخزين حالة فتح الاستماع لكل درس
+        this.listeningNextCount = 0; // عداد الضغط على التالي في الاستماع
 
+        // متغيرات خاصة بتمرين الكتابة (Spelling)
         this.spellingRemaining = [];
         this.spellingCurrent = null;
         this.spellingAnswered = false;
         this.spellingUserAnswer = '';
-        this.spellingResult = null;
-        this.spellingUnlocked = {};
-        this.spellingNextCount = 0;
+        this.spellingResult = null; // 'correct', 'wrong', null
+        this.spellingUnlocked = {}; // تخزين حالة فتح الكتابة لكل درس
+        this.spellingNextCount = 0; // عداد الضغط على التالي في الكتابة
 
-        this.levelTestLevel = null;
-        this.levelTestLessons = [];
-        this.levelTestCurrentLessonIndex = 0;
-        this.levelTestCurrentLessonId = null;
-        this.levelTestLessonQuestions = [];
-        this.levelTestRequiredCorrect = 5;
-        this.levelTestCurrentCorrect = 0;
-        this.levelTestCurrentTotal = 0;
-        this.levelTestQuestionsBank = {};
-        this.levelTestResults = [];
-        this.levelTestQuestionsAnswered = 0;
-        this.levelTestMaxQuestions = 100;
+        // متغيرات خاصة بالاختبار الشامل للمستوى (Level Mastery Test)
+        this.levelTestLevel = null; // المستوى المختار: 'beginner', 'intermediate', 'advanced'
+        this.levelTestLessons = []; // قائمة الدروس في هذا المستوى (مرتبة)
+        this.levelTestCurrentLessonIndex = 0; // فهرس الدرس الحالي في القائمة
+        this.levelTestCurrentLessonId = null; // معرف الدرس الحالي
+        this.levelTestLessonQuestions = []; // كلمات الدرس الحالي (مخلوطة عشوائياً)
+        this.levelTestRequiredCorrect = 5; // عدد الإجابات الصحيحة المطلوبة لاجتياز الدرس الحالي (يبدأ بـ 5)
+        this.levelTestCurrentCorrect = 0; // عدد الإجابات الصحيحة في الدرس الحالي
+        this.levelTestCurrentTotal = 0; // عدد الأسئلة المجاب عنها في الدرس الحالي
+        this.levelTestQuestionsBank = {}; // بنك الكلمات المتبقية لكل درس (لإعادة المحاولة)
+        this.levelTestResults = []; // نتائج الدروس: { lessonId, passed, attempts }
+        this.levelTestQuestionsAnswered = 0; // إجمالي الأسئلة المجاب عنها
+        this.levelTestMaxQuestions = 100; // الحد الأقصى للأسئلة
         this.levelTestCurrentQuestion = null;
         this.levelTestCurrentOptions = [];
-        this.levelTestUnlockedCount = 0;
-        this.levelTestCoinsEarned = 0;
+        this.levelTestUnlockedCount = 0; // عدد الدروس المفتوحة في هذا الاختبار
+        this.levelTestCoinsEarned = 0; // اللؤلؤ المكتسب من فتح الدروس
 
+        // تحميل آخر درس تم اختباره لكل مستوى (سيتم استخدامه للبدء)
         this.lastTestedLesson = JSON.parse(localStorage.getItem('lastTestedLesson')) || { beginner: 0, intermediate: 0, advanced: 0 };
 
+        // تحميل حالة فتح التمارين
         const savedUnlocked = JSON.parse(localStorage.getItem('unlockedExercises')) || {};
         this.jumbleUnlocked = savedUnlocked.jumble || {};
         this.listeningUnlocked = savedUnlocked.listening || {};
         this.spellingUnlocked = savedUnlocked.spelling || {};
 
-        this.newWordsAddedCount = JSON.parse(localStorage.getItem('newWordsAddedCount')) || 0;
-        this.adWatchedCount = JSON.parse(localStorage.getItem('adWatchedCount')) || 0;
+        // متغيرات الإعلانات والشراء
+        this.newWordsAddedCount = JSON.parse(localStorage.getItem('newWordsAddedCount')) || 0; // عدد الكلمات الجديدة المضافة
+        this.adWatchedCount = JSON.parse(localStorage.getItem('adWatchedCount')) || 0; // عدد الإعلانات التي تمت مشاهدتها (لكسب 50 لؤلؤة)
 
+        // معلومات الشراء (بدون عرض IBAN)
         this.purchaseRequests = JSON.parse(localStorage.getItem('purchaseRequests')) || [];
 
+        // بيانات الملف الشخصي
         this.userProfile = JSON.parse(localStorage.getItem('userProfile')) || {
             name: '',
             age: '',
             joinDate: new Date().toLocaleDateString('ar-EG'),
-            level: 'A1', // سيتم تحديثه من آخر اختبار مستوى
+            level: 'A1',
             image: '',
             testsHistory: []
         };
@@ -90,6 +102,7 @@ class App {
             this.userProfile.level = this.placementResults[0].level;
         }
 
+        // تحديث الشارات والمستوى
         this.updateBadgesAndTier();
 
         if (document.readyState === 'loading') {
@@ -103,20 +116,23 @@ class App {
         const totalLessonsUnlocked = this.unlockedLessons ? this.unlockedLessons.length : 0;
         const totalMastered = this.masteredWords ? this.masteredWords.length : 0;
 
+        // تحديث الشارات
         let newBadges = [];
-        if (totalLessonsUnlocked >= 10 && totalMastered >= 100) newBadges.push('🥉');
-        if (totalLessonsUnlocked >= 20 && totalMastered >= 500) newBadges.push('🥈');
-        if (totalLessonsUnlocked >= 50 && totalMastered >= 1500) newBadges.push('🥇');
-        if (totalLessonsUnlocked >= 100 && totalMastered >= 3000) newBadges.push('👑');
+        if (totalLessonsUnlocked >= 10 && totalMastered >= 100) newBadges.push('🥉'); // برونزي
+        if (totalLessonsUnlocked >= 20 && totalMastered >= 500) newBadges.push('🥈'); // فضي
+        if (totalLessonsUnlocked >= 50 && totalMastered >= 1500) newBadges.push('🥇'); // ذهبي
+        if (totalLessonsUnlocked >= 100 && totalMastered >= 3000) newBadges.push('👑'); // ماسي
 
         this.userStats.badges = newBadges;
 
+        // تحديث التاج (tier) بناءً على عدد الشارات
         if (newBadges.includes('👑')) this.userStats.tier = 'ماسي';
         else if (newBadges.includes('🥇')) this.userStats.tier = 'ذهبي';
         else if (newBadges.includes('🥈')) this.userStats.tier = 'فضي';
         else if (newBadges.includes('🥉')) this.userStats.tier = 'برونزي';
         else this.userStats.tier = 'بدون';
 
+        // تحديث مستوى المستخدم بناءً على الدروس المفتوحة (نظام ذكي)
         if (totalLessonsUnlocked >= 100) this.userStats.level = 5;
         else if (totalLessonsUnlocked >= 60) this.userStats.level = 4;
         else if (totalLessonsUnlocked >= 30) this.userStats.level = 3;
@@ -128,12 +144,15 @@ class App {
 
     updateProgress(points) {
         this.userStats.xp += points;
+        const totalMastered = this.masteredWords ? this.masteredWords.length : 0;
         this.updateBadgesAndTier();
         localStorage.setItem('userStats', JSON.stringify(this.userStats));
     }
 
     init() {
-        this.addThemeStyles();
+        // إضافة الأنماط الأساسية (تحل محل الحاجة إلى style.css منفصل)
+        this.injectCoreStyles();
+
         document.documentElement.setAttribute('data-theme', this.theme);
 
         if (!window.levels || !window.lessonsData || !window.placementBank || !window.lessonsList) {
@@ -172,19 +191,39 @@ class App {
         this.render();
     }
 
-    addThemeStyles() {
-        const styleId = 'theme-dynamic-styles';
+    // ================== دالة حقن الأنماط الأساسية (بدون تعارض) ==================
+    injectCoreStyles() {
+        const styleId = 'app-core-styles';
         if (document.getElementById(styleId)) return;
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
+            /* ===== أنماط أساسية (تحل محل style.css) ===== */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Cairo', sans-serif;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                background: #f1f5f9;
+                color: #1e293b;
+                direction: rtl;
+                line-height: 1.6;
+                overflow-x: hidden;
+                transition: background 0.3s, color 0.3s;
+            }
+
+            /* الوضع الليلي */
             [data-theme="dark"] body {
-                background-color: #121212 !important;
-                color: #ffffff !important;
+                background-color: #121212;
+                color: #ffffff;
             }
             [data-theme="dark"] .header {
                 background-color: #1e1e1e !important;
-                border-bottom: 1px solid #333 !important;
+                border-bottom: 1px solid #333;
             }
             [data-theme="dark"] .reading-card,
             [data-theme="dark"] .feature-card,
@@ -192,46 +231,44 @@ class App {
             [data-theme="dark"] .flashcard-container,
             [data-theme="dark"] .jumble-card,
             [data-theme="dark"] .spelling-card {
-                background-color: #1e1e1e !important;
-                color: #ffffff !important;
-                border-color: #444 !important;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.5) !important;
+                background-color: #1e1e1e;
+                color: #ffffff;
+                border-color: #444;
             }
             [data-theme="dark"] .hero-btn,
             [data-theme="dark"] .quiz-opt-btn,
             [data-theme="dark"] .nav-btn {
-                background-color: #333 !important;
-                color: #fff !important;
-                border-color: #555 !important;
+                background-color: #333;
+                color: #fff;
+                border-color: #555;
             }
             [data-theme="dark"] .hero-btn:hover,
             [data-theme="dark"] .quiz-opt-btn:hover {
-                background-color: #444 !important;
+                background-color: #444;
             }
             [data-theme="dark"] input,
             [data-theme="dark"] textarea {
-                background-color: #2d2d2d !important;
-                color: #fff !important;
-                border-color: #555 !important;
-            }
-            [data-theme="dark"] .flashcard-front,
-            [data-theme="dark"] .flashcard-back {
-                background-color: #2d2d2d !important;
-                color: #fff !important;
-            }
-            [data-theme="dark"] .logout-btn {
-                background-color: #4a4a4a !important;
-                color: #fff !important;
-            }
-            [data-theme="dark"] .welcome-banner {
-                background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+                background-color: #2d2d2d;
+                color: #fff;
+                border-color: #555;
             }
 
+            /* الهيدر */
+            .header {
+                background: #1e40af;
+                color: white;
+                padding: 0.6rem 1rem;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                border-bottom: 2px solid rgba(0,0,0,0.1);
+            }
             .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 10px 20px;
             }
             .logo-container {
                 display: flex;
@@ -242,10 +279,6 @@ class App {
             .logo-container img {
                 height: 40px;
                 width: auto;
-                transition: transform 0.3s;
-            }
-            .logo-container:hover img {
-                transform: scale(1.05);
             }
             .logo-container h2 {
                 margin: 0;
@@ -260,215 +293,77 @@ class App {
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
-
-            .auth-container {
-                text-align: center;
-                margin-bottom: 30px;
+            .nav-menu {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                padding-bottom: 5px;
             }
-            .auth-container img {
-                height: 100px;
-                width: auto;
-                margin-bottom: 15px;
+            .nav-btn {
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: none;
+                background: rgba(255,255,255,0.15);
+                color: white;
+                cursor: pointer;
+                white-space: nowrap;
+                font-weight: 600;
             }
-            .auth-container h1 {
-                font-size: 2.5rem;
-                margin: 0;
+            .nav-btn.active {
+                background: white;
                 color: #1e40af;
             }
-            .auth-container p {
-                font-size: 1.2rem;
-                color: #64748b;
-            }
-            [data-theme="dark"] .auth-container h1 {
-                color: #ffd700;
-            }
-            [data-theme="dark"] .auth-container p {
-                color: #ccc;
-            }
-            .auth-card {
-                max-width: 400px;
-                margin: 0 auto;
+
+            /* الحاوية الرئيسية */
+            .main-content {
+                max-width: 800px;
+                margin: 0.5rem auto;
+                padding: 0.5rem;
             }
 
-            .spelling-input {
+            /* البطاقات */
+            .flashcard-container {
+                perspective: 1000px;
                 width: 100%;
-                padding: 15px;
-                font-size: 1.2rem;
-                border: 2px solid #ddd;
-                border-radius: 8px;
+                height: 350px;
                 margin: 20px 0;
-                direction: ltr;
-                text-align: left;
-            }
-            .spelling-feedback {
-                font-size: 1.2rem;
-                font-weight: bold;
-                margin: 10px 0;
-            }
-            .correct-feedback {
-                color: #10b981;
-            }
-            .wrong-feedback {
-                color: #ef4444;
-            }
-
-            .ad-container {
-                margin: 20px 0;
-                padding: 15px;
-                background: #f0f0f0;
-                border-radius: 10px;
-                text-align: center;
-                border: 1px dashed #ffd700;
-            }
-            .bank-info {
-                background: #e3f2fd;
-                padding: 15px;
-                border-radius: 10px;
-                font-size: 0.9rem;
-                margin: 10px 0;
-            }
-            .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-                animation: fadeIn 0.3s;
-            }
-            .modal-content {
-                background: white;
-                border-radius: 16px;
-                padding: 25px;
-                max-width: 400px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                animation: slideUp 0.3s;
                 position: relative;
             }
-            [data-theme="dark"] .modal-content {
-                background: #1e1e1e;
-                color: white;
+            .flashcard {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
             }
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+            .flashcard.flipped {
+                transform: rotateY(180deg);
             }
-            @keyframes slideUp {
-                from { transform: translateY(20px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
-            }
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            .modal-header h3 {
-                margin: 0;
-            }
-            .close-btn {
-                font-size: 1.5rem;
-                cursor: pointer;
-                padding: 0 5px;
-                color: #999;
-                transition: color 0.2s;
-            }
-            .close-btn:hover {
-                color: #333;
-            }
-            [data-theme="dark"] .close-btn:hover {
-                color: white;
-            }
-            .coin-option {
-                background: #f5f5f5;
-                border-radius: 12px;
-                padding: 15px;
-                margin-bottom: 15px;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-                border: 1px solid #e0e0e0;
-            }
-            [data-theme="dark"] .coin-option {
-                background: #2d2d2d;
-                border-color: #444;
-            }
-            .coin-option:hover {
-                transform: scale(1.02);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-            .profile-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-            .profile-image {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                background: #e0e0e0;
+            .flashcard-front, .flashcard-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                overflow: hidden;
-                border: 3px solid #ffd700;
-                cursor: pointer;
+                background: white;
+                border-radius: 24px;
+                padding: 30px;
+                border: 3px solid #e2e8f0;
             }
-            .profile-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
+            .flashcard-back {
+                transform: rotateY(180deg);
+                background: #f8fafc;
             }
-            .profile-image svg {
-                width: 70px;
-                height: 70px;
-                fill: #aaa;
-            }
-            .profile-info {
-                width: 100%;
-                background: #f9f9f9;
-                border-radius: 12px;
-                padding: 15px;
-                margin: 5px 0;
-            }
-            [data-theme="dark"] .profile-info {
-                background: #2d2d2d;
-            }
-            .info-row {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px 0;
-                border-bottom: 1px solid #eee;
-            }
-            [data-theme="dark"] .info-row {
-                border-bottom-color: #444;
-            }
-            .info-row:last-child {
-                border-bottom: none;
-            }
-            .progress-bar-container {
-                width: 100%;
-                height: 10px;
-                background: #e0e0e0;
-                border-radius: 5px;
-                margin: 10px 0;
-            }
-            .progress-bar-fill {
-                height: 100%;
-                background: linear-gradient(90deg, #ffd700, #ffa500);
-                border-radius: 5px;
-                transition: width 0.3s;
+            .flashcard-front h1, .flashcard-back h1 {
+                font-size: 2.5rem;
+                color: #1e3a8a;
+                text-align: center;
+                word-break: break-word;
             }
 
-            /* أنماط الخيارات في الاختبار */
+            /* خيارات الاختبار */
             .quiz-options {
                 display: flex;
                 flex-direction: column;
@@ -479,7 +374,7 @@ class App {
             }
             .quiz-opt-btn {
                 width: 100%;
-                padding: 18px 20px;
+                padding: 16px 20px;
                 border: 2px solid #e2e8f0;
                 background: white;
                 color: #1e293b;
@@ -487,19 +382,21 @@ class App {
                 cursor: pointer;
                 font-size: 1.2rem;
                 font-weight: 600;
-                transition: none; /* إلغاء أي تأثيرات انتقالية */
                 text-align: center;
                 box-shadow: none !important;
-                margin: 0;
+                outline: none;
                 min-height: 70px;
                 line-height: 1.4;
                 word-break: break-word;
-                outline: none; /* إزالة التحديد الأزرق */
+                transition: none; /* لا تأثيرات */
             }
-            .quiz-opt-btn:focus,
-            .quiz-opt-btn:active {
-                outline: none;
-                box-shadow: none;
+            .quiz-opt-btn:hover:not(:disabled) {
+                border-color: #1e40af;
+                background: #f0f9ff;
+            }
+            .quiz-opt-btn:disabled {
+                opacity: 0.9;
+                cursor: not-allowed;
             }
 
             /* ألوان الإجابات */
@@ -519,7 +416,6 @@ class App {
                 background-color: #6b7280 !important;
                 color: #e5e7eb !important;
                 border-color: #4b5563 !important;
-                opacity: 0.8;
                 box-shadow: none !important;
             }
 
@@ -538,45 +434,120 @@ class App {
                 justify-content: center;
                 cursor: pointer;
                 margin: 10px auto;
-                box-shadow: none !important;
-                outline: none;
-            }
-            .quiz-speak-btn:focus {
+                box-shadow: none;
                 outline: none;
             }
 
-            .result-modal {
+            /* باقي الأنماط (بطاقات الدروس، الملف الشخصي، إلخ) */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            .feature-card {
+                background: white;
+                padding: 2rem;
+                border-radius: 20px;
                 text-align: center;
+                cursor: pointer;
+                border: 2px solid #e2e8f0;
             }
-            .result-icon {
-                font-size: 4rem;
-                margin-bottom: 15px;
+            .feature-card:hover {
+                transform: translateY(-5px);
+                border-color: #1e40af;
             }
-            .result-message {
-                font-size: 1.2rem;
-                margin-bottom: 20px;
+            .feature-card h3 {
+                color: #1e40af;
+                font-size: 1.3rem;
+                direction: ltr;
+                unicode-bidi: plaintext;
             }
-
-            .unlock-choice {
-                display: flex;
-                gap: 15px;
-                flex-direction: column;
-                margin: 20px 0;
+            .hero-btn {
+                background: #1e40af;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 14px;
+                border: none;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                box-shadow: none !important;
             }
-
-            /* أنماط صفحة سجل الاختبارات */
-            .history-list {
-                max-height: 400px;
+            .hero-btn:active {
+                transform: scale(0.98);
+            }
+            .reading-card {
+                background: white;
+                padding: 1.2rem;
+                border-radius: 15px;
+                border: 2px solid #e2e8f0;
+                margin-bottom: 10px;
+                direction: ltr;
+                text-align: left;
+                line-height: 1.5;
+                max-height: 60vh;
                 overflow-y: auto;
-                border: 1px solid #e2e8f0;
+            }
+            .spelling-input {
+                width: 100%;
+                padding: 15px;
+                font-size: 1.2rem;
+                border: 2px solid #ddd;
                 border-radius: 8px;
-                padding: 10px;
+                margin: 20px 0;
+                direction: ltr;
+                text-align: left;
+            }
+            .profile-image {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background: #e0e0e0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                border: 3px solid #ffd700;
+                cursor: pointer;
+            }
+            .profile-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                max-width: 400px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            [data-theme="dark"] .modal-content {
+                background: #1e1e1e;
+                color: white;
             }
             .history-item {
                 border-bottom: 1px solid #e2e8f0;
                 padding: 12px;
                 cursor: pointer;
-                transition: background 0.2s;
             }
             .history-item:hover {
                 background: #f1f5f9;
@@ -584,8 +555,13 @@ class App {
             [data-theme="dark"] .history-item:hover {
                 background: #2d2d2d;
             }
-            .history-item:last-child {
-                border-bottom: none;
+
+            /* تحسينات للشاشات الصغيرة */
+            @media (max-width: 600px) {
+                .flashcard-container { height: 280px; }
+                .flashcard-front h1, .flashcard-back h1 { font-size: 1.8rem; }
+                .quiz-opt-btn { padding: 14px; font-size: 1rem; min-height: 60px; }
+                .quiz-options { gap: 10px; }
             }
         `;
         document.head.appendChild(style);
@@ -614,6 +590,7 @@ class App {
         localStorage.setItem('purchaseRequests', JSON.stringify(this.purchaseRequests));
     }
 
+    // دالة لعرض إعلان (وهمية، ستستدعي موب ادد)
     showAd(type, callback) {
         console.log(`📺 عرض إعلان من نوع ${type}`);
         setTimeout(() => {
@@ -622,6 +599,7 @@ class App {
         alert(`جارٍ عرض الإعلان...`);
     }
 
+    // مشاهدة 3 إعلانات لكسب 50 لؤلؤة
     watchAdsForCoins() {
         if (this.adWatchedCount >= 3) {
             this.showCustomModal('info', '⚠️', 'لقد استنفدت حصتك اليومية من مشاهدة الإعلانات. حاول غداً!');
@@ -642,6 +620,7 @@ class App {
         });
     }
 
+    // طلب شراء 300 لؤلؤة
     requestPurchase() {
         this.showPurchaseForm = true;
         this.showCoinModal = true;
@@ -671,12 +650,14 @@ class App {
         this.render();
     }
 
+    // إظهار/إخفاء نافذة العملات
     toggleCoinModal() {
         this.showCoinModal = !this.showCoinModal;
         this.showPurchaseForm = false;
         this.render();
     }
 
+    // إظهار نافذة منبثقة جميلة
     showCustomModal(type, icon, message) {
         const modalDiv = document.createElement('div');
         modalDiv.className = 'modal-overlay';
@@ -693,6 +674,7 @@ class App {
         document.body.appendChild(modalDiv);
     }
 
+    // دالة جديدة لفتح درس بالعملات (بدلاً من الاختبار)
     unlockLessonWithCoins(lessonId) {
         if (this.userCoins >= 100) {
             if (confirm('هل تريد فتح هذا الدرس باستخدام 100 لؤلؤة؟')) {
@@ -712,20 +694,24 @@ class App {
         }
     }
 
+    // تعديل فتح الدرس: إما اختبار أو دفع
     openLesson(lessonId) {
         const list = window.lessonsList[this.selectedLevel] || [];
         const isUnlocked = this.unlockedLessons.includes(String(lessonId)) || (list[0] && list[0].id == lessonId) || this.selectedLevel === 'custom_list';
         if (isUnlocked) {
+            // الدرس مفتوح بالفعل
             this.selectedLessonId = lessonId;
             this.currentPage = 'reading';
             this.isUnlockTest = false;
         } else {
+            // الدرس مقفل، نعرض خيارين
             this.tempLessonToUnlock = lessonId;
             this.currentPage = 'unlock_choice';
         }
         this.render();
     }
 
+    // إضافة اختبار إلى التاريخ
     addTestToHistory(testType, score, details) {
         this.userProfile.testsHistory.push({
             type: testType,
@@ -736,6 +722,7 @@ class App {
         localStorage.setItem('userProfile', JSON.stringify(this.userProfile));
     }
 
+    // صفحة الملف الشخصي
     showProfile() {
         this.currentPage = 'profile';
         this.render();
@@ -757,6 +744,7 @@ class App {
         }
     }
 
+    // تحديث بيانات الملف الشخصي
     updateProfile() {
         const newName = document.getElementById('profileName')?.value;
         const newAge = document.getElementById('profileAge')?.value;
@@ -782,16 +770,18 @@ class App {
         }
     }
 
+    // حساب مستوى اللغة (A1, A2, ...) - يعيد آخر مستوى تم الحصول عليه من اختبار المستوى
     getEnglishLevel() {
-        // يعيد آخر مستوى تم الحصول عليه من اختبار المستوى
         return this.userProfile.level || 'A1';
     }
 
+    // ================== دوال إعادة ترتيب الجمل ==================
     prepareJumble() {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
 
         const termWords = lesson.terms.map(t => t.english.toLowerCase());
+
         const sentences = lesson.content.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
 
         const usefulSentences = sentences.filter(s => {
@@ -927,6 +917,7 @@ class App {
         this.render();
     }
 
+    // ================== دوال اختبار الاستماع ==================
     prepareListeningQuiz() {
         if (this.listeningTimer) {
             clearTimeout(this.listeningTimer);
@@ -974,7 +965,6 @@ class App {
         const allOptions = document.querySelectorAll('.listening-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
-            // استخدام نفس نظام الألوان الموحد
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
             if (btn.dataset.param === this.listeningCurrent.arabic) {
                 btn.classList.add('correct-answer');
@@ -1013,6 +1003,7 @@ class App {
         }
     }
 
+    // دالة لفتح اختبار الاستماع بالعملات (مرة واحدة لكل درس)
     unlockListening(lessonId) {
         if (this.listeningUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
@@ -1032,6 +1023,7 @@ class App {
         }
     }
 
+    // دالة لفتح الترتيب بالعملات
     unlockJumble(lessonId) {
         if (this.jumbleUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
@@ -1051,6 +1043,7 @@ class App {
         }
     }
 
+    // دالة لفتح الكتابة بالعملات
     unlockSpelling(lessonId) {
         if (this.spellingUnlocked[lessonId]) return true;
         if (this.userCoins >= 50) {
@@ -1070,6 +1063,7 @@ class App {
         }
     }
 
+    // ================== دوال تمرين الكتابة (Spelling) ==================
     prepareSpelling() {
         const lesson = window.lessonsData[this.selectedLessonId];
         if (!lesson) return;
@@ -1130,6 +1124,7 @@ class App {
         this.spellingUserAnswer = e.target.value;
     }
 
+    // ================== دوال الاختبار الشامل للمستوى ==================
     prepareLevelTest(levelParam) {
         let lessonIds = [];
         let levelName = '';
@@ -1198,6 +1193,7 @@ class App {
         this.render();
     }
 
+    // دالة مساعدة لجمع كل كلمات المستوى (للاستخدام في توليد الخيارات)
     getAllLevelWords() {
         if (!this.levelTestLevel) return [];
         const lessonIds = this.levelTestLessons || [];
@@ -1207,10 +1203,13 @@ class App {
             if (lesson && lesson.terms) {
                 allWords = allWords.concat(lesson.terms);
             }
+            // إضافة الكلمات المضافة من المستخدم
             const added = this.userVocabulary.filter(v => v.lessonId == id);
             allWords = allWords.concat(added);
         });
+        // إزالة الكلمات المخفية والمتقنة
         allWords = allWords.filter(t => !this.hiddenFromCards.includes(String(t.id)) && !this.masteredWords.includes(String(t.id)));
+        // إزالة التكرار (حسب id)
         const unique = {};
         allWords.forEach(w => unique[w.id] = w);
         return Object.values(unique);
@@ -1236,9 +1235,11 @@ class App {
 
         this.levelTestCurrentQuestion = bank.shift();
 
+        // جمع الخيارات الخاطئة
         let wrongOptions = [];
 
-        const currentLessonWords = [...bank];
+        // 1. من بنك الدرس الحالي (بعد إزالة السؤال الحالي)
+        const currentLessonWords = [...bank]; // نسخة من البنك المتبقي
         this.shuffleArray(currentLessonWords);
         for (let i = 0; i < 3; i++) {
             if (currentLessonWords.length > i) {
@@ -1248,6 +1249,7 @@ class App {
             }
         }
 
+        // 2. إذا لم يكتمل العدد، نستخدم كلمات من جميع دروس المستوى (عدا السؤال الحالي)
         if (wrongOptions.length < 3) {
             const allLevelWords = this.getAllLevelWords().filter(w => w.id !== this.levelTestCurrentQuestion.id);
             this.shuffleArray(allLevelWords);
@@ -1260,10 +1262,12 @@ class App {
             }
         }
 
+        // 3. إذا ما زال العدد ناقصاً، نضيف '???'
         while (wrongOptions.length < 3) {
             wrongOptions.push('???');
         }
 
+        // تكوين الخيارات النهائية (صحيح + 3 خاطئة) وخلطها
         const options = [this.levelTestCurrentQuestion.arabic, ...wrongOptions];
         this.shuffleArray(options);
         this.levelTestCurrentOptions = options;
@@ -1277,10 +1281,12 @@ class App {
 
         this.playTone(isCorrect ? 'correct' : 'error');
 
+        // تلوين الأزرار باستخدام كلاسات
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
+
             if (btn.dataset.correct === correct) {
                 btn.classList.add('correct-answer');
             } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
@@ -1306,10 +1312,11 @@ class App {
 
         setTimeout(() => {
             if (this.levelTestCurrentCorrect >= this.levelTestRequiredCorrect) {
+                // اجتاز الدرس
                 if (!this.unlockedLessons.includes(this.levelTestCurrentLessonId)) {
                     this.unlockedLessons.push(this.levelTestCurrentLessonId);
                     this.levelTestUnlockedCount++;
-                    this.userCoins += 20;
+                    this.userCoins += 20; // مكافأة لكل درس يُفتح
                     this.levelTestCoinsEarned += 20;
                     this.levelTestResults.push({
                         lessonId: this.levelTestCurrentLessonId,
@@ -1319,6 +1326,7 @@ class App {
                 }
                 this.moveToNextLesson();
             } else {
+                // لم يجتز الدرس بعد
                 if (this.levelTestQuestionsBank[this.levelTestCurrentLessonId].length === 0) {
                     const lesson = window.lessonsData[this.levelTestCurrentLessonId];
                     if (lesson && lesson.terms) {
@@ -1380,6 +1388,7 @@ class App {
             }
         }
 
+        // إضافة اللؤلؤ المكتسب
         if (this.levelTestCoinsEarned > 0) {
             message += `\nحصلت على ${this.levelTestCoinsEarned} لؤلؤة إضافية.`;
         }
@@ -1393,6 +1402,7 @@ class App {
         });
     }
 
+    // ================== دوال أخرى ==================
     isLessonCompleted(lessonId) {
         const lesson = window.lessonsData[lessonId];
         if (!lesson) return false;
@@ -1411,6 +1421,7 @@ class App {
         }
     }
 
+    // ================== دوال الصوت والاختبارات العادية ==================
     speak(text) {
         if (!text) return;
         window.speechSynthesis.cancel();
@@ -1697,6 +1708,7 @@ class App {
         }, 1100);
     }
 
+    // ================== الأحداث العامة ==================
     setupGlobalEvents() {
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-action]');
@@ -1770,6 +1782,7 @@ class App {
                     break;
 
                 case 'unlockWithTest':
+                    // فتح الدرس بالاختبار (الطريقة القديمة)
                     const list = window.lessonsList[this.selectedLevel] || [];
                     const curIdx = list.findIndex(l => l.id == param);
                     const prevId = list[curIdx - 1]?.id;
@@ -1782,6 +1795,7 @@ class App {
                     break;
 
                 case 'unlockWithCoins':
+                    // فتح الدرس بالعملات
                     this.unlockLessonWithCoins(param);
                     break;
 
@@ -1966,6 +1980,7 @@ class App {
                     this.finishLevelTestEarly();
                     break;
 
+                // أحداث جديدة للعملات والإعلانات
                 case 'watchAds':
                     this.watchAdsForCoins();
                     break;
@@ -1979,6 +1994,7 @@ class App {
                     this.submitPurchaseRequest();
                     break;
 
+                // أحداث الملف الشخصي
                 case 'updateProfile':
                     this.updateProfile();
                     break;
