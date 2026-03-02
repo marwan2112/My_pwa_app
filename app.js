@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -191,6 +192,7 @@ class App {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
+            /* أنماط الوضع الليلي */
             [data-theme="dark"] body {
                 background-color: #121212 !important;
                 color: #ffffff !important;
@@ -487,51 +489,50 @@ class App {
                 transition: width 0.3s;
             }
             
-            /* أنماط الخيارات في الاختبار */
+            /* أنماط الخيارات في الاختبار (معدلة) */
             .quiz-options {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                margin: 20px auto;
-                max-width: 500px;
-                width: 100%;
-                height: auto;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 15px !important;
+                max-width: 500px !important;
+                width: 100% !important;
+                margin: 20px auto !important;
+                height: auto !important;
             }
             .quiz-opt-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                padding: 18px 20px;
-                font-size: 1.2rem;
-                font-weight: 500;
-                border: 2px solid #ccc;
-                border-radius: 12px;
-                background-color: #f8f9fa;
-                color: #333;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                min-height: 70px;
-                white-space: normal;
-                word-wrap: break-word;
-                box-sizing: border-box;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                text-align: center;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                padding: 18px 20px !important;
+                font-size: 1.2rem !important;
+                border: 2px solid #ccc !important;
+                border-radius: 12px !important;
+                background-color: #f8f9fa !important;
+                color: #333 !important;
+                cursor: pointer !important;
+                transition: all 0.2s ease !important;
+                min-height: 70px !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+                margin: 0 !important;
             }
             [data-theme="dark"] .quiz-opt-btn {
-                background-color: #2d2d2d;
-                color: #fff;
-                border-color: #555;
+                background-color: #2d2d2d !important;
+                color: #fff !important;
+                border-color: #555 !important;
             }
             .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #e9ecef;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                background-color: #e9ecef !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
             }
             [data-theme="dark"] .quiz-opt-btn:hover:not(:disabled) {
-                background-color: #3a3a3a;
+                background-color: #3a3a3a !important;
             }
-            /* أنماط تلوين الإجابات */
+            /* ألوان الإجابات */
             .correct-answer {
                 background-color: #10b981 !important;
                 color: white !important;
@@ -551,23 +552,23 @@ class App {
                 opacity: 0.8;
             }
             .quiz-speak-btn {
-                font-size: 2rem;
-                padding: 15px;
-                background: #6366f1;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 70px;
-                height: 70px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                margin: 10px auto;
-                transition: 0.2s;
+                font-size: 2rem !important;
+                padding: 15px !important;
+                background: #6366f1 !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 70px !important;
+                height: 70px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer !important;
+                margin: 10px auto !important;
+                transition: 0.2s !important;
             }
             .quiz-speak-btn:hover {
-                transform: scale(1.1);
+                transform: scale(1.1) !important;
             }
             
             /* أنماط النوافذ المنبثقة للنتائج */
