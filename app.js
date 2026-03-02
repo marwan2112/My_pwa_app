@@ -1,3 +1,4 @@
+```javascript
 class App {
     constructor() {
         this.currentAudio = null; // كائن الصوت الحالي
@@ -149,8 +150,8 @@ class App {
     }
 
     init() {
-        // إضافة الأنماط الأساسية (تحل محل الحاجة إلى style.css منفصل)
-        this.injectCoreStyles();
+        // إضافة CSS للوضع الليلي والأنماط الأخرى (بدون أنماط الخيارات)
+        this.addThemeStyles();
 
         document.documentElement.setAttribute('data-theme', this.theme);
 
@@ -190,39 +191,20 @@ class App {
         this.render();
     }
 
-    // ================== دالة حقن الأنماط الأساسية (بدون تعارض) ==================
-    injectCoreStyles() {
-        const styleId = 'app-core-styles';
+    addThemeStyles() {
+        const styleId = 'theme-dynamic-styles';
         if (document.getElementById(styleId)) return;
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            /* ===== أنماط أساسية (تحل محل style.css) ===== */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Cairo', sans-serif;
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            body {
-                background: #f1f5f9;
-                color: #1e293b;
-                direction: rtl;
-                line-height: 1.6;
-                overflow-x: hidden;
-                transition: background 0.3s, color 0.3s;
-            }
-
-            /* الوضع الليلي */
+            /* أنماط الوضع الليلي */
             [data-theme="dark"] body {
-                background-color: #121212;
-                color: #ffffff;
+                background-color: #121212 !important;
+                color: #ffffff !important;
             }
             [data-theme="dark"] .header {
                 background-color: #1e1e1e !important;
-                border-bottom: 1px solid #333;
+                border-bottom: 1px solid #333 !important;
             }
             [data-theme="dark"] .reading-card,
             [data-theme="dark"] .feature-card,
@@ -230,44 +212,47 @@ class App {
             [data-theme="dark"] .flashcard-container,
             [data-theme="dark"] .jumble-card,
             [data-theme="dark"] .spelling-card {
-                background-color: #1e1e1e;
-                color: #ffffff;
-                border-color: #444;
+                background-color: #1e1e1e !important;
+                color: #ffffff !important;
+                border-color: #444 !important;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.5) !important;
             }
             [data-theme="dark"] .hero-btn,
             [data-theme="dark"] .quiz-opt-btn,
             [data-theme="dark"] .nav-btn {
-                background-color: #333;
-                color: #fff;
-                border-color: #555;
+                background-color: #333 !important;
+                color: #fff !important;
+                border-color: #555 !important;
             }
             [data-theme="dark"] .hero-btn:hover,
             [data-theme="dark"] .quiz-opt-btn:hover {
-                background-color: #444;
+                background-color: #444 !important;
             }
             [data-theme="dark"] input,
             [data-theme="dark"] textarea {
-                background-color: #2d2d2d;
-                color: #fff;
-                border-color: #555;
+                background-color: #2d2d2d !important;
+                color: #fff !important;
+                border-color: #555 !important;
+            }
+            [data-theme="dark"] .flashcard-front,
+            [data-theme="dark"] .flashcard-back {
+                background-color: #2d2d2d !important;
+                color: #fff !important;
+            }
+            [data-theme="dark"] .logout-btn {
+                background-color: #4a4a4a !important;
+                color: #fff !important;
+            }
+            [data-theme="dark"] .welcome-banner {
+                background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             }
 
-            /* الهيدر */
-            .header {
-                background: #1e40af;
-                color: white;
-                padding: 0.6rem 1rem;
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-                border-bottom: 2px solid rgba(0,0,0,0.1);
-            }
+            /* أنماط الهيدر واللوجو */
             .header-content {
-                max-width: 1200px;
-                margin: 0 auto;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                padding: 10px 20px;
             }
             .logo-container {
                 display: flex;
@@ -278,6 +263,10 @@ class App {
             .logo-container img {
                 height: 40px;
                 width: auto;
+                transition: transform 0.3s;
+            }
+            .logo-container:hover img {
+                transform: scale(1.05);
             }
             .logo-container h2 {
                 margin: 0;
@@ -292,205 +281,38 @@ class App {
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
-            .nav-menu {
-                display: flex;
-                gap: 8px;
-                overflow-x: auto;
-                padding-bottom: 5px;
-            }
-            .nav-btn {
-                padding: 6px 12px;
-                border-radius: 20px;
-                border: none;
-                background: rgba(255,255,255,0.15);
-                color: white;
-                cursor: pointer;
-                white-space: nowrap;
-                font-weight: 600;
-            }
-            .nav-btn.active {
-                background: white;
-                color: #1e40af;
-            }
 
-            /* الحاوية الرئيسية */
-            .main-content {
-                max-width: 800px;
-                margin: 0.5rem auto;
-                padding: 0.5rem;
+            /* أنماط صفحة Auth */
+            .auth-container {
+                text-align: center;
+                margin-bottom: 30px;
             }
-
-            /* البطاقات */
-            .flashcard-container {
-                perspective: 1000px;
-                width: 100%;
-                height: 350px;
-                margin: 20px 0;
-                position: relative;
+            .auth-container img {
+                height: 100px;
+                width: auto;
+                margin-bottom: 15px;
             }
-            .flashcard {
-                position: relative;
-                width: 100%;
-                height: 100%;
-                transition: transform 0.6s;
-                transform-style: preserve-3d;
-            }
-            .flashcard.flipped {
-                transform: rotateY(180deg);
-            }
-            .flashcard-front, .flashcard-back {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                backface-visibility: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: white;
-                border-radius: 24px;
-                padding: 30px;
-                border: 3px solid #e2e8f0;
-            }
-            .flashcard-back {
-                transform: rotateY(180deg);
-                background: #f8fafc;
-            }
-            .flashcard-front h1, .flashcard-back h1 {
+            .auth-container h1 {
                 font-size: 2.5rem;
-                color: #1e3a8a;
-                text-align: center;
-                word-break: break-word;
-            }
-
-            /* خيارات الاختبار */
-            .quiz-options {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-                max-width: 500px;
-                width: 100%;
-                margin: 20px auto;
-            }
-            .quiz-opt-btn {
-                width: 100%;
-                padding: 16px 20px;
-                border: 2px solid #e2e8f0;
-                background: white;
-                color: #1e293b;
-                border-radius: 16px;
-                cursor: pointer;
-                font-size: 1.2rem;
-                font-weight: 600;
-                text-align: center;
-                box-shadow: none !important;
-                outline: none;
-                min-height: 70px;
-                line-height: 1.4;
-                word-break: break-word;
-                transition: none; /* لا تأثيرات */
-            }
-            .quiz-opt-btn:hover:not(:disabled) {
-                border-color: #1e40af;
-                background: #f0f9ff;
-            }
-            .quiz-opt-btn:disabled {
-                opacity: 0.9;
-                cursor: not-allowed;
-            }
-
-            /* ألوان الإجابات */
-            .correct-answer {
-                background-color: #10b981 !important;
-                color: white !important;
-                border-color: #059669 !important;
-                box-shadow: none !important;
-            }
-            .wrong-answer {
-                background-color: #ef4444 !important;
-                color: white !important;
-                border-color: #b91c1c !important;
-                box-shadow: none !important;
-            }
-            .other-option {
-                background-color: #6b7280 !important;
-                color: #e5e7eb !important;
-                border-color: #4b5563 !important;
-                box-shadow: none !important;
-            }
-
-            /* زر النطق */
-            .quiz-speak-btn {
-                font-size: 2rem;
-                padding: 15px;
-                background: #6366f1;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 70px;
-                height: 70px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                margin: 10px auto;
-                box-shadow: none;
-                outline: none;
-            }
-
-            /* باقي الأنماط (بطاقات الدروس، الملف الشخصي، إلخ) */
-            .features-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
-            }
-            .feature-card {
-                background: white;
-                padding: 2rem;
-                border-radius: 20px;
-                text-align: center;
-                cursor: pointer;
-                border: 2px solid #e2e8f0;
-            }
-            .feature-card:hover {
-                transform: translateY(-5px);
-                border-color: #1e40af;
-            }
-            .feature-card h3 {
+                margin: 0;
                 color: #1e40af;
-                font-size: 1.3rem;
-                direction: ltr;
-                unicode-bidi: plaintext;
             }
-            .hero-btn {
-                background: #1e40af;
-                color: white;
-                padding: 12px 24px;
-                border-radius: 14px;
-                border: none;
-                cursor: pointer;
-                font-weight: 700;
-                font-size: 1rem;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                box-shadow: none !important;
+            .auth-container p {
+                font-size: 1.2rem;
+                color: #64748b;
             }
-            .hero-btn:active {
-                transform: scale(0.98);
+            [data-theme="dark"] .auth-container h1 {
+                color: #ffd700;
             }
-            .reading-card {
-                background: white;
-                padding: 1.2rem;
-                border-radius: 15px;
-                border: 2px solid #e2e8f0;
-                margin-bottom: 10px;
-                direction: ltr;
-                text-align: left;
-                line-height: 1.5;
-                max-height: 60vh;
-                overflow-y: auto;
+            [data-theme="dark"] .auth-container p {
+                color: #ccc;
             }
+            .auth-card {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            /* أنماط تمرين الكتابة */
             .spelling-input {
                 width: 100%;
                 padding: 15px;
@@ -500,6 +322,120 @@ class App {
                 margin: 20px 0;
                 direction: ltr;
                 text-align: left;
+            }
+            .spelling-feedback {
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+            .correct-feedback {
+                color: #10b981;
+            }
+            .wrong-feedback {
+                color: #ef4444;
+            }
+
+            /* أنماط الإعلانات والشراء */
+            .ad-container {
+                margin: 20px 0;
+                padding: 15px;
+                background: #f0f0f0;
+                border-radius: 10px;
+                text-align: center;
+                border: 1px dashed #ffd700;
+            }
+            .bank-info {
+                background: #e3f2fd;
+                padding: 15px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                margin: 10px 0;
+            }
+
+            /* أنماط النافذة المنبثقة للعملات */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                max-width: 400px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                animation: slideUp 0.3s;
+                position: relative;
+            }
+            [data-theme="dark"] .modal-content {
+                background: #1e1e1e;
+                color: white;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .modal-header h3 {
+                margin: 0;
+            }
+            .close-btn {
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0 5px;
+                color: #999;
+                transition: color 0.2s;
+            }
+            .close-btn:hover {
+                color: #333;
+            }
+            [data-theme="dark"] .close-btn:hover {
+                color: white;
+            }
+            .coin-option {
+                background: #f5f5f5;
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                border: 1px solid #e0e0e0;
+            }
+            [data-theme="dark"] .coin-option {
+                background: #2d2d2d;
+                border-color: #444;
+            }
+            .coin-option:hover {
+                transform: scale(1.02);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+            /* أنماط صفحة الملف الشخصي */
+            .profile-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
             }
             .profile-image {
                 width: 120px;
@@ -518,49 +454,66 @@ class App {
                 height: 100%;
                 object-fit: cover;
             }
-            .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
+            .profile-image svg {
+                width: 70px;
+                height: 70px;
+                fill: #aaa;
             }
-            .modal-content {
-                background: white;
-                border-radius: 16px;
-                padding: 25px;
-                max-width: 400px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
+            .profile-info {
+                width: 100%;
+                background: #f9f9f9;
+                border-radius: 12px;
+                padding: 15px;
+                margin: 5px 0;
             }
-            [data-theme="dark"] .modal-content {
-                background: #1e1e1e;
-                color: white;
-            }
-            .history-item {
-                border-bottom: 1px solid #e2e8f0;
-                padding: 12px;
-                cursor: pointer;
-            }
-            .history-item:hover {
-                background: #f1f5f9;
-            }
-            [data-theme="dark"] .history-item:hover {
+            [data-theme="dark"] .profile-info {
                 background: #2d2d2d;
             }
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+            [data-theme="dark"] .info-row {
+                border-bottom-color: #444;
+            }
+            .info-row:last-child {
+                border-bottom: none;
+            }
+            .progress-bar-container {
+                width: 100%;
+                height: 10px;
+                background: #e0e0e0;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #ffd700, #ffa500);
+                border-radius: 5px;
+                transition: width 0.3s;
+            }
 
-            /* تحسينات للشاشات الصغيرة */
-            @media (max-width: 600px) {
-                .flashcard-container { height: 280px; }
-                .flashcard-front h1, .flashcard-back h1 { font-size: 1.8rem; }
-                .quiz-opt-btn { padding: 14px; font-size: 1rem; min-height: 60px; }
-                .quiz-options { gap: 10px; }
+            /* أنماط النوافذ المنبثقة للنتائج */
+            .result-modal {
+                text-align: center;
+            }
+            .result-icon {
+                font-size: 4rem;
+                margin-bottom: 15px;
+            }
+            .result-message {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+            }
+
+            /* أنماط خيار فتح الدرس */
+            .unlock-choice {
+                display: flex;
+                gap: 15px;
+                flex-direction: column;
+                margin: 20px 0;
             }
         `;
         document.head.appendChild(style);
@@ -577,6 +530,7 @@ class App {
         localStorage.setItem('lastTestedLesson', JSON.stringify(this.lastTestedLesson));
         localStorage.setItem('userProfile', JSON.stringify(this.userProfile));
 
+        // حفظ حالة فتح التمارين
         const unlockedExercises = {
             jumble: this.jumbleUnlocked,
             listening: this.listeningUnlocked,
@@ -584,6 +538,7 @@ class App {
         };
         localStorage.setItem('unlockedExercises', JSON.stringify(unlockedExercises));
 
+        // حفظ عدادات الإعلانات وطلبات الشراء
         localStorage.setItem('newWordsAddedCount', JSON.stringify(this.newWordsAddedCount));
         localStorage.setItem('adWatchedCount', JSON.stringify(this.adWatchedCount));
         localStorage.setItem('purchaseRequests', JSON.stringify(this.purchaseRequests));
