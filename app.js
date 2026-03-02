@@ -610,7 +610,7 @@ class App {
         this.render();
     }
 
-    // إظهار نافذة منبثقة جميلة
+    // إظهار نافذة منبثقة جميلة (معدلة لدعم HTML)
     showCustomModal(type, icon, message) {
         const modalDiv = document.createElement('div');
         modalDiv.className = 'modal-overlay';
@@ -1226,23 +1226,26 @@ class App {
         this.levelTestCurrentOptions = options;
     }
 
+    // دالة handleLevelTestAnswer المعدلة (باستخدام trim)
     handleLevelTestAnswer(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
 
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        const selectedTrim = selected.trim().toLowerCase();
+        const correctTrim = correct.trim().toLowerCase();
+        const isCorrect = (selectedTrim === correctTrim);
 
         this.playTone(isCorrect ? 'correct' : 'error');
 
-        // تلوين الأزرار باستخدام كلاسات
         const allOptions = document.querySelectorAll('.quiz-opt-btn');
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-
-            if (btn.dataset.correct === correct) {
+            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
+            const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
+            if (btnCorrect === correctTrim) {
                 btn.classList.add('correct-answer');
-            } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
+            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
                 btn.classList.add('wrong-answer');
             } else {
                 btn.classList.add('other-option');
@@ -1533,11 +1536,14 @@ class App {
         return selected;
     }
 
+    // دالة handlePlacement المعدلة (باستخدام trim)
     handlePlacement(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
 
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        const selectedTrim = selected.trim().toLowerCase();
+        const correctTrim = correct.trim().toLowerCase();
+        const isCorrect = (selectedTrim === correctTrim);
 
         this.playTone(isCorrect ? 'correct' : 'error');
         if (isCorrect) this.placementScore++;
@@ -1546,9 +1552,11 @@ class App {
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-            if (btn.dataset.correct === correct) {
+            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
+            const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
+            if (btnCorrect === correctTrim) {
                 btn.classList.add('correct-answer');
-            } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
+            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
                 btn.classList.add('wrong-answer');
             } else {
                 btn.classList.add('other-option');
@@ -1629,10 +1637,13 @@ class App {
         this.quizOptions = [currentQ.arabic, ...wrongs].sort(() => 0.5 - Math.random());
     }
 
+    // دالة handleAnswer المعدلة (باستخدام trim)
     handleAnswer(selected, correct, btnElement) {
         if (this.isWaiting) return;
         this.isWaiting = true;
-        const isCorrect = (selected.trim().toLowerCase() === correct.trim().toLowerCase());
+        const selectedTrim = selected.trim().toLowerCase();
+        const correctTrim = correct.trim().toLowerCase();
+        const isCorrect = (selectedTrim === correctTrim);
         if (isCorrect) {
             this.quizScore++;
             this.playTone('correct');
@@ -1644,9 +1655,11 @@ class App {
         allOptions.forEach(btn => {
             btn.disabled = true;
             btn.classList.remove('correct-answer', 'wrong-answer', 'other-option');
-            if (btn.dataset.correct === correct) {
+            const btnCorrect = btn.dataset.correct ? btn.dataset.correct.trim().toLowerCase() : '';
+            const btnParam = btn.dataset.param ? btn.dataset.param.trim().toLowerCase() : '';
+            if (btnCorrect === correctTrim) {
                 btn.classList.add('correct-answer');
-            } else if (btn.dataset.param === selected && btn.dataset.correct !== correct) {
+            } else if (btnParam === selectedTrim && btnCorrect !== correctTrim) {
                 btn.classList.add('wrong-answer');
             } else {
                 btn.classList.add('other-option');
@@ -2057,6 +2070,46 @@ class App {
         }
     }
 
+    // دالة مساعدة لعرض الأوسمة في الصفحة الرئيسية
+    getBadgesDisplay() {
+        const earnedBadges = this.userStats.badges || [];
+        if (earnedBadges.length > 0) {
+            return `<div class="badges-container" onclick="appInstance.showBadgesModal()">
+                ${earnedBadges.map(b => `<span class="badge-item">${b}</span>`).join('')}
+            </div>`;
+        } else {
+            return `<div class="badges-container" onclick="appInstance.showBadgesModal()" style="justify-content:center; color:#aaa; cursor:pointer;">
+                <span>🏅 اضغط لعرض الأوسمة</span>
+            </div>`;
+        }
+    }
+
+    // دالة عرض الأوسمة في نافذة منبثقة
+    showBadgesModal() {
+        const allBadges = [
+            { icon: '🥉', name: 'برونزي', condition: '10 دروس و100 كلمة' },
+            { icon: '🥈', name: 'فضي', condition: '20 درس و500 كلمة' },
+            { icon: '🥇', name: 'ذهبي', condition: '50 درس و1500 كلمة' },
+            { icon: '👑', name: 'ماسي', condition: '100 درس و3000 كلمة' }
+        ];
+        const earnedBadges = this.userStats.badges || [];
+        
+        let badgesHtml = '<div class="badges-grid">';
+        allBadges.forEach(badge => {
+            const isEarned = earnedBadges.includes(badge.icon);
+            badgesHtml += `
+                <div class="badge-modal-item ${isEarned ? 'earned' : ''}">
+                    <span class="badge-icon">${badge.icon}</span>
+                    <span class="badge-name">${badge.name}</span>
+                    <small>${badge.condition}</small>
+                </div>
+            `;
+        });
+        badgesHtml += '</div>';
+        
+        this.showCustomModal('info', '🏅 الأوسمة', badgesHtml);
+    }
+
     render() {
         const app = document.getElementById('app');
         if (!app) return;
@@ -2193,9 +2246,9 @@ class App {
                         </div>
                     </div>
 
-                    <div style="margin-top: 15px; display: flex; gap: 12px; font-size: 1.6rem; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 12px;">
-                        ${this.userStats.badges.length > 0 ? this.userStats.badges.join(' ') : '<span style="font-size:0.8rem; opacity:0.8;">اجمع 10 كلمات للحصول على وسامك الأول! 🏅</span>'}
-                    </div>
+                    <!-- عرض الأوسمة -->
+                    ${this.getBadgesDisplay()}
+
                     <div style="margin-top: 10px; font-size:0.9rem;">التاج الحالي: ${this.userStats.tier}</div>
                     <div style="margin-top: 5px; font-size:0.9rem;">الدروس المفتوحة: ${totalLessons} | الكلمات المتقنة: ${totalMastered}</div>
                 </div>
@@ -2496,8 +2549,10 @@ class App {
             const q = this.quizQuestions[this.quizIndex];
             return `<div class="reading-card quiz-box">
                 <div class="quiz-info">السؤال ${this.quizIndex + 1}/${this.quizQuestions.length}</div>
-                <h2>${q.english}</h2>
-                <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}">🔊</button>
+                <div class="quiz-question-row">
+                    <h2>${q.english}</h2>
+                    <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}">🔊</button>
+                </div>
                 <div class="quiz-options">
                     ${this.quizOptions.map(opt => `<button class="quiz-opt-btn" data-action="ansQ" data-param="${opt}" data-correct="${q.arabic}">${opt}</button>`).join('')}
                 </div>
@@ -2605,8 +2660,8 @@ class App {
                     </span>
                     <button class="hero-btn" data-action="finishLevelTest" style="background:#ef4444; padding:5px 15px;">⏹️ إنهاء الاختبار</button>
                 </div>
-                <h2 style="margin-bottom:30px; text-align:center; font-size:2rem;">${q.english}</h2>
-                <div style="text-align: center; margin: 10px 0;">
+                <div class="quiz-question-row">
+                    <h2>${q.english}</h2>
                     <button class="quiz-speak-btn" data-action="speak" data-param="${q.english}">🔊</button>
                 </div>
                 <div class="quiz-options">
