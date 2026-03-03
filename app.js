@@ -1921,42 +1921,43 @@ class App {
                     const cardShuffle = document.querySelector('.flashcard-container');
                     if (cardShuffle) {
                         cardShuffle.classList.add('shuffle-anim-card');
-                        setTimeout(() => {
-                            if (param === 'all' && this.selectedLessonId) {
-                                const lessonId = this.selectedLessonId;
-                                const lesson = window.lessonsData[lessonId];
-                                
-                                // جمع معرفات كلمات الدرس الأصلية
-                                const originalIds = lesson && lesson.terms ? lesson.terms.map(t => String(t.id)) : [];
-                                console.log('Original IDs:', originalIds);
-                                
-                                // جمع معرفات كلمات المستخدم لهذا الدرس
-                                const userWordIds = this.userVocabulary
-                                    .filter(v => v.lessonId == lessonId)
-                                    .map(v => String(v.id));
-                                console.log('User word IDs:', userWordIds);
-                                
-                                // دمج المعرفات
-                                const allIds = [...originalIds, ...userWordIds];
-                                console.log('All IDs to remove from masteredWords:', allIds);
-                                
-                                if (allIds.length > 0) {
-                                    // إزالة هذه المعرفات من masteredWords
-                                    const beforeLength = this.masteredWords.length;
-                                    this.masteredWords = this.masteredWords.filter(id => !allIds.includes(id));
-                                    console.log(`✅ Removed ${beforeLength - this.masteredWords.length} words from masteredWords. New masteredWords:`, this.masteredWords);
-                                } else {
-                                    console.log('⚠️ No IDs found for this lesson.');
-                                }
-                                
-                                this.currentCardIndex = 0;
-                                this.saveData();
-                                console.log('✅ Data saved. Rendering...');
-                                this.render();
-                            }
-                        }, 600);
-                        this.showAd('image');
                     }
+                    const delay = cardShuffle ? 600 : 0;
+                    setTimeout(() => {
+                        if (param === 'all' && this.selectedLessonId) {
+                            const lessonId = this.selectedLessonId;
+                            const lesson = window.lessonsData[lessonId];
+                            
+                            // جمع معرفات كلمات الدرس الأصلية
+                            const originalIds = lesson && lesson.terms ? lesson.terms.map(t => String(t.id)) : [];
+                            console.log('Original IDs:', originalIds);
+                            
+                            // جمع معرفات كلمات المستخدم لهذا الدرس
+                            const userWordIds = this.userVocabulary
+                                .filter(v => v.lessonId == lessonId)
+                                .map(v => String(v.id));
+                            console.log('User word IDs:', userWordIds);
+                            
+                            // دمج المعرفات
+                            const allIds = [...originalIds, ...userWordIds];
+                            console.log('All IDs to remove from masteredWords:', allIds);
+                            
+                            if (allIds.length > 0) {
+                                // إزالة هذه المعرفات من masteredWords
+                                const beforeLength = this.masteredWords.length;
+                                this.masteredWords = this.masteredWords.filter(id => !allIds.includes(id));
+                                console.log(`✅ Removed ${beforeLength - this.masteredWords.length} words from masteredWords. New masteredWords:`, this.masteredWords);
+                            } else {
+                                console.log('⚠️ No IDs found for this lesson.');
+                            }
+                            
+                            this.currentCardIndex = 0;
+                            this.saveData();
+                            console.log('✅ Data saved. Rendering...');
+                            this.render();
+                        }
+                    }, delay);
+                    this.showAd('image');
                     return;
 
                 case 'addNewWord':
