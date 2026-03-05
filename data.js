@@ -127,8 +127,7 @@ window.lessonsList = {
     { id: "117", title: "  " },
     { id: "118", title: "  " },
     { id: "119", title: "  " },
-    { id: "120", title: "  " },
-    
+    { id: "120", title: "  " }
   ],
   "advanced": [
     { id: "301", title: "Cooperative Sovereignty in a Globalized Era" },
@@ -3425,6 +3424,42 @@ window.lessonsData = {
   {"id": "67-40", "english": "culture", "arabic": "ثقافة"}
 ]
 },
+"68": {
+"title": "Moving to a New City",
+"content": "Adam is standing in his empty bedroom. Boxes are piled everywhere. Tomorrow he is moving to a new city for university. He is feeling a mix of excitement and sadness. He has lived in this house his whole life. Every corner holds a memory. He is looking at the walls where his posters used to hang. He is thinking about his childhood. His mother is calling from downstairs. She is saying, Adam, dinner is ready. He is going down. The family is eating together. The atmosphere is different. Everyone is quiet. His father is breaking the silence. He is saying, This is a big change for all of us. But we are so proud of you. Adam is smiling. He is saying, I am going to miss you all so much. His little sister Huda is crying. She is saying, Who will play with me? Adam is hugging her. He is saying, I will visit during holidays. We can video call every day. Huda is nodding through her tears. After dinner, Adam is packing the last few items. He is holding a photo album. It is full of pictures from high school. Prom, football games, trips with friends. He is feeling nostalgic. He is texting Ali. He is writing, I cannot believe I am leaving tomorrow. Ali is replying, I know. But you are going to have an amazing time. New city, new people, new experiences. Adam is smiling. He is writing, I wish you were coming with me. Ali is saying, Me too. But we will visit each other. Promise. Adam is promising. The next morning, Adam is waking up early. The sun is shining. His family is already up. They are loading the car. Adam is carrying his favorite backpack. He is taking one last look at his room. He is whispering, Goodbye, room. Thank you for all the memories. They are driving to the new city. The journey takes four hours. Adam is looking out the window. He is watching the landscape change. Hills, fields, then tall buildings. They are arriving at his new apartment. It is small but cozy. His parents are helping him unpack. They are arranging his furniture. They are putting up his posters. Soon the room feels like home. His mother is hugging him tightly. She is saying, Take care of yourself. Eat well. Call us every day. Adam is promising. His father is shaking his hand. He is saying, I am proud of you, son. Make the most of this opportunity. They are leaving. Adam is standing at the window. He is watching their car drive away. He is feeling a lump in his throat. But he is also feeling excited. This is the start of a new chapter. He is unpacking his laptop. He is setting it up on his desk. He is video calling Ali. Ali is answering immediately. He is saying, How is it? Adam is laughing. He is saying, It is strange. But I think I will like it. Ali is saying, Of course you will. New adventures await. Adam is nodding. He is ready for whatever comes next.",
+"terms": [
+  {"id": "68-1", "english": "empty", "arabic": "فارغ"},
+  {"id": "68-2", "english": "piled", "arabic": "مكدس"},
+  {"id": "68-3", "english": "excitement", "arabic": "إثارة"},
+  {"id": "68-4", "english": "sadness", "arabic": "حزن"},
+  {"id": "68-5", "english": "memory", "arabic": "ذكرى"},
+  {"id": "68-6", "english": "atmosphere", "arabic": "جو"},
+  {"id": "68-7", "english": "breaking the silence", "arabic": "يكسر الصمت"},
+  {"id": "68-8", "english": "miss", "arabic": "يشتاق"},
+  {"id": "68-9", "english": "video call", "arabic": "مكالمة فيديو"},
+  {"id": "68-10", "english": "through her tears", "arabic": "بين دموعها"},
+  {"id": "68-11", "english": "photo album", "arabic": "ألبوم صور"},
+  {"id": "68-12", "english": "prom", "arabic": "حفلة التخرج"},
+  {"id": "68-13", "english": "nostalgic", "arabic": "حنين"},
+  {"id": "68-14", "english": "amazing", "arabic": "مذهل"},
+  {"id": "68-15", "english": "promise", "arabic": "يعد"},
+  {"id": "68-16", "english": "loading", "arabic": "تحميل"},
+  {"id": "68-17", "english": "backpack", "arabic": "حقيبة ظهر"},
+  {"id": "68-18", "english": "landscape", "arabic": "منظر طبيعي"},
+  {"id": "68-19", "english": "cozy", "arabic": "مريح"},
+  {"id": "68-20", "english": "unpack", "arabic": "يفرغ"},
+  {"id": "68-21", "english": "arranging", "arabic": "يرتب"},
+  {"id": "68-22", "english": "hugging tightly", "arabic": "يعانق بشدة"},
+  {"id": "68-23", "english": "take care", "arabic": "اعتني بنفسك"},
+  {"id": "68-24", "english": "make the most of", "arabic": "يستغل أفضل"},
+  {"id": "68-25", "english": "lump in throat", "arabic": "غصة في الحلق"},
+  {"id": "68-26", "english": "new chapter", "arabic": "فصل جديد"},
+  {"id": "68-27", "english": "setting up", "arabic": "يثبت"},
+  {"id": "68-28", "english": "strange", "arabic": "غريب"},
+  {"id": "68-29", "english": "await", "arabic": "تنتظر"},
+  {"id": "68-30", "english": "ready", "arabic": "مستعد"}
+]
+  },
 "69": {
 "title": "A Business Meeting",
 "content": "Adam is sitting in a conference room. He is wearing his best suit. He has been invited to a business meeting with his father. His father owns a small construction company. He wants Adam to learn about the business. Adam is feeling nervous. He has never attended a formal meeting before. The room is filled with professionals. They are all dressed in suits. A large table is in the center. There are laptops and notebooks on it. Adam's father is introducing him to colleagues. He is saying, This is my son, Adam. He is interested in architecture. He will join us today. The colleagues are smiling. They are shaking Adam's hand. Adam is trying to appear confident. But his palms are sweating. The meeting is about to start. Mr. Hassan, the project manager, is standing up. He is welcoming everyone. He is saying, Thank you for coming. Today we will discuss the new shopping mall project. Adam is listening carefully. He is taking notes in his notebook. Mr. Hassan is presenting the plans. He is using a projector. Blueprints are appearing on the screen. Adam is fascinated. He has never seen real architectural plans before. He is recognizing some terms. He has learned about them in school. Mr. Hassan is explaining the timeline. The project will take eighteen months. They have already secured the budget. They are now looking for contractors. Adam's father is raising his hand. He is asking, What is the budget for materials? Mr. Hassan is checking his notes. He is saying, We have allocated two million dollars for materials. We are expecting high-quality supplies. Adam is impressed by the numbers. He has never thought about how much buildings cost. Another colleague is speaking. She is Ms. Nadia, the financial officer. She is presenting the financial projections. She is using charts and graphs. Adam is trying to follow. He is understanding some of it. But some terms are new. He is writing them down to look up later. The meeting is continuing for two hours. They are discussing many topics. Permits, deadlines, suppliers, and safety regulations. Adam is learning so much. He is realizing that construction is complicated. It is not just about building. It is about planning, money, and people. During a break, Adam is talking to his father. He is saying, This is more complex than I thought. His father is nodding. He is saying, Yes, it is. But that is what makes it interesting. Adam is agreeing. He is feeling more respect for his father's work. After the break, they are discussing the design. The architect is presenting his ideas. He is showing images of the mall. It will have a modern look. Large windows and green spaces. Adam is loving the design. He is imagining himself creating such designs one day. He is asking a question. He is saying, How did you choose this design? The architect is smiling. He is explaining, We considered the location and the community. We wanted something that fits the environment. Adam is nodding. He is understanding that architecture is about more than just aesthetics. It is about function and context. The meeting is finally ending. Everyone is standing up. They are shaking hands again. Mr. Hassan is thanking everyone for their contributions. Adam's father is patting him on the back. He is saying, You did well, son. I am proud of you. Adam is feeling proud too. He has survived his first business meeting. He has learned so much. On the way home, he is thinking about the experience. He is realizing that he has made the right choice. Architecture is definitely for him. He is excited about the future. He cannot wait to start his own projects. He is also grateful for his father. He has given him this opportunity. Adam is feeling motivated. He is ready to study harder. He wants to be the best architect he can be.",
