@@ -2610,7 +2610,7 @@ class App {
                 </div>
                 <div class="card-controls-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
                     <button class="hero-btn" data-action="speak" data-param="${t.english}" style="background:#6366f1;">🔊 نطق</button>
-                    <button class="hero-btn" data-action="masterWordFlash" data-param="${t.id}" style="background:#10b981;">✅ حفظ</button>
+                    <button class="hero-btn" data-action="masterWordFlash" data-param="${t.id}" style="background:#10b981;">✅ اعرفها</button>
                     <button class="hero-btn" data-action="deleteWord" data-param="${t.id}" style="background:#ef4444;">🗑️ حذف</button>
                 </div>
                 <button class="hero-btn" data-action="restartCards" data-param="remaining" style="width:100%; margin: 15px 0; background:#f59e0b;">🔁 تكرار المتبقي</button>
