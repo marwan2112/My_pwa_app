@@ -92,6 +92,13 @@ class App {
         this.currentUserEmail = null;
         this.userData = null;
 
+        // بيانات المستخدم الأساسية (يجب تهيئتها لتجنب الأخطاء)
+        this.userVocabulary = [];
+        this.masteredWords = [];
+        this.unlockedLessons = [];
+        this.hiddenFromCards = [];
+        this.customLessons = {};
+
         // تهيئة قائمة المستخدمين في localStorage إذا لم تكن موجودة
         if (!localStorage.getItem('users')) {
             localStorage.setItem('users', JSON.stringify({}));
