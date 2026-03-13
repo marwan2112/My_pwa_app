@@ -99,12 +99,6 @@ class App {
         this.hiddenFromCards = [];
         this.customLessons = {};
 
-        // متغيرات المصادقة (اختيارية)
-        this.pendingEmail = null; // للتحقق من البريد قبل التسجيل
-        this.pendingCode = null; // رمز التأكيد
-        this.pendingName = null; // الاسم المؤقت
-        this.pendingPass = null; // كلمة المرور المؤقتة
-
         // تهيئة قائمة المستخدمين في localStorage إذا لم تكن موجودة
         if (!localStorage.getItem('users')) {
             localStorage.setItem('users', JSON.stringify({}));
@@ -116,7 +110,7 @@ class App {
             const users = JSON.parse(localStorage.getItem('users'));
             if (users[savedEmail]) {
                 this.currentUserEmail = savedEmail;
-                this.userData = { name: users[savedEmail].name, email: savedEmail, pass: users[savedEmail].password, verified: users[savedEmail].verified || false };
+                this.userData = { name: users[savedEmail].name, email: savedEmail, pass: users[savedEmail].password };
                 this.loadUserData(savedEmail);
                 this.currentPage = 'home';
             } else {
@@ -136,7 +130,7 @@ class App {
 
     // دالة لتشفير بسيط (للاستخدام المحلي فقط)
     hashPassword(password) {
-        return btoa(password); // ترميز base64
+        return btoa(password); // ترميز base64 (ليس آمناً للإنتاج الحقيقي)
     }
 
     // دالة لتحميل بيانات مستخدم معين من localStorage
@@ -235,43 +229,6 @@ class App {
         this.lastTestedLesson = { beginner: 0, intermediate: 0, advanced: 0 };
         this.currentPage = 'auth';
         this.render();
-    }
-
-    // دالة إرسال رمز التأكيد (تستخدم EmailJS - يجب تهيئته)
-    sendVerificationCode(email) {
-        // توليد رمز عشوائي من 6 أرقام
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        // حفظ الرمز في localStorage مع صلاحية (10 دقائق)
-        localStorage.setItem(`verification_${email}`, JSON.stringify({ code, expires: Date.now() + 10 * 60 * 1000 }));
-
-        // إرسال البريد عبر EmailJS (يحتاج تهيئة)
-        // يجب إضافة مكتبة EmailJS وتكوينها
-        if (window.emailjs) {
-            emailjs.send('service_id', 'template_id', {
-                to_email: email,
-                verification_code: code
-            }).then(() => {
-                alert('تم إرسال رمز التأكيد إلى بريدك الإلكتروني');
-            }, (error) => {
-                console.error('فشل إرسال البريد:', error);
-                alert('فشل إرسال الرمز، يرجى المحاولة لاحقاً');
-            });
-        } else {
-            // محاكاة للإصدار التجريبي
-            alert(`[محاكاة] رمز التأكيد لبريد ${email} هو: ${code}\n(في الإصدار الحقيقي سيُرسل عبر البريد)`);
-        }
-        return code;
-    }
-
-    // دالة التحقق من الرمز
-    verifyCode(email, code) {
-        const stored = JSON.parse(localStorage.getItem(`verification_${email}`));
-        if (!stored) return false;
-        if (stored.code === code && stored.expires > Date.now()) {
-            localStorage.removeItem(`verification_${email}`);
-            return true;
-        }
-        return false;
     }
 
     updateBadgesAndTier() {
@@ -2110,18 +2067,6 @@ class App {
                     this.handleAuth();
                     return;
 
-                case 'verifyEmail':
-                    this.verifyEmail();
-                    return;
-
-                case 'resendCode':
-                    this.resendCode();
-                    return;
-
-                case 'skipVerification':
-                    this.skipVerification();
-                    return;
-
                 case 'doPlacement':
                     this.handlePlacement(param, correct, btn);
                     return;
@@ -2233,7 +2178,7 @@ class App {
             if (users[email].password === hashedPass) {
                 // تسجيل الدخول ناجح
                 this.currentUserEmail = email;
-                this.userData = { name: users[email].name, email, pass: hashedPass, verified: users[email].verified || false };
+                this.userData = { name: users[email].name, email, pass: hashedPass };
                 localStorage.setItem('currentUser', email);
                 this.loadUserData(email);
                 this.currentPage = 'home';
@@ -2243,21 +2188,12 @@ class App {
             }
         } else {
             // مستخدم جديد - تسجيل
-            // حفظ البيانات مؤقتاً (اختياري للتحقق)
-            this.pendingEmail = email;
-            this.pendingName = name;
-            this.pendingPass = pass;
-            // إرسال رمز التأكيد (اختياري)
-            this.sendVerificationCode(email);
-            // ننتقل مباشرة للصفحة الرئيسية مع إمكانية التحقق لاحقاً
-            // إنشاء المستخدم فوراً (بدون تحقق)
-            users[email] = { name, password: hashedPass, verified: false };
+            users[email] = { name, password: hashedPass };
             localStorage.setItem('users', JSON.stringify(users));
-
             this.currentUserEmail = email;
-            this.userData = { name, email, pass: hashedPass, verified: false };
+            this.userData = { name, email, pass: hashedPass };
             localStorage.setItem('currentUser', email);
-
+            
             // إنشاء بيانات افتراضية للمستخدم الجديد
             this.userVocabulary = [];
             this.masteredWords = [];
@@ -2287,46 +2223,7 @@ class App {
 
             this.currentPage = 'home';
             this.render();
-
-            // عرض رسالة اختيارية للتحقق
-            alert('تم إنشاء حسابك. يمكنك تحقق بريدك الإلكتروني لاحقاً من صفحة الملف الشخصي.');
         }
-    }
-
-    // دالة تأكيد البريد الإلكتروني (اختياري)
-    verifyEmail() {
-        const code = document.getElementById('verifyCode')?.value;
-        if (!code) {
-            alert('الرجاء إدخال رمز التأكيد');
-            return;
-        }
-        if (this.verifyCode(this.currentUserEmail, code)) {
-            const users = JSON.parse(localStorage.getItem('users'));
-            if (users[this.currentUserEmail]) {
-                users[this.currentUserEmail].verified = true;
-                localStorage.setItem('users', JSON.stringify(users));
-                this.userData.verified = true;
-                alert('تم توثيق البريد الإلكتروني بنجاح');
-                this.currentPage = 'home';
-                this.render();
-            }
-        } else {
-            alert('رمز التأكيد غير صحيح أو منتهي الصلاحية');
-        }
-    }
-
-    // إعادة إرسال الرمز
-    resendCode() {
-        if (this.currentUserEmail) {
-            this.sendVerificationCode(this.currentUserEmail);
-            alert('تم إرسال رمز جديد');
-        }
-    }
-
-    // تخطي التحقق (العودة للصفحة الرئيسية)
-    skipVerification() {
-        this.currentPage = 'home';
-        this.render();
     }
 
     handleNewWord() {
@@ -2506,7 +2403,7 @@ class App {
     }
 
     getHeader() {
-        if (this.currentPage === 'auth' || this.currentPage === 'verify') return '';
+        if (this.currentPage === 'auth') return '';
         let nav = '';
         if (this.selectedLessonId && ['reading', 'flashcards', 'quiz', 'jumble', 'listening', 'spelling'].includes(this.currentPage) && !this.isUnlockTest) {
             nav = `<nav class="nav-menu">
@@ -2554,25 +2451,7 @@ class App {
                     <input id="authEmail" placeholder="البريد الإلكتروني" class="auth-input">
                     <input type="password" id="authPass" placeholder="كلمة المرور" class="auth-input">
                     <button class="hero-btn" data-action="doAuth" style="width:100%;">تسجيل الدخول / إنشاء حساب</button>
-                    <p style="margin-top:10px; font-size:0.9rem; color:#666;">سيتم إنشاء حسابك فوراً، ويمكنك تحقق بريدك لاحقاً.</p>
-                </div>
-            </main>`;
-        }
-
-        if (this.currentPage === 'verify') {
-            return `<main class="main-content">
-                <div class="auth-container">
-                    <img src="wordwise_logo.png" alt="WordWise">
-                    <h1>WordWise</h1>
-                    <p>تأكيد البريد الإلكتروني (اختياري)</p>
-                </div>
-                <div class="reading-card auth-card">
-                    <h2>📧 أدخل رمز التأكيد</h2>
-                    <p style="margin-bottom:15px;">تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني ${this.currentUserEmail || ''}</p>
-                    <input id="verifyCode" placeholder="رمز التأكيد" class="auth-input" maxlength="6">
-                    <button class="hero-btn" data-action="verifyEmail" style="width:100%; background:#10b981;">تأكيد</button>
-                    <button class="hero-btn" data-action="resendCode" style="width:100%; margin-top:10px; background:#3b82f6;">إعادة إرسال الرمز</button>
-                    <button class="hero-btn" data-action="skipVerification" style="width:100%; margin-top:10px; background:#64748b;">تخطي التحقق</button>
+                    <p style="margin-top:10px; font-size:0.9rem; color:#666;">جميع بياناتك محفوظة ومرتبطة بهذا البريد.</p>
                 </div>
             </main>`;
         }
@@ -2644,14 +2523,7 @@ class App {
                         <div class="info-row"><span>المستوى في التطبيق:</span> <span>${this.userStats.level}</span></div>
                         <div class="info-row"><span>مستوى اللغة:</span> <span>${englishLevel}</span></div>
                         <div class="info-row"><span>كلمة المرور:</span> <span><input type="password" id="profilePassword" placeholder="جديدة"></span></div>
-                        <div class="info-row"><span>حالة البريد:</span> <span>${this.userData?.verified ? '✅ موثق' : '⏳ غير موثق'}</span></div>
                     </div>
-
-                    ${!this.userData?.verified ? `
-                    <div style="width:100%; margin:10px 0; text-align:center;">
-                        <button class="hero-btn" data-action="setPage" data-param="verify" style="background:#3b82f6; width:100%;">📧 توثيق البريد الإلكتروني</button>
-                    </div>
-                    ` : ''}
 
                     <div style="width:100%; margin:15px 0;">
                         <div style="display:flex; justify-content:space-between;">
