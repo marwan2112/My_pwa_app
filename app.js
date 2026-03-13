@@ -99,6 +99,12 @@ class App {
         this.hiddenFromCards = [];
         this.customLessons = {};
 
+        // متغيرات المصادقة
+        this.pendingEmail = null; // للتحقق من البريد قبل التسجيل
+        this.pendingCode = null; // رمز التأكيد
+        this.pendingName = null; // الاسم المؤقت
+        this.pendingPass = null; // كلمة المرور المؤقتة
+
         // تهيئة قائمة المستخدمين في localStorage إذا لم تكن موجودة
         if (!localStorage.getItem('users')) {
             localStorage.setItem('users', JSON.stringify({}));
@@ -110,9 +116,20 @@ class App {
             const users = JSON.parse(localStorage.getItem('users'));
             if (users[savedEmail]) {
                 this.currentUserEmail = savedEmail;
-                this.userData = { name: users[savedEmail].name, email: savedEmail, pass: users[savedEmail].password };
+                this.userData = { name: users[savedEmail].name, email: savedEmail, pass: users[savedEmail].password, verified: users[savedEmail].verified || false };
                 this.loadUserData(savedEmail);
+                // إذا كان البريد غير موثق، نطلب التوثيق
+                if (!this.userData.verified) {
+                    this.currentPage = 'verify';
+                } else {
+                    this.currentPage = 'home';
+                }
+            } else {
+                localStorage.removeItem('currentUser');
+                this.currentPage = 'auth';
             }
+        } else {
+            this.currentPage = 'auth';
         }
 
         if (document.readyState === 'loading') {
@@ -225,6 +242,28 @@ class App {
         this.render();
     }
 
+    // دالة إرسال رمز التأكيد (محاكاة)
+    sendVerificationCode(email) {
+        // توليد رمز عشوائي من 6 أرقام
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        // حفظ الرمز في localStorage مع صلاحية (يمكن إضافة وقت انتهاء)
+        localStorage.setItem(`verification_${email}`, JSON.stringify({ code, expires: Date.now() + 10 * 60 * 1000 })); // 10 دقائق
+        // محاكاة إرسال البريد الإلكتروني (في التطبيق الحقيقي، استخدم EmailJS أو خدمة أخرى)
+        alert(`تم إرسال رمز التأكيد إلى بريدك الإلكتروني: ${code}\n(هذه محاكاة، الرمز الحقيقي سيُرسل عبر البريد)`);
+        return code;
+    }
+
+    // دالة التحقق من الرمز
+    verifyCode(email, code) {
+        const stored = JSON.parse(localStorage.getItem(`verification_${email}`));
+        if (!stored) return false;
+        if (stored.code === code && stored.expires > Date.now()) {
+            localStorage.removeItem(`verification_${email}`);
+            return true;
+        }
+        return false;
+    }
+
     updateBadgesAndTier() {
         const totalLessonsUnlocked = this.unlockedLessons ? this.unlockedLessons.length : 0;
         const totalMastered = this.masteredWords ? this.masteredWords.length : 0;
@@ -270,8 +309,17 @@ class App {
             return;
         }
 
-        // إذا كان هناك مستخدم مسجل، نذهب للصفحة الرئيسية، وإلا صفحة المصادقة
-        this.currentPage = this.currentUserEmail ? 'home' : 'auth';
+        // إذا كان هناك مستخدم مسجل، نذهب للصفحة الرئيسية (أو التحقق إذا لم يوثق)
+        if (this.currentUserEmail) {
+            const users = JSON.parse(localStorage.getItem('users'));
+            if (users[this.currentUserEmail] && users[this.currentUserEmail].verified) {
+                this.currentPage = 'home';
+            } else {
+                this.currentPage = 'verify';
+            }
+        } else {
+            this.currentPage = 'auth';
+        }
 
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (this.audioCtx.state === 'suspended') {
@@ -2057,6 +2105,14 @@ class App {
                     this.handleAuth();
                     return;
 
+                case 'verifyEmail':
+                    this.verifyEmail();
+                    return;
+
+                case 'resendCode':
+                    this.resendCode();
+                    return;
+
                 case 'doPlacement':
                     this.handlePlacement(param, correct, btn);
                     return;
@@ -2168,49 +2224,108 @@ class App {
             if (users[email].password === hashedPass) {
                 // تسجيل الدخول ناجح
                 this.currentUserEmail = email;
-                this.userData = { name: users[email].name, email, pass: hashedPass };
+                this.userData = { name: users[email].name, email, pass: hashedPass, verified: users[email].verified || false };
                 localStorage.setItem('currentUser', email);
                 this.loadUserData(email);
-                this.currentPage = 'home';
+                // إذا كان البريد غير موثق، نطلب التوثيق
+                if (!this.userData.verified) {
+                    // إرسال رمز جديد
+                    this.pendingEmail = email;
+                    this.pendingName = name;
+                    this.pendingPass = pass;
+                    this.sendVerificationCode(email);
+                    this.currentPage = 'verify';
+                } else {
+                    this.currentPage = 'home';
+                }
                 this.render();
             } else {
                 alert('كلمة المرور غير صحيحة');
             }
         } else {
-            // مستخدم جديد - تسجيل
-            users[email] = { name, password: hashedPass };
+            // مستخدم جديد - تسجيل، نتأكد أن البريد غير مستخدم (وهو غير مستخدم لأننا في else)
+            // حفظ البيانات مؤقتاً حتى التأكيد
+            this.pendingEmail = email;
+            this.pendingName = name;
+            this.pendingPass = pass;
+            // إرسال رمز التأكيد
+            this.sendVerificationCode(email);
+            this.currentPage = 'verify';
+            this.render();
+        }
+    }
+
+    // دالة تأكيد البريد الإلكتروني
+    verifyEmail() {
+        const code = document.getElementById('verifyCode')?.value;
+        if (!code) {
+            alert('الرجاء إدخال رمز التأكيد');
+            return;
+        }
+        if (this.verifyCode(this.pendingEmail, code)) {
+            // تأكيد ناجح
+            const users = JSON.parse(localStorage.getItem('users'));
+            const hashedPass = this.hashPassword(this.pendingPass);
+            // إذا كان المستخدم موجوداً (تسجيل دخول) نحدث فقط verified
+            if (users[this.pendingEmail]) {
+                users[this.pendingEmail].verified = true;
+            } else {
+                // مستخدم جديد
+                users[this.pendingEmail] = { name: this.pendingName, password: hashedPass, verified: true };
+            }
             localStorage.setItem('users', JSON.stringify(users));
-            this.currentUserEmail = email;
-            this.userData = { name, email, pass: hashedPass };
-            localStorage.setItem('currentUser', email);
-            // إنشاء بيانات افتراضية للمستخدم الجديد
-            this.userVocabulary = [];
-            this.masteredWords = [];
-            this.unlockedLessons = [];
-            this.hiddenFromCards = [];
-            this.customLessons = {};
-            this.userStats = { xp: 0, level: 1, badges: [], tier: 'برونزي' };
-            this.placementResults = [];
-            this.placementFullHistory = [];
-            this.userCoins = 100; // مكافأة ترحيبية
-            this.jumbleUnlocked = {};
-            this.listeningUnlocked = {};
-            this.spellingUnlocked = {};
-            this.newWordsAddedCount = 0;
-            this.adWatchedCount = 0;
-            this.purchaseRequests = [];
-            this.userProfile = {
-                name: name,
-                age: '',
-                joinDate: new Date().toLocaleDateString('ar-EG'),
-                level: 'A1',
-                image: '',
-                testsHistory: []
-            };
-            this.lastTestedLesson = { beginner: 0, intermediate: 0, advanced: 0 };
-            this.saveUserData();
+
+            this.currentUserEmail = this.pendingEmail;
+            this.userData = { name: this.pendingName, email: this.pendingEmail, pass: hashedPass, verified: true };
+            localStorage.setItem('currentUser', this.pendingEmail);
+
+            // إذا كان مستخدم جديد، ننشئ بيانات افتراضية
+            if (!localStorage.getItem(`userData_${this.pendingEmail}`)) {
+                this.userVocabulary = [];
+                this.masteredWords = [];
+                this.unlockedLessons = [];
+                this.hiddenFromCards = [];
+                this.customLessons = {};
+                this.userStats = { xp: 0, level: 1, badges: [], tier: 'برونزي' };
+                this.placementResults = [];
+                this.placementFullHistory = [];
+                this.userCoins = 100; // مكافأة ترحيبية
+                this.jumbleUnlocked = {};
+                this.listeningUnlocked = {};
+                this.spellingUnlocked = {};
+                this.newWordsAddedCount = 0;
+                this.adWatchedCount = 0;
+                this.purchaseRequests = [];
+                this.userProfile = {
+                    name: this.pendingName,
+                    age: '',
+                    joinDate: new Date().toLocaleDateString('ar-EG'),
+                    level: 'A1',
+                    image: '',
+                    testsHistory: []
+                };
+                this.lastTestedLesson = { beginner: 0, intermediate: 0, advanced: 0 };
+                this.saveUserData();
+            } else {
+                // مستخدم موجود، نحمل بياناته
+                this.loadUserData(this.pendingEmail);
+            }
+
+            this.pendingEmail = null;
+            this.pendingName = null;
+            this.pendingPass = null;
             this.currentPage = 'home';
             this.render();
+        } else {
+            alert('رمز التأكيد غير صحيح أو منتهي الصلاحية');
+        }
+    }
+
+    // إعادة إرسال الرمز
+    resendCode() {
+        if (this.pendingEmail) {
+            this.sendVerificationCode(this.pendingEmail);
+            alert('تم إرسال رمز جديد');
         }
     }
 
@@ -2391,7 +2506,7 @@ class App {
     }
 
     getHeader() {
-        if (this.currentPage === 'auth') return '';
+        if (this.currentPage === 'auth' || this.currentPage === 'verify') return '';
         let nav = '';
         if (this.selectedLessonId && ['reading', 'flashcards', 'quiz', 'jumble', 'listening', 'spelling'].includes(this.currentPage) && !this.isUnlockTest) {
             nav = `<nav class="nav-menu">
@@ -2439,7 +2554,25 @@ class App {
                     <input id="authEmail" placeholder="البريد الإلكتروني" class="auth-input">
                     <input type="password" id="authPass" placeholder="كلمة المرور" class="auth-input">
                     <button class="hero-btn" data-action="doAuth" style="width:100%;">تسجيل الدخول / إنشاء حساب</button>
-                    <p style="margin-top:10px; font-size:0.9rem; color:#666;">إذا كان لديك حساب بالفعل، سيتم تسجيل الدخول. وإلا سيتم إنشاء حساب جديد بنفس البريد وكلمة المرور.</p>
+                    <p style="margin-top:10px; font-size:0.9rem; color:#666;">سيتم إرسال رمز تأكيد إلى بريدك الإلكتروني للتحقق.</p>
+                </div>
+            </main>`;
+        }
+
+        if (this.currentPage === 'verify') {
+            return `<main class="main-content">
+                <div class="auth-container">
+                    <img src="wordwise_logo.png" alt="WordWise">
+                    <h1>WordWise</h1>
+                    <p>تأكيد البريد الإلكتروني</p>
+                </div>
+                <div class="reading-card auth-card">
+                    <h2>📧 أدخل رمز التأكيد</h2>
+                    <p style="margin-bottom:15px;">تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني ${this.pendingEmail || ''}</p>
+                    <input id="verifyCode" placeholder="رمز التأكيد" class="auth-input" maxlength="6">
+                    <button class="hero-btn" data-action="verifyEmail" style="width:100%; background:#10b981;">تأكيد</button>
+                    <button class="hero-btn" data-action="resendCode" style="width:100%; margin-top:10px; background:#3b82f6;">إعادة إرسال الرمز</button>
+                    <button class="hero-btn" data-action="goHome" style="width:100%; margin-top:10px; background:#64748b;">العودة لتسجيل الدخول</button>
                 </div>
             </main>`;
         }
